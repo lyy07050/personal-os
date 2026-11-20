@@ -35,21 +35,23 @@ MOBILE = [("手机首页", "home"), ("冰箱", "fridge"), ("所有部门", "more
           ("物品墙", "things"), ("知识库", "notes"), ("多邻国", "english"), ("教务处", "school"), ("人事部", "career")]
 
 
-def note(calls: list[tuple[str, dict]]) -> str:
+def note(calls: list[tuple[str, dict]], page: str) -> str:
+    # 电脑面板：第一个 view 是左侧导航 side，lifeos-desk 让这个块排成「导航 | 面板」两列
+    calls = [("side", {"page": page})] + calls
     body = "\n".join(f'await dv.view("90 系统/views/{v}", {json.dumps(a, ensure_ascii=False)})' for v, a in calls)
-    return f"---\ncssclasses:\n  - lifeos-dash\n---\n```dataviewjs\n{body}\n```\n"
+    return f"---\ncssclasses:\n  - lifeos-dash\n  - lifeos-desk\n---\n```dataviewjs\n{body}\n```\n"
 
 
 def all_notes() -> dict[str, str]:
     out = {}
     for main, label, view, args, subs in PAGES:
         if not subs:
-            out[main] = note([(view, args)])
+            out[main] = note([(view, args)], view)
             continue
         tabs = [{"label": label, "path": main}] + [{"label": l, "path": p} for p, l, _ in subs]
-        out[main] = note([("tabs", {"current": label, "pages": tabs}), (view, args)])
+        out[main] = note([("tabs", {"current": label, "pages": tabs}), (view, args)], view)
         for path, l, a in subs:
-            out[path] = note([("tabs", {"current": l, "pages": tabs}), (view, a)])
+            out[path] = note([("tabs", {"current": l, "pages": tabs}), (view, a)], view)
     for name, view in MOBILE:
         out[f"10 总部/手机/{name}"] = f'---\ncssclasses:\n  - lifeos-dash\n---\n```dataviewjs\nawait dv.view("90 系统/views/m-{view}")\n```\n'
     return out

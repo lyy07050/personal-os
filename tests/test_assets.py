@@ -37,7 +37,7 @@ def test_css_scoped_to_dashboards():
     css = (SNIPPETS / "lifeos.css").read_text(encoding="utf-8")
     body = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     body = re.sub(r"@keyframes[^{]+\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", body)
-    body = re.sub(r"@media[^{]*\{", "", body)
+    body = re.sub(r"@(media|container)[^{]*\{", "", body)
     for selector_group in re.findall(r"([^{}@]+)\{", body):
         for sel in re.split(r",(?![^()]*\))", selector_group):
             sel = sel.strip()

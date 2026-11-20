@@ -201,3 +201,27 @@
 .lifeos-dash .m .sheet .ic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
 .lifeos-dash .m .ok{font-size:13px;color:var(--green);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.lifeos-dash .m .sheet,.lifeos-dash .m .dash-fab{transition:none}}
+
+/* ---------- 侧栏（网页版左侧导航，照 demo/v4/desktop.css 和 UI 规范第 5 节） ----------
+   电脑面板笔记带 cssclasses lifeos-desk；它的 dataviewjs 块排成两列：左 210 导航，右边面板。
+   面板区比 1100 窄时（比如开着文件列表）导航收起，面板占满。 */
+.lifeos-dash.lifeos-desk{--file-line-width:1440px}
+.lifeos-dash.lifeos-desk .markdown-preview-sizer{container-type:inline-size}
+.lifeos-dash.lifeos-desk .block-language-dataviewjs{display:grid;grid-template-columns:210px minmax(0,1fr);column-gap:16px;align-items:start}
+.lifeos-dash.lifeos-desk .block-language-dataviewjs>*{grid-column:2;min-width:0}
+.lifeos-dash.lifeos-desk .block-language-dataviewjs>.side-host{grid-column:1;grid-row:1 / span 9;align-self:stretch}
+.lifeos-dash .side{position:sticky;top:0;min-height:min(100%,calc(100vh - 90px));padding:28px 0 28px 22px;display:flex;flex-direction:column}
+.lifeos-dash .side .brand{display:block;font-family:var(--gaegu);font-weight:700;font-size:30px;line-height:1;margin-bottom:22px;color:var(--ink)}
+.lifeos-dash .side .brand b{color:var(--brown);font-weight:700}
+.lifeos-dash .side h6{font-size:13px;font-weight:500;letter-spacing:.14em;color:var(--muted);margin:18px 0 6px}
+.lifeos-dash .side a,.lifeos-dash .side .grp{display:flex;justify-content:space-between;align-items:center;padding:5px 14px 5px 0;font-size:16px;color:var(--muted);transition:color .2s}
+.lifeos-dash .side a.sub{padding-left:14px}
+.lifeos-dash .side a:hover{color:var(--ink)}
+.lifeos-dash .side a.on,.lifeos-dash .side .grp.on{color:var(--ink);font-weight:600}
+.lifeos-dash .side a i{font-style:normal;color:var(--brown);font-size:14px}
+.lifeos-dash .side .foot{margin-top:auto;font-size:15px;color:var(--ink-2)}
+@container (max-width:1100px){
+  .lifeos-dash.lifeos-desk .block-language-dataviewjs{grid-template-columns:minmax(0,1fr)}
+  .lifeos-dash.lifeos-desk .block-language-dataviewjs>*{grid-column:1}
+  .lifeos-dash.lifeos-desk .block-language-dataviewjs>.side-host{display:none}
+}

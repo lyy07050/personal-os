@@ -133,9 +133,12 @@ let CURRENT = null;
     if (text == null) throw new Error("找不到笔记 " + note);
     CURRENT = parse(note + ".md", text);
     document.title = note;
+    // 和 Obsidian 一样：frontmatter 的 cssclasses 加到阅读视图上；一个 dataviewjs 块 = 一个容器，块里的多个 dv.view 共用它
+    const fm = /^---\n([\s\S]*?)\n---/.exec(text);
+    if (fm) for (const c of fm[1].matchAll(/^\s*-\s*(lifeos-[\w-]+)/gm)) sizer.parentElement.classList.add(c[1]);
     const block = /```dataviewjs\n([\s\S]*?)```/.exec(text);
+    const box = document.createElement("div"); box.className = "block-language-dataviewjs"; sizer.appendChild(box);
     for (const m of block[1].matchAll(/dv\.view\("([^"]+)"(?:,\s*(\{.*\}))?\)/g)) {
-      const box = document.createElement("div"); box.className = "block-language-dataviewjs"; sizer.appendChild(box);
       await runView(m[1], m[2] ? JSON.parse(m[2]) : {}, box);
     }
   } catch (e) { sizer.innerHTML = `<pre class="err">${e.stack || e}</pre>`; console.error(e); }
