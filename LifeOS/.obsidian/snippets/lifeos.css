@@ -1,0 +1,147 @@
+/* 人生 OS · 面板样式。数值照 HTML 稿 demo/v4/desktop.css、mobile.css 和 DESIGN.md。
+   只作用于 frontmatter 里有 `cssclasses: [lifeos-dash]` 的笔记，其他笔记保持 Obsidian 原样。
+   面板永远是浅色（DESIGN.md：不要黑色背景），不跟随 Obsidian 的深色模式。 */
+
+/* ---------- token ---------- */
+.lifeos-dash{
+  --paper:#ebf2ed; --page:#f0f5f2; --card:#ffffff; --tile:#f8fbf9;
+  --green:#3e5b4b; --green-deep:#2f4639; --ink:#252d29; --ink-2:#4f5c52; --table:#303a33; --muted:#636d64; --tab-off:#737e74;
+  --brown:#94604b; --warn:#a15c46; --chip-pink:#945b47; --done:#8fa98a; --outline:#a9b4a4;
+  --pink:#fdefee; --blue:#ecf8fe; --yellow:#fef7e0; --purple:#f3f0f4; --apricot:#e9e7e6; --sage:#dfe8db; --beige:#f2e8d3;
+  --sh-card:0 4px 16px rgba(60,85,70,.05);
+  --sh-lift:0 1.5px 4.5px rgba(52,72,59,.05),0 4.5px 13.5px rgba(52,72,59,.10);
+  --sh-sticker:drop-shadow(0 3px 6px rgba(46,42,39,.14));
+  --sans:"PingFang SC","Noto Sans SC",-apple-system,sans-serif;
+  --zcool:"ZCOOL KuaiLe","PingFang SC",sans-serif; --gaegu:"Gaegu","PingFang SC",cursive; --mono:"DM Mono",ui-monospace,monospace;
+  /* 让 Obsidian 自己的颜色也跟着走浅色 */
+  --background-primary:var(--paper); --text-normal:var(--ink); --text-muted:var(--muted); --text-accent:var(--green);
+  --file-line-width:1174px;
+  background-color:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color:var(--ink); font-family:var(--sans); font-size:16px; -webkit-font-smoothing:antialiased;
+}
+/* 面板笔记不显示标题栏里的大标题和属性框，只显示面板本身 */
+.lifeos-dash .inline-title,
+.lifeos-dash .metadata-container,
+.lifeos-dash .embedded-backlinks,
+.lifeos-dash .mod-header{display:none}
+.lifeos-dash .block-language-dataviewjs{margin:0}
+.lifeos-dash .markdown-preview-sizer{padding-bottom:64px!important}
+
+/* ---------- 基础 ---------- */
+.lifeos-dash .dash *{box-sizing:border-box}
+.lifeos-dash .dash a{color:inherit;text-decoration:none}
+.lifeos-dash .dash button{font:inherit;color:inherit;background:none;border:0;box-shadow:none;cursor:pointer;padding:0;height:auto}
+.lifeos-dash .dash h1,.lifeos-dash .dash h2,.lifeos-dash .dash h3,.lifeos-dash .dash p,.lifeos-dash .dash ul{margin:0;padding:0}
+.lifeos-dash .dash ::selection{background:var(--sage);color:var(--ink)}
+.lifeos-dash .z{font-family:var(--zcool);font-weight:400}
+.lifeos-dash .g{font-family:var(--gaegu);font-weight:700}
+.lifeos-dash .mono{font-family:var(--mono)}
+.lifeos-dash .muted{color:var(--muted)}
+.lifeos-dash .warn{color:var(--warn)}
+.lifeos-dash .g,.lifeos-dash .amt,.lifeos-dash .mono,.lifeos-dash .num,.lifeos-dash .dash td{font-variant-numeric:tabular-nums}
+.lifeos-dash .g small{font-size:.45em}
+.lifeos-dash .dash h1,.lifeos-dash .dash h2,.lifeos-dash .dash h3{text-wrap:balance;color:var(--ink)}
+.lifeos-dash .dash p{text-wrap:pretty}
+.lifeos-dash .dash :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+
+/* ---------- 顶部 tab（分页面之间跳转，只写名字，不加数字） ---------- */
+.lifeos-dash .tabs{display:inline-flex;align-items:center;gap:22px;background:#fff;border-radius:34px;height:68px;padding:0 26px;box-shadow:var(--sh-lift);margin-bottom:24px}
+.lifeos-dash .tabs a{font-size:40px;line-height:1;color:var(--tab-off);transition:color .2s}
+.lifeos-dash .tabs a.lat{font-family:var(--gaegu);font-weight:700}
+.lifeos-dash .tabs a.cjk{font-family:var(--zcool);font-size:28px}
+.lifeos-dash .tabs a.on,.lifeos-dash .tabs a:hover{color:var(--ink)}
+
+/* ---------- banner ---------- */
+.lifeos-dash .ban{position:relative;background:#fff;border-radius:22px;box-shadow:var(--sh-card);height:254px;padding:44px 48px 0;margin-bottom:32px}
+.lifeos-dash .ban .eye{font-size:16px;font-weight:500;letter-spacing:.14em;color:var(--ink-2)}
+.lifeos-dash .ban h1{font-family:var(--zcool);font-weight:400;font-size:60px;line-height:1.15;margin-top:6px}
+.lifeos-dash .ban .facts{font-size:16px;color:var(--ink-2);margin-top:8px;text-wrap:balance}
+.lifeos-dash .ban .facts b{font-weight:400;color:var(--warn)}
+.lifeos-dash .ban .btns{display:flex;gap:10px;margin-top:16px}
+.lifeos-dash .ban .art{position:absolute;pointer-events:none;filter:var(--sh-sticker);transition:translate .5s cubic-bezier(.2,.8,.2,1),rotate .5s cubic-bezier(.2,.8,.2,1)}
+.lifeos-dash .ban:hover .art{translate:0 -5px;rotate:-1.5deg}
+.lifeos-dash .btn{height:44px;padding:0 20px;border-radius:999px;font-size:16px;font-weight:500;display:inline-flex;align-items:center;gap:6px;transition:transform .2s}
+.lifeos-dash .btn:active{transform:scale(.97)}
+.lifeos-dash .dash .btn.pri{background:var(--green);color:#fff;box-shadow:0 1.5px 4.5px rgba(52,72,59,.08),0 6px 14px rgba(52,72,59,.18)}
+.lifeos-dash .dash .btn.sec{background:#fff;box-shadow:var(--sh-lift)}
+
+/* ---------- 版块 ---------- */
+.lifeos-dash .stack{display:flex;flex-direction:column;gap:24px}
+.lifeos-dash .row{display:grid;gap:24px}
+.lifeos-dash .c2{grid-template-columns:1fr 1fr}
+.lifeos-dash .c3{grid-template-columns:repeat(3,1fr)}
+.lifeos-dash .card{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:32px;position:relative}
+.lifeos-dash .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}
+.lifeos-dash .head h2{font-family:var(--zcool);font-weight:400;font-size:30px;line-height:1.2}
+.lifeos-dash .head .note{font-size:14px;color:var(--muted)}
+.lifeos-dash .group{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:16px}
+.lifeos-dash .tile{background:var(--tile);border:1px solid rgba(37,45,41,.06);border-radius:18px;box-shadow:var(--sh-lift)}
+.lifeos-dash .tile h3{font-family:var(--zcool);font-weight:400;font-size:20px}
+.lifeos-dash .big{font-family:var(--gaegu);font-weight:700;font-size:88px;line-height:1;color:var(--green)}
+
+/* ---------- 小部件 ---------- */
+.lifeos-dash .chip{display:inline-flex;align-items:center;height:30px;padding:0 13px;border-radius:999px;font-size:15px;font-weight:500;background:var(--sage);color:var(--green);white-space:nowrap}
+.lifeos-dash .chip.pink{background:var(--pink);color:var(--chip-pink)}
+.lifeos-dash .chip.yellow{background:var(--yellow);color:#7a5b1e}
+.lifeos-dash .chip.blue{background:var(--blue);color:#33586e}
+.lifeos-dash .chip.purple{background:var(--purple);color:#5e4b68}
+.lifeos-dash .chip.beige{background:var(--beige);color:#6b5530}
+.lifeos-dash .chip.apricot{background:var(--apricot);color:#5c5450}
+.lifeos-dash .chip.plain{background:none;color:var(--ink-2);padding:0}
+.lifeos-dash .ck{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--outline);background:#fff;display:inline-grid;place-items:center;flex:none;transition:background .2s,border-color .2s}
+.lifeos-dash .ck svg{opacity:0;transform:scale(.6);transition:all .2s}
+.lifeos-dash .done>.ck,.lifeos-dash .ck.on{background:var(--green);border-color:var(--green)}
+.lifeos-dash .done>.ck svg,.lifeos-dash .ck.on svg{opacity:1;transform:none}
+.lifeos-dash .done .t{text-decoration:line-through;color:var(--muted)}
+.lifeos-dash .bar{height:6px;border-radius:3px;background:var(--sage);overflow:hidden}
+.lifeos-dash .bar span{display:block;height:100%;border-radius:3px;background:var(--done)}
+.lifeos-dash .list{list-style:none}
+.lifeos-dash .list li{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(37,45,41,.07);font-size:18px}
+.lifeos-dash .list li::marker{content:none}
+.lifeos-dash .list li:last-child{border-bottom:0}
+.lifeos-dash .dash table{width:100%;border-collapse:collapse;margin:0}
+.lifeos-dash .dash th{font-size:14px;font-weight:500;color:var(--muted);text-align:left;padding:10px 12px;border:0;border-bottom:1px solid rgba(37,45,41,.08);background:none}
+.lifeos-dash .dash td{font-size:16px;color:var(--table);padding:20px 12px;border:0;border-bottom:1px solid rgba(37,45,41,.06)}
+.lifeos-dash .dash tr:last-child td{border-bottom:0}
+.lifeos-dash .amt{font-family:var(--mono);text-align:right}
+.lifeos-dash .food-emoji{display:inline-grid;place-items:center;border-radius:50%;background:#f3f6f1;box-shadow:inset 0 0 0 1px rgba(37,45,41,.05);line-height:1}
+.lifeos-dash .food-img{display:block;filter:drop-shadow(0 2px 3px rgba(46,42,39,.12))}
+
+/* ---------- 手账质感：和纸胶带 · 盖章 · 撕贴纸 · 日期印章 ---------- */
+.lifeos-dash .tape{position:absolute;width:92px;height:24px;z-index:3;pointer-events:none;opacity:.78;background:var(--tape,#dfe8db);border-radius:2px;box-shadow:0 1px 2px rgba(46,42,39,.06)}
+.lifeos-dash .ban>.tape{top:-11px;left:30px;rotate:-5deg}
+@keyframes lifeos-stamp{0%{scale:1.45;rotate:-14deg;box-shadow:0 0 0 0 rgba(62,91,75,.35)}55%{scale:.9;rotate:3deg}100%{scale:1;rotate:0deg;box-shadow:0 0 0 9px rgba(62,91,75,0)}}
+.lifeos-dash .stamp{animation:lifeos-stamp .46s cubic-bezier(.2,.8,.2,1)}
+@keyframes lifeos-peel{0%{rotate:0deg;translate:0 0}45%{rotate:-16deg;translate:-4px -10px;scale:1.08}100%{rotate:-7deg;translate:-2px -3px;scale:1}}
+.lifeos-dash .gone .pic{animation:lifeos-peel .62s cubic-bezier(.2,.8,.2,1) both;filter:drop-shadow(0 6px 6px rgba(46,42,39,.18))}
+.lifeos-dash .date-stamp{border:1.5px solid rgba(148,96,75,.38);border-radius:12px;padding:5px 6px 4px;background:rgba(255,255,255,.55)}
+
+/* ---------- 手机（Obsidian 在 iPhone 上给 body 加 .is-mobile） ---------- */
+.is-mobile .lifeos-dash{
+  --brown:#7f4f3c; --warn:#8e4a35; --muted:#5b645c;
+  --shadow:0 1px 2px rgba(52,72,59,.04),0 8px 24px rgba(52,72,59,.07);
+  --file-line-width:100%;
+  background-color:var(--page); font-size:14px;
+}
+.is-mobile .lifeos-dash .markdown-preview-sizer{padding-left:16px!important;padding-right:16px!important}
+.is-mobile .lifeos-dash .card{border-radius:28px;padding:16px;box-shadow:var(--shadow);overflow:hidden}
+.is-mobile .lifeos-dash .head{margin-bottom:10px}
+.is-mobile .lifeos-dash .head h2{font-family:var(--sans);font-weight:600;font-size:20px;letter-spacing:-.02em}
+.is-mobile .lifeos-dash .stack,.is-mobile .lifeos-dash .row{gap:12px}
+.is-mobile .lifeos-dash .c2,.is-mobile .lifeos-dash .c3{grid-template-columns:1fr}
+.is-mobile .lifeos-dash .ban{height:auto;padding:20px;border-radius:28px;margin-bottom:12px}
+.is-mobile .lifeos-dash .ban h1{font-family:var(--sans);font-weight:600;font-size:28px;letter-spacing:-.02em}
+.is-mobile .lifeos-dash .ban .eye,.is-mobile .lifeos-dash .ban .facts{font-size:13px}
+.is-mobile .lifeos-dash .tabs{display:none}
+.is-mobile .lifeos-dash .chip{height:26px;padding:0 10px;font-size:12px}
+.is-mobile .lifeos-dash .ck{width:20px;height:20px}
+.is-mobile .lifeos-dash .list li{font-size:14px;padding:10px 0}
+.is-mobile .lifeos-dash .big{font-size:56px}
+.is-mobile .lifeos-dash .dash td{padding:12px 8px;font-size:14px}
+
+@media (prefers-reduced-motion:reduce){
+  .lifeos-dash .stamp,.lifeos-dash .gone .pic{animation:none}
+  .lifeos-dash .ban:hover .art{translate:none;rotate:none}
+  .lifeos-dash .dash *{transition:none!important}
+}
