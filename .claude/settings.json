@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./LifeOS/60 个人档案/**)",
+      "Edit(./LifeOS/60 个人档案/**)",
+      "Bash(cat:*60 个人档案*)",
+      "Bash(grep:*60 个人档案*)"
+    ]
+  }
+}
