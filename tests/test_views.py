@@ -31,7 +31,7 @@ def _view_calls(text: str) -> list[str]:
 def test_dashboard_notes_exist_and_are_marked():
     for rel in ALL_NOTES:
         text = (VAULT / rel).read_text(encoding="utf-8")
-        assert "cssclasses: [lifeos-dash]" in text, rel
+        assert re.search(r"cssclasses:\s*(\[lifeos-dash\]|\n\s*- lifeos-dash)", text), rel
         assert text.count("```dataviewjs") == 1, rel
 
 
@@ -157,7 +157,7 @@ def test_mobile_pages_exist():
     for name, view in MOBILE.items():
         rel = f"10 总部/手机/{name}.md"
         text = (VAULT / rel).read_text(encoding="utf-8")
-        assert "cssclasses: [lifeos-dash]" in text, rel
+        assert re.search(r"cssclasses:\s*(\[lifeos-dash\]|\n\s*- lifeos-dash)", text), rel
         assert _view_calls(text) == [f"90 系统/views/{view}"], rel
         assert (VIEWS / view / "view.js").is_file(), view
         r = subprocess.run(["git", "check-ignore", "-q", f"LifeOS/{rel}"], cwd=PROJECT)

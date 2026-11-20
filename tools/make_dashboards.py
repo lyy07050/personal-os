@@ -37,7 +37,7 @@ MOBILE = [("手机首页", "home"), ("冰箱", "fridge"), ("所有部门", "more
 
 def note(calls: list[tuple[str, dict]]) -> str:
     body = "\n".join(f'await dv.view("90 系统/views/{v}", {json.dumps(a, ensure_ascii=False)})' for v, a in calls)
-    return f"---\ncssclasses: [lifeos-dash]\n---\n```dataviewjs\n{body}\n```\n"
+    return f"---\ncssclasses:\n  - lifeos-dash\n---\n```dataviewjs\n{body}\n```\n"
 
 
 def all_notes() -> dict[str, str]:
@@ -51,7 +51,7 @@ def all_notes() -> dict[str, str]:
         for path, l, a in subs:
             out[path] = note([("tabs", {"current": l, "pages": tabs}), (view, a)])
     for name, view in MOBILE:
-        out[f"10 总部/手机/{name}"] = f'---\ncssclasses: [lifeos-dash]\n---\n```dataviewjs\nawait dv.view("90 系统/views/m-{view}")\n```\n'
+        out[f"10 总部/手机/{name}"] = f'---\ncssclasses:\n  - lifeos-dash\n---\n```dataviewjs\nawait dv.view("90 系统/views/m-{view}")\n```\n'
     return out
 
 
