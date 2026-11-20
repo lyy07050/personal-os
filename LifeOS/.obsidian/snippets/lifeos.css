@@ -225,3 +225,13 @@
   .lifeos-dash.lifeos-desk .block-language-dataviewjs>*{grid-column:1}
   .lifeos-dash.lifeos-desk .block-language-dataviewjs>.side-host{display:none}
 }
+
+/* ---------- 链接 ----------
+   面板里的跳转用 Obsidian 的 internal-link（点了才会在 Obsidian 里打开笔记），
+   但不要 Obsidian 默认的紫色和下划线：颜色跟着所在位置走，没有下划线。用变量改，不和面板自己的颜色规则抢优先级。 */
+.lifeos-dash .dash{
+  --link-color:currentColor; --link-color-hover:currentColor;
+  --link-decoration:none; --link-decoration-hover:none; --link-decoration-thickness:0;
+  --link-unresolved-color:currentColor; --link-unresolved-opacity:1; --link-unresolved-decoration-style:none; --link-unresolved-decoration-color:transparent;
+}
+.lifeos-dash .dash a.internal-link{text-decoration:none}
