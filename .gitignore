@@ -33,7 +33,14 @@ src/plugins/impeccable-live.client.ts
 
 .DS_Store
 
-# LifeOS：私密和大文件，不进 git
+# LifeOS：只把「系统」放进 git（views、模板、附件、CSS、面板笔记），真实数据一律留在本地
+LifeOS/**
+!LifeOS/**/
+!LifeOS/**/.gitkeep
+!LifeOS/90 系统/**
+!LifeOS/.obsidian/snippets/**
+# 面板笔记（只含 dv.view 调用，没有数据）在 Task 5/6 里逐个加到这里：!LifeOS/<路径>.md
+# 私密和大文件：放在最后，覆盖上面的例外
 LifeOS/60 个人档案/
 LifeOS/45 教务处/课件/
 LifeOS/.obsidian/workspace*.json

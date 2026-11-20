@@ -47,3 +47,18 @@ def test_claude_md_lists_commands():
     for cmd in ["整理账本", "整理随手记", "整理英文", "整理课堂笔记", "生成本周复盘", "同步 Quercus"]:
         assert cmd in text, cmd
     assert "绝不读取 60 个人档案" in text
+
+
+def _ignored(path: str) -> bool:
+    return subprocess.run(["git", "check-ignore", "-q", path], cwd=PROJECT).returncode == 0
+
+
+def test_vault_data_not_tracked():
+    # 真实数据（账本、日记、随手记…）不进 git；系统文件（views、模板、附件、CSS）进 git
+    for data in ["LifeOS/20 财务部/账本/2026-11.md", "LifeOS/10 总部/日记/2026-11-18.md",
+                 "LifeOS/00 随手记/周末市集.md", "LifeOS/30 后勤部/食物.md"]:
+        assert _ignored(data), data
+    for system in ["LifeOS/90 系统/views/home/view.js", "LifeOS/90 系统/模板/日记.md",
+                   "LifeOS/.obsidian/snippets/lifeos.css", "LifeOS/00 随手记/.gitkeep"]:
+        assert not _ignored(system), system
+    assert _ignored("LifeOS/60 个人档案/.gitkeep")
