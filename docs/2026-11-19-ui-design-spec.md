@@ -1,7 +1,7 @@
 # 人生 OS · UI 设计规范（手绘粉绿风 v3 · Figma 定稿版）
 
 > 来源：Figma 文件 https://www.figma.com/design/sDcsDbWq3AyNq2RnurREqo
-> 读取日期：2026-11-19。2026-11-20 起视觉以 HTML 稿 `demo/v4/` 为准（Figma 已落后）；更早的 `demo/os/` 已过时。
+> 读取日期：2026-11-19。2026-11-20 起视觉以 HTML 稿 `demo/v4/` 为准（Figma 已落后）；更早的 `存档/os/` 已过时。
 > 以后改设计：先在 Figma 改，再更新这份文档，最后同步根目录的 `PRODUCT.md`（第 0 节）和 `DESIGN.md`（第 1–7 节），impeccable 只读那两份。
 
 ---
