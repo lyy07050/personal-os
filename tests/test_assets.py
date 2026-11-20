@@ -89,3 +89,13 @@ def test_build_fonts_css(tmp_path):
     assert "data:font/woff2;base64,AAFmYWtl" in css
     assert "http" not in css
     assert set(missing) == {"DM Mono", "Playfair Display", "Crimson Text"}
+
+
+def test_app_mode_snippet_only_touches_dashboards():
+    # App 模式只在面板笔记上藏 Obsidian 界面，普通笔记不受影响
+    css = (SNIPPETS / "lifeos-app.css").read_text(encoding="utf-8")
+    body = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    rules = re.findall(r"([^{}]+)\{", body)
+    assert rules
+    for sel in rules:
+        assert ":has(" in sel and ".lifeos-dash" in sel, sel
