@@ -6,6 +6,7 @@
 """
 from __future__ import annotations
 
+import json
 import random
 import sys
 from datetime import date, datetime, timedelta
@@ -204,6 +205,13 @@ def make_school(root: Path) -> None:
            f"# {code} {name}\n\n下次课：{nxt}\n\n<!-- quercus:start -->\n" + "\n".join(mine) + "\n<!-- quercus:end -->\n\n## 我的笔记\n",
            f"course: {code}\nnext_class: {nxt}")
     (root / "45 教务处/课件").mkdir(parents=True, exist_ok=True)
+    manifest = {"last_sync": "2026-11-18T08:00:00", "files": {
+        "101": {"path": "INF 2178 Experimental Design/Week 10 – Regression.pdf", "course": "INF 2178", "updated_at": "2026-11-18T07:40:00Z", "downloaded_at": "2026-11-18T08:00:00", "size": 1843200},
+        "102": {"path": "INF 1340 Programming for Data Science/Lecture 9 – Pandas II.pptx", "course": "INF 1340", "updated_at": "2026-11-17T15:00:00Z", "downloaded_at": "2026-11-17T08:00:00", "size": 5242880},
+        "103": {"path": "DATA 101 Intro to Data Analytics/A4 instructions.pdf", "course": "DATA 101", "updated_at": "2026-11-14T12:00:00Z", "downloaded_at": "2026-11-14T08:00:00", "size": 204800},
+        "104": {"path": "INF 1343 Data Modeling & Database/ER Diagram examples.pdf", "course": "INF 1343", "updated_at": "2026-11-12T12:00:00Z", "downloaded_at": "2026-11-12T08:00:00", "size": 921600},
+    }}
+    (root / "45 教务处/课件/.manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 # ---------- 人事 ----------
@@ -234,7 +242,8 @@ def make_career(root: Path) -> None:
 
 # ---------- 总部 ----------
 
-PROJECTS = [("DATA 101 作业 4", 60), ("投 2 份实习", 50), ("整理本周账单", 25), ("背 20 个单词", 60), ("买鸡蛋和牛奶", 0)]
+PROJECTS = [("DATA 101 作业 4", 60, "school"), ("投 2 份实习", 50, "career"), ("整理本周账单", 25, "money"),
+            ("背 20 个单词", 60, "english"), ("买鸡蛋和牛奶", 0, "errands")]
 INBOX = [  # (文件名, type, pinned, source, date, 正文)
     ("回国准备", "备忘", "true", "", "", "# 回🇨🇳准备\n\n- [x] 爸爸要的鱼油 ×2\n- [x] 枫糖浆\n- [x] 冰酒\n- [ ] 西洋参\n- [ ] 护手霜 ×3\n- [ ] 给外婆的围巾\n- [ ] 充电宝\n"),
     ("回加准备", "备忘", "true", "", "", "# 回🇨🇦准备\n\n- [ ] 续签学签材料\n- [ ] 带一包火锅底料\n- [ ] 冬天的厚袜子\n- [ ] 常用药\n"),
@@ -251,8 +260,9 @@ INBOX = [  # (文件名, type, pinned, source, date, 正文)
 
 
 def make_hq(root: Path, today: date, rng: random.Random) -> None:
-    for title, progress in PROJECTS:
-        _w(root, f"10 总部/项目/{title}.md", f"# {title}\n", f"progress: {progress}\nstatus: {'未开始' if progress == 0 else '进行中'}")
+    for title, progress, area in PROJECTS:
+        _w(root, f"10 总部/项目/{title}.md", f"# {title}\n",
+           f"progress: {progress}\nstatus: {'未开始' if progress == 0 else '进行中'}\narea: {area}")
     for name, typ, pinned, src, day, body in INBOX:
         meta = f"type: {typ}\npinned: {pinned}\nsource: {src}" + (f"\ndate: {day}" if day else "")
         _w(root, f"00 随手记/{name}.md", body, meta)
@@ -264,6 +274,20 @@ def make_hq(root: Path, today: date, rng: random.Random) -> None:
         _w(root, f"10 总部/日记/{d.isoformat()}.md", f"# {d.month} 月 {d.day} 日\n", meta)
 
 
+REVIEWS = {  # 周 → (三件要事 [(文字, 做完没)], 放进首页没)
+    "2026-W46": ([("交 DATA 101 作业 3", True), ("投 2 份实习", True), ("整理冰箱", False)], True),
+    "2026-W47": ([("交 INF 1340 Assignment 3", False), ("投 3 份实习", False), ("", False)], False),
+}
+
+
+def make_reviews(root: Path) -> None:
+    for week, (goals, on_home) in REVIEWS.items():
+        tasks = "\n".join(f"- [{'x' if done else ' '}] {text} [来源:: 复盘]" for text, done in goals)
+        meta = f"week: {week}\ncssclasses: [lifeos-dash, lifeos-review]\ngoals_on_home: {'true' if on_home else 'false'}"
+        _w(root, f"10 总部/复盘/{week}.md",
+           f"## 下周三件要事\n\n{tasks}\n\n```dataviewjs\nawait dv.view(\"90 系统/views/review\")\n```\n\n## 想说的话\n\n", meta)
+
+
 def main(root: Path, today: date = date(2026, 11, 18)) -> None:
     root = Path(root)
     rng = random.Random(7)
@@ -273,6 +297,7 @@ def main(root: Path, today: date = date(2026, 11, 18)) -> None:
     make_school(root)
     make_career(root)
     make_hq(root, today, rng)
+    make_reviews(root)
     (root / "60 个人档案").mkdir(parents=True, exist_ok=True)  # 只建空文件夹，不写任何内容
 
 

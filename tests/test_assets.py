@@ -39,7 +39,7 @@ def test_css_scoped_to_dashboards():
     body = re.sub(r"@keyframes[^{]+\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", body)
     body = re.sub(r"@media[^{]*\{", "", body)
     for selector_group in re.findall(r"([^{}@]+)\{", body):
-        for sel in selector_group.split(","):
+        for sel in re.split(r",(?![^()]*\))", selector_group):
             sel = sel.strip()
             if sel and not sel.startswith(("from", "to", "0%", "100%")) and re.match(r"[\w.#:\[*]", sel):
                 assert ".lifeos-dash" in sel, sel

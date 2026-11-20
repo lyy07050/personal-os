@@ -28,11 +28,15 @@
 .lifeos-dash .block-language-dataviewjs{margin:0}
 .lifeos-dash .markdown-preview-sizer{padding-bottom:64px!important}
 
+/* 周复盘笔记：「下周三件要事」的原始任务行由面板里的输入框代替，阅读模式下隐藏原文 */
+.lifeos-dash.lifeos-review .el-h2:has(h2[data-heading="下周三件要事"]),
+.lifeos-dash.lifeos-review .el-h2:has(h2[data-heading="下周三件要事"]) + .el-ul{display:none}
+
 /* ---------- 基础 ---------- */
-.lifeos-dash .dash *{box-sizing:border-box}
-.lifeos-dash .dash a{color:inherit;text-decoration:none}
-.lifeos-dash .dash button{font:inherit;color:inherit;background:none;border:0;box-shadow:none;cursor:pointer;padding:0;height:auto}
-.lifeos-dash .dash h1,.lifeos-dash .dash h2,.lifeos-dash .dash h3,.lifeos-dash .dash p,.lifeos-dash .dash ul{margin:0;padding:0}
+.lifeos-dash :where(.dash) *{box-sizing:border-box}
+.lifeos-dash :where(.dash) a{color:inherit;text-decoration:none}
+.lifeos-dash :where(.dash) button{font:inherit;color:inherit;background:none;border:0;box-shadow:none;cursor:pointer;padding:0;height:auto}
+.lifeos-dash :where(.dash) :is(h1,h2,h3,p,ul){margin:0;padding:0}
 .lifeos-dash .dash ::selection{background:var(--sage);color:var(--ink)}
 .lifeos-dash .z{font-family:var(--zcool);font-weight:400}
 .lifeos-dash .g{font-family:var(--gaegu);font-weight:700}

@@ -20,6 +20,18 @@
         ],
         "createdAt": "2026-11-20T05:47:49.328Z",
         "reason": "assistant: white group panels holding tinted tiles are the user's own Figma layout (spec §2.2 大分组框)"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "crimson text",
+        "createdAt": "2026-11-20T07:29:04.436Z",
+        "reason": "Claude: approved home hero in demo/v4/desktop-home.html uses Crimson Text for the date line; spec 6.9/3.2 lists it"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "pingfang sc",
+        "createdAt": "2026-11-20T07:29:45.522Z",
+        "reason": "Claude: build plan Task 4 uses system PingFang SC in place of Noto Sans SC inside Obsidian (Noto CJK too large to embed)"
       }
     ]
   }

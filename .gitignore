@@ -39,7 +39,33 @@ LifeOS/**
 !LifeOS/**/.gitkeep
 !LifeOS/90 系统/**
 !LifeOS/.obsidian/snippets/**
-# 面板笔记（只含 dv.view 调用，没有数据）在 Task 5/6 里逐个加到这里：!LifeOS/<路径>.md
+# 面板笔记（只含 dv.view 调用，没有数据），由 tools/make_dashboards.py 生成
+!LifeOS/10 总部/首页.md
+!LifeOS/00 随手记/随手记.md
+!LifeOS/10 总部/周复盘面板.md
+!LifeOS/30 后勤部/食物墙.md
+!LifeOS/20 财务部/财务面板.md
+!LifeOS/20 财务部/财务面板/本周.md
+!LifeOS/20 财务部/财务面板/2026 年.md
+!LifeOS/30 后勤部/物品墙.md
+!LifeOS/30 后勤部/物品墙/电子.md
+!LifeOS/30 后勤部/物品墙/小玩意.md
+!LifeOS/30 后勤部/物品墙/衣物.md
+!LifeOS/30 后勤部/物品墙/化妆品.md
+!LifeOS/30 后勤部/物品墙/厨房.md
+!LifeOS/40 研发部/知识库.md
+!LifeOS/40 研发部/知识库/灵感.md
+!LifeOS/40 研发部/知识库/胡思乱想.md
+!LifeOS/40 研发部/英语/英语面板.md
+!LifeOS/40 研发部/英语/英语面板/单词本.md
+!LifeOS/40 研发部/英语/英语面板/错词本.md
+!LifeOS/45 教务处/教务面板.md
+!LifeOS/45 教务处/教务面板/截止日期.md
+!LifeOS/45 教务处/教务面板/课件.md
+!LifeOS/45 教务处/教务面板/笔记.md
+!LifeOS/50 人事部/求职.md
+!LifeOS/50 人事部/求职/面试.md
+!LifeOS/50 人事部/求职/求职笔记.md
 # 私密和大文件：放在最后，覆盖上面的例外
 LifeOS/60 个人档案/
 LifeOS/45 教务处/课件/

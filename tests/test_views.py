@@ -1,0 +1,145 @@
+import json
+import re
+import subprocess
+from pathlib import Path
+
+PROJECT = Path(__file__).resolve().parent.parent
+VAULT = PROJECT / "LifeOS"
+VIEWS = VAULT / "90 系统/views"
+LIB = VIEWS / "_shared/lib.js"
+
+# 主页面 → 分页面（UI 规范 7.6；分页面放在和主页面同名的文件夹里）
+DASHBOARDS = {
+    "10 总部/首页.md": [],
+    "00 随手记/随手记.md": [],
+    "10 总部/周复盘面板.md": [],
+    "20 财务部/财务面板.md": ["20 财务部/财务面板/本周.md", "20 财务部/财务面板/2026 年.md"],
+    "30 后勤部/食物墙.md": [],
+    "30 后勤部/物品墙.md": [f"30 后勤部/物品墙/{c}.md" for c in ("电子", "小玩意", "衣物", "化妆品", "厨房")],
+    "40 研发部/知识库.md": ["40 研发部/知识库/灵感.md", "40 研发部/知识库/胡思乱想.md"],
+    "40 研发部/英语/英语面板.md": ["40 研发部/英语/英语面板/单词本.md", "40 研发部/英语/英语面板/错词本.md"],
+    "45 教务处/教务面板.md": ["45 教务处/教务面板/截止日期.md", "45 教务处/教务面板/课件.md", "45 教务处/教务面板/笔记.md"],
+    "50 人事部/求职.md": ["50 人事部/求职/面试.md", "50 人事部/求职/求职笔记.md"],
+}
+ALL_NOTES = list(DASHBOARDS) + [s for subs in DASHBOARDS.values() for s in subs]
+
+
+def _view_calls(text: str) -> list[str]:
+    return re.findall(r'dv\.view\("([^"]+)"', text)
+
+
+def test_dashboard_notes_exist_and_are_marked():
+    for rel in ALL_NOTES:
+        text = (VAULT / rel).read_text(encoding="utf-8")
+        assert "cssclasses: [lifeos-dash]" in text, rel
+        assert text.count("```dataviewjs") == 1, rel
+
+
+def test_every_dashboard_calls_existing_view():
+    for note in VAULT.rglob("*.md"):
+        text = note.read_text(encoding="utf-8")
+        if "lifeos-dash" not in text:
+            continue
+        for view in _view_calls(text):
+            assert (VAULT / view / "view.js").is_file(), (note, view)
+
+
+def test_view_js_syntax(tmp_path):
+    for js in VIEWS.rglob("*.js"):
+        wrapped = tmp_path / "check.js"
+        wrapped.write_text("(async()=>{\n" + js.read_text(encoding="utf-8") + "\n})", encoding="utf-8")
+        r = subprocess.run(["node", "--check", str(wrapped)], capture_output=True, text=True)
+        assert r.returncode == 0, (js, r.stderr)
+
+
+def test_every_subpage_has_tabs():
+    for main, subs in DASHBOARDS.items():
+        if not subs:
+            continue
+        for rel in [main] + subs:
+            text = (VAULT / rel).read_text(encoding="utf-8")
+            assert "90 系统/views/tabs" in text, rel
+            args = json.loads(re.search(r'views/tabs", (\{.*?\})\)', text, re.S).group(1))
+            labels = [p["label"] for p in args["pages"]]
+            assert args["current"] in labels, rel
+            assert not any(re.search(r"\d", l) for l in labels if not re.fullmatch(r"\d{4} 年|Fall \d{4}", l)), labels
+            for p in args["pages"]:
+                assert (VAULT / (p["path"] + ".md")).is_file(), (rel, p["path"])
+
+
+def test_dashboard_notes_tracked_by_git():
+    for rel in ALL_NOTES:
+        r = subprocess.run(["git", "check-ignore", "-q", f"LifeOS/{rel}"], cwd=PROJECT)
+        assert r.returncode == 1, rel
+
+
+def _lib(expr: str):
+    script = f"const L = eval(require('fs').readFileSync({json.dumps(str(LIB))}, 'utf8'));\nconsole.log(JSON.stringify({expr}));"
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, check=True).stdout
+    return json.loads(out)
+
+
+CARDS = """[
+  {name:"a", type:"活动", date:"2026-11-29"},
+  {name:"b", type:"活动", date:"2026-11-10"},
+  {name:"c", type:"活动"},
+  {name:"d", type:"活动", date:"2026-11-21"},
+  {name:"e", type:"备忘", date:"2026-11-19"},
+  {name:"f", type:"活动", date:"2026-12-06"},
+  {name:"g", type:"活动", date:"2026-12-20"}
+]"""
+
+
+def test_upcoming_events():
+    names = _lib(f'L.upcomingEvents({CARDS}, "2026-11-18").map(c => c.name)')
+    assert names == ["d", "a", "f"]  # 过期的、没写日期的、不是活动的都不要；最多 3 条，按日期升序
+
+
+def test_upcoming_events_includes_today():
+    assert _lib('L.upcomingEvents([{name:"t", type:"活动", date:"2026-11-18"}], "2026-11-18").length') == 1
+
+
+def test_reminders():
+    cards = """[
+      {name:"pinned-open", type:"备忘", pinned:true, open:2},
+      {name:"pinned-done", type:"备忘", pinned:true, open:0},
+      {name:"list-open", type:"清单", pinned:false, open:3},
+      {name:"note-unpinned", type:"灵感", pinned:false, open:1}
+    ]"""
+    assert _lib(f"L.reminders({cards}).map(c => c.name)") == ["pinned-open"]
+
+
+def test_lib_parses_same_formats_as_python():
+    entry = _lib('L.parseLedger("- 2026-11-18 奶茶 [金额:: $6.50] [分类:: 餐饮] [方式:: ApplePay]")')
+    assert entry == {"date": "2026-11-18", "name": "奶茶", "amount": 6.5, "category": "餐饮", "method": "ApplePay"}
+    assert _lib('L.parseLedger("- 2026-11-18 奶茶 [分类:: 餐饮]")') is None
+    food = _lib('L.parseFood("- [x] 草莓 [数量:: 250 g] [到期:: 2026-11-22] [位置:: 冷藏] [类别:: 水果]")')
+    assert food == {"done": True, "name": "草莓", "qty": "250 g", "expires": "2026-11-22", "place": "冷藏", "kind": "水果"}
+    dl = _lib('L.parseDeadline("- [ ] DATA 101 作业 4 [截止:: 2026-11-18 23:59] [课程:: DATA 101]")')
+    assert dl == {"done": False, "title": "DATA 101 作业 4", "due": "2026-11-18 23:59", "course": "DATA 101"}
+
+
+def test_lib_days_left_and_money():
+    assert _lib('[L.daysLeft("2026-11-19", "2026-11-18"), L.daysLeft("2026-11-18", "2026-11-18"), L.daysLeft("2026-11-10", "2026-11-18")]') == [1, 0, -8]
+    assert _lib('[L.money(812.4), L.money(1400), L.money(6.5)]') == ["$812.40", "$1,400.00", "$6.50"]
+    assert _lib('L.leftLabel(1)') == "明天过期"
+
+
+def test_no_banned_copy_in_views():
+    banned = ["示例", "过期自动隐藏", "点上面的", "可以不填", "继续投", "不急，但别忘", "一张卡只放一个分类"]
+    for js in VIEWS.rglob("*.js"):
+        text = js.read_text(encoding="utf-8")
+        for word in banned:
+            assert word not in text, (js, word)
+
+
+def test_no_external_urls_in_views():
+    for js in VIEWS.rglob("*.js"):
+        text = js.read_text(encoding="utf-8")
+        assert not re.search(r"https?://(?!www\.w3\.org/2000/svg|localhost[:/]|127\.0\.0\.1[:/])", text), js
+
+
+def test_lib_iso_week():
+    assert _lib('[L.isoWeek("2026-11-18"), L.isoWeek("2026-11-22"), L.isoWeek("2026-11-23"), L.isoWeek("2027-01-01")]') == \
+        ["2026-W47", "2026-W47", "2026-W48", "2026-W53"]
+    assert _lib('[L.weekMonday("2026-W47"), L.weekMonday("2026-W01")]') == ["2026-11-16", "2025-12-29"]
