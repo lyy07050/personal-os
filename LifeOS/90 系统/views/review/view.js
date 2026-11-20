@@ -3,36 +3,18 @@
 //   在 10 总部/周复盘面板.md 里：dv.view("90 系统/views/review", {mode: "index"}) → 所有周的列表
 // 布局照 demo/v4/desktop-review.html。
 const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
+const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const esc = L.esc;
 const T = L.today();
 const DIR = "10 总部/复盘";
-const HABITS = ["早起", "喝水", "运动", "背词", "早睡"];
+const HABITS = D.HABITS;
 const CAT_BG = { 餐饮: "#f8dcd8", 购物: "#ecf8fe", 交通: "#fff0be", 日用: "#ece6ef", 服饰: "#e7e0ee", 美妆: "#fbe9e7", 娱乐: "#dfe8db", 学习: "#e6ede2", 居住: "#f2e8d3", 其他: "#f2e8d3", 待分类: "#eee" };
 
-const reviews = dv.pages(`"${DIR}"`).where((p) => p.week).sort((p) => String(p.week), "desc").array();
+const reviews = D.reviews();
 const current = dv.current && dv.current();
 const week = input && input.mode === "index" ? null : String((current && current.week) || L.isoWeek(T));
 
-// ---------- 一周的数字 ----------
-async function stats(w) {
-  const mon = L.weekMonday(w), days = [...Array(7)].map((_, i) => L.addDays(mon, i)), sun = days[6];
-  const months = [...new Set(days.map((d) => d.slice(0, 7)))];
-  const entries = (await Promise.all(months.map((m) => L.ledger(dv, m)))).flat().filter((e) => e.date >= mon && e.date <= sun);
-  const spent = entries.reduce((a, e) => a + e.amount, 0);
-  const byCat = {};
-  entries.forEach((e) => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
-  const diaries = Object.fromEntries(dv.pages('"10 总部/日记"').where((p) => p.date).array()
-    .map((p) => [L.iso(p.date), p]).filter(([d]) => d >= mon && d <= sun));
-  const english = days.filter((d) => diaries[d] && diaries[d]["背词"] === true).length;
-  const newCards = dv.pages('"40 研发部/知识卡"').where((p) => { const c = L.iso(p.created); return c >= mon && c <= sun; }).array();
-  // 完成待办：这周截止的作业 + 上周复盘定下的三件事
-  const dls = (await L.lines(dv, "45 教务处/截止日期.md")).map(L.parseDeadline).filter((d) => d && d.due && d.due.slice(0, 10) >= mon && d.due.slice(0, 10) <= sun);
-  const prevReview = reviews.find((r) => String(r.week) === L.isoWeek(L.addDays(mon, -7)));
-  const goals = prevReview ? prevReview.file.tasks.where((t) => /\[来源::\s*复盘\]/.test(t.text) && t.text.replace(/\[[^\]]*\]/g, "").trim()).array() : [];
-  const total = dls.length + goals.length, done = dls.filter((d) => d.done).length + goals.filter((g) => g.completed).length;
-  const budget = Number((dv.page(`20 财务部/账本/${mon.slice(0, 7)}`) || {}).budget) || 1400;
-  return { mon, sun, days, spent, byCat, diaries, english, newCards, total, done, weekBudget: budget / 4 };
-}
+const stats = (w) => D.reviewStats(w, reviews);
 
 const STYLE = `
 .lifeos-dash .rv-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px}
@@ -150,19 +132,7 @@ if (!week) {
   const root = L.mount(dv, html, STYLE);
 
   // 三件要事：改输入框 → 改笔记里对应那一行
-  root.querySelectorAll(".three input").forEach((inp) => inp.addEventListener("change", async () => {
-    const i = +inp.dataset.i, text = inp.value.trim();
-    const f = L.fileOf(path);
-    if (!f) return;
-    await app.vault.process(f, (body) => {
-      const ls = body.split("\n");
-      const idx = ls.map((l, k) => (/\[来源::\s*复盘\]/.test(l) && /^- \[[ x]\]/.test(l) ? k : -1)).filter((k) => k >= 0);
-      const line = `- [ ] ${text} [来源:: 复盘]`;
-      if (idx[i] !== undefined) ls[idx[i]] = ls[idx[i]].replace(/^(- \[[ x]\]).*$/, `$1 ${text} [来源:: 复盘]`);
-      else ls.splice((idx.length ? idx[idx.length - 1] + 1 : ls.indexOf("## 下周三件要事") + 2), 0, line);
-      return ls.join("\n");
-    });
-  }));
+  root.querySelectorAll(".three input").forEach((inp) => inp.addEventListener("change", () => D.setGoal(path, +inp.dataset.i, inp.value.trim())));
   root.querySelector(".to-home").addEventListener("click", async (e) => {
     const b = e.currentTarget;
     await L.setMeta(path, "goals_on_home", true);
@@ -175,8 +145,6 @@ if (!week) {
     if (on) L.stamp(d);
     const row = [...root.querySelectorAll(`.dot[data-h="${d.dataset.h}"]`)];
     d.parentElement.querySelectorAll(".n")[HABITS.indexOf(d.dataset.h)].textContent = `${row.filter((x) => x.classList.contains("on")).length} / 7`;
-    const dp = `10 总部/日记/${d.dataset.d}.md`;
-    if (!L.fileOf(dp)) await app.vault.create(dp, `---\ndate: ${d.dataset.d}\n${HABITS.map((h) => `${h}: false`).join("\n")}\n---\n`);
-    await L.setMeta(dp, d.dataset.h, on);
+    await D.setHabit(d.dataset.d, d.dataset.h, on);
   }));
 }

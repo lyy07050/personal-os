@@ -1,24 +1,18 @@
 // 多邻国 · 英语。参数 {section: "today" | "words" | "mistakes"}。布局照 demo/v4/desktop-english.html。
 // 单词卡是 Spaced Repetition 插件的 front::back；插件复习后会在行尾写 <!--SR:!日期,间隔,难度-->，用间隔算「掌握」。
 const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
+const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const esc = L.esc;
 const T = L.today();
 const section = (input && input.section) || "today";
 const WORDS = "40 研发部/英语/单词本.md", MISTAKES = "40 研发部/英语/错词本.md";
 
-const parseCards = (ls) => ls.map((l, i) => ({ l, i })).filter(({ l }) => l.includes("::") && !l.startsWith("#")).map(({ l, i }) => {
-  const sr = /<!--SR:!([\d-]+),(\d+),(\d+)-->/.exec(l);
-  const [front, back] = l.replace(/<!--SR:.*?-->/, "").split("::");
-  const interval = sr ? +sr[2] : 0;
-  return { front: front.trim(), back: (back || "").trim(), line: i, due: sr ? sr[1] : "", mastery: interval >= 60 ? 5 : interval >= 21 ? 4 : interval >= 7 ? 3 : interval >= 3 ? 2 : interval >= 1 ? 1 : 0 };
-});
-const words = parseCards(await L.lines(dv, WORDS));
-const mistakes = parseCards(await L.lines(dv, MISTAKES));
-const word = words.length ? words[Math.floor(Date.parse(T) / 86400000) % words.length] : null;
-
-const diaries = new Map(dv.pages('"10 总部/日记"').where((p) => p.date).array().map((p) => [L.iso(p.date), p["背词"] === true]));
-let streak = 0;
-for (let d = diaries.get(T) ? T : L.addDays(T, -1); diaries.get(d); d = L.addDays(d, -1)) streak++;
+const words = await D.wordCards(WORDS);
+const mistakes = await D.wordCards(MISTAKES);
+const word = D.wordOfDay(words);
+const dmap = D.diaries();
+const diaries = new Map([...dmap].map(([d, p]) => [d, p["背词"] === true]));
+const streak = D.streak(dmap);
 let longest = 0, run = 0;
 [...diaries.keys()].sort().forEach((d, i, arr) => { run = diaries.get(d) && (i === 0 || L.daysLeft(d, arr[i - 1]) === 1) ? run + 1 : diaries.get(d) ? 1 : 0; longest = Math.max(longest, run); });
 const mon = L.mondayOf(T);
@@ -26,11 +20,7 @@ const week = [...Array(7)].map((_, i) => diaries.get(L.addDays(mon, i)) === true
 const last14 = [...Array(14)].map((_, i) => diaries.get(L.addDays(T, i - 13)) === true);
 const dueToday = words.filter((w) => w.due && w.due <= T).length;
 
-function startReview() {
-  const cmd = "obsidian-spaced-repetition:srs-review-flashcards";
-  if (app.commands && app.commands.commands && app.commands.commands[cmd]) app.commands.executeCommandById(cmd);
-  else L.open(WORDS);
-}
+const startReview = () => D.startReview(WORDS);
 
 const o = {
   page: "english", eye: "41 · ENGLISH", title: { today: "多邻国", words: "单词本", mistakes: "错词本" }[section],

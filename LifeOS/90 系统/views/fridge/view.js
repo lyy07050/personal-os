@@ -1,27 +1,16 @@
 // 食物墙：六类方块 + 购物清单 + 今天可以做。没有分页面。布局照 demo/v4/desktop-fridge.html。
 // 「吃完」= 食物.md 里这一行打勾，名字加进购物清单。
 const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
+const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const { foodIcon } = eval(await dv.io.load("90 系统/views/_shared/food.js"));
 const esc = L.esc;
 const T = L.today();
 const FOOD = "30 后勤部/食物.md", SHOP = "30 后勤部/购物清单.md";
 const BG = { 生鲜: "var(--tile)", 水果: "var(--blue)", 调味料: "var(--pink)", 粉面速食: "var(--yellow)", 药材: "var(--purple)", 零食: "var(--tile)" };
 
-const food = (await L.lines(dv, FOOD)).map((l, i) => ({ ...L.parseFood(l), raw: l, line: i })).filter((f) => f.name && !f.done)
-  .map((f) => ({ ...f, left: f.expires ? L.daysLeft(f.expires, T) : null }))
-  .sort((a, b) => (a.left ?? 9999) - (b.left ?? 9999));
-const shop = (await L.lines(dv, SHOP)).map((l, i) => ({ m: /^- \[( |x)\] (.+)$/.exec(l), line: i })).filter((x) => x.m)
-  .map((x) => ({ done: x.m[1] === "x", text: x.m[2], line: x.line }));
-const recipes = dv.pages('"30 后勤部/食谱"').array().map((p) => ({
-  name: p.file.name, path: p.file.path,
-  ingredients: (Array.isArray(p.ingredients) ? p.ingredients : String(p.ingredients || "").split(/[,，]/)).map((s) => String(s).trim()).filter(Boolean),
-}));
-const have = new Set(food.map((f) => f.name));
-const inFridge = (ing) => [...have].some((n) => n.includes(ing) || ing.includes(n));
-recipes.forEach((r) => { r.score = r.ingredients.filter(inFridge).length / (r.ingredients.length || 1); });
-recipes.sort((a, b) => b.score - a.score);
-const recipeText = {};
-for (const r of recipes) recipeText[r.path] = ((await dv.io.load(r.path)) || "").split("\n").filter((l) => l.trim() && !l.startsWith("#") && !l.startsWith("---") && !/^\w+:/.test(l)).join(" ");
+const food = await D.food();
+const shop = await D.shopping();
+const { list: recipes, inFridge } = await D.recipes(food);
 
 const cold = food.filter((f) => f.place === "冷藏");
 const soon = cold.find((f) => f.left !== null && f.left <= 2);
@@ -50,7 +39,7 @@ const html = L.banner(o) + `<div class="stack">
   </section>
   <section class="card" aria-label="今天可以做">
     <div class="head"><h2>今天可以做</h2></div>
-    <div class="recipes">${recipes.slice(0, 3).map((r) => `<div class="recipe">${L.link(r.path, `<h3>${esc(r.name)}</h3>`)}<p>${esc(recipeText[r.path])}</p>${r.ingredients.map((g) => `<span class="chip ${inFridge(g) ? "" : "plain"}">${esc(g)}</span>`).join(" ")}</div>`).join("")}</div>
+    <div class="recipes">${recipes.slice(0, 3).map((r) => `<div class="recipe">${L.link(r.path, `<h3>${esc(r.name)}</h3>`)}<p>${esc(r.text)}</p>${r.ingredients.map((g) => `<span class="chip ${inFridge(g) ? "" : "plain"}">${esc(g)}</span>`).join(" ")}</div>`).join("")}</div>
   </section></div>`;
 
 const STYLE = `
@@ -100,18 +89,7 @@ root.querySelectorAll(".addf").forEach((form) => form.addEventListener("submit",
   const v = Object.fromEntries(new FormData(form));
   const name = v.n.trim();
   if (!name) return;
-  const exp = v.d === "" ? "无" : L.addDays(T, +v.d);
-  const line = `- [ ] ${name} [数量:: ${v.q.trim() || "1"}] [到期:: ${exp}] [位置:: ${v.p}] [类别:: ${form.dataset.k}]`;
-  await app.vault.process(L.fileOf(FOOD), (text) => {
-    const ls = text.replace(/\n+$/, "").split("\n");
-    let h = ls.indexOf(`## ${v.p}`);
-    if (h < 0) { ls.push("", `## ${v.p}`, ""); h = ls.length - 2; }
-    let end = ls.findIndex((l, i) => i > h && l.startsWith("## "));
-    if (end < 0) end = ls.length;
-    while (end > h + 1 && !ls[end - 1].trim()) end--;
-    ls.splice(end, 0, line);
-    return ls.join("\n") + "\n";
-  });
+  await D.addFood({ name, qty: v.q, days: v.d, place: v.p, kind: form.dataset.k });
   form.reset(); form.hidden = true;
   L.notice(`${name} 放进${v.p}了`);
 }));
@@ -120,8 +98,7 @@ root.querySelectorAll(".addf").forEach((form) => form.addEventListener("submit",
 root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEventListener("click", async () => {
   const f = food.find((x) => x.line === +li.dataset.l);
   li.classList.add("gone"); li.querySelector(".eat").remove();
-  await L.replaceLine(FOOD, f.raw, L.toggleTaskLine(f.raw));
-  await L.appendLine(SHOP, `- [ ] ${f.name}`);
+  await D.eat(f);
   const ul = root.querySelector(".shop .list"), n = document.createElement("li");
   n.innerHTML = `<button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(f.name, 40)}</span><span class="t">${esc(f.name)}</span>`;
   ul.appendChild(n);

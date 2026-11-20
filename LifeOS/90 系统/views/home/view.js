@@ -1,5 +1,6 @@
 // 首页：只汇总，不录入。布局照 demo/v4/desktop-home.html。
 const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
+const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const { foodIcon } = eval(await dv.io.load("90 系统/views/_shared/food.js"));
 const T = L.today();
 const mon = L.mondayOf(T);
@@ -7,47 +8,24 @@ const week = [...Array(7)].map((_, i) => L.addDays(mon, i));
 const esc = L.esc;
 
 // ---------- 数据 ----------
-const DL_PATH = "45 教务处/截止日期.md";
-const dlLines = await L.lines(dv, DL_PATH);
-const deadlines = dlLines.map((l, i) => ({ ...L.parseDeadline(l), line: i })).filter((d) => d.title);
-
-const projects = dv.pages('"10 总部/项目"').where((p) => p.progress !== undefined).array()
-  .map((p) => ({ path: p.file.path, title: p.file.name, progress: Number(p.progress) || 0, status: p.status || "", area: p.area || "" }));
-
-// 复盘「下周三件要事」：最近一篇复盘里点过「放进首页待办」的那几行
-const review = dv.pages('"10 总部/复盘"').where((p) => p.goals_on_home === true).sort((p) => p.file.name, "desc").first();
-const goals = review ? review.file.tasks.where((t) => /\[来源::\s*复盘\]/.test(t.text)).array()
-  .map((t) => ({ path: review.file.path, line: t.line, text: t.text.replace(/\[来源::[^\]]*\]/, "").trim(), done: t.completed }))
-  .filter((g) => g.text) : [];
-
-const interviews = dv.pages('"50 人事部/面试"').array()
-  .map((p) => ({ title: p.company ? `${p.company} 面试` : p.file.name, when: String(p.date || ""), path: p.file.path }))
+const DL_PATH = D.DL;
+const deadlines = await D.deadlines();
+const projects = D.projects();
+const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path }))
   .filter((i) => i.when.slice(0, 10) >= mon && i.when.slice(0, 10) <= week[6]);
+const todos = await D.todos();
 
-const todos = [
-  ...deadlines.filter((d) => !d.done && d.due && d.due.slice(0, 10) === T)
-    .map((d) => ({ kind: "dl", text: d.title, tag: d.due.slice(11), warn: true, line: d.line })),
-  ...interviews.filter((i) => i.when.slice(0, 10) === T).map((i) => ({ kind: "iv", text: i.title, tag: i.when.slice(11), warn: true, path: i.path })),
-  ...goals.map((g) => ({ kind: "goal", text: g.text, tag: "本周", done: g.done, path: g.path, line: g.line })),
-  ...projects.filter((p) => p.status !== "完成").map((p) => ({ kind: "proj", text: p.title, tag: p.area, path: p.path })),
-  ...projects.filter((p) => p.status === "完成").map((p) => ({ kind: "proj", text: p.title, tag: p.area, path: p.path, done: true })),
-].filter((t, i, all) => all.findIndex((x) => x.text === t.text) === i); // 截止和事情同名时只留一条
+const { perDay: weekSpend, spent } = await D.weekSpend();
 
-const nov = await L.ledger(dv, T.slice(0, 7));
-const prev = mon.slice(0, 7) !== T.slice(0, 7) ? await L.ledger(dv, mon.slice(0, 7)) : [];
-const weekSpend = week.map((d) => [...nov, ...prev].filter((e) => e.date === d).reduce((a, e) => a + e.amount, 0));
-const spent = weekSpend.reduce((a, b) => a + b, 0);
-
-const food = (await L.lines(dv, "30 后勤部/食物.md")).map((l, i) => ({ ...L.parseFood(l), raw: l, line: i })).filter((f) => f.name && !f.done);
+const food = await D.food();
 const cold = food.filter((f) => f.place === "冷藏").sort((a, b) => (a.expires || "9999").localeCompare(b.expires || "9999"));
 
-const diaries = dv.pages('"10 总部/日记"').where((p) => p.date).array();
-const studied = new Set(diaries.filter((p) => p["背词"] === true).map((p) => L.iso(p.date)));
-let streak = 0;
-for (let d = studied.has(T) ? T : L.addDays(T, -1); studied.has(d); d = L.addDays(d, -1)) streak++;
+const dmap = D.diaries();
+const studied = new Set([...dmap].filter(([, p]) => p["背词"] === true).map(([d]) => d));
+const streak = D.streak(dmap);
 
-const words = (await L.lines(dv, "40 研发部/英语/单词本.md")).filter((l) => l.includes("::")).map((l) => l.split("::"));
-const word = words.length ? words[Math.floor(Date.parse(T) / 86400000) % words.length] : null;
+const words = (await D.wordCards(D.WORDS)).map((w) => [w.front, w.back]);
+const word = words.length ? D.wordOfDay(words) : null;
 
 const allCards = await L.cards(dv);
 const events = L.upcomingEvents(allCards, T);
@@ -283,22 +261,16 @@ form.addEventListener("submit", async (e) => {
 
 root.querySelectorAll(".todo li").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
   const t = todos[+li.dataset.i];
-  if (li.classList.toggle("done")) L.stamp(li.querySelector(".ck"));
-  if (t.kind === "dl") await L.toggleTaskAt(DL_PATH, t.line);
-  else if (t.kind === "goal") await L.toggleTaskAt(t.path, t.line);
-  else if (t.kind === "proj") {
-    const done = li.classList.contains("done");
-    await L.setMeta(t.path, "status", done ? "完成" : "进行中");
-    if (done) await L.setMeta(t.path, "progress", 100);
-  }
+  const done = li.classList.toggle("done");
+  if (done) L.stamp(li.querySelector(".ck"));
+  await D.toggleTodo(t, done);
 }));
 
 // 冰箱：勾上 = 吃完 → 这行打勾，名字进购物清单
 root.querySelectorAll(".food").forEach((el) => el.querySelector(".ck").addEventListener("click", async () => {
   const f = cold[+el.dataset.f];
   el.classList.add("gone"); L.stamp(el.querySelector(".ck")); el.querySelector(".ck").classList.add("on");
-  await L.replaceLine("30 后勤部/食物.md", f.raw, L.toggleTaskLine(f.raw));
-  await L.appendLine("30 后勤部/购物清单.md", `- [ ] ${f.name}`);
+  await D.eat(f);
   L.notice(`${f.name} 吃完了，已加进购物清单`);
 }));
 

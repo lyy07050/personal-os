@@ -30,6 +30,11 @@ PAGES = [
 ]
 
 
+# 手机页面：10 总部/手机/<名字> → views/m-<view>（没有 tab，返回键在页面里）
+MOBILE = [("手机首页", "home"), ("冰箱", "fridge"), ("所有部门", "more"), ("随手记", "inbox"), ("每周复盘", "review"),
+          ("物品墙", "things"), ("知识库", "notes"), ("多邻国", "english"), ("教务处", "school"), ("人事部", "career")]
+
+
 def note(calls: list[tuple[str, dict]]) -> str:
     body = "\n".join(f'await dv.view("90 系统/views/{v}", {json.dumps(a, ensure_ascii=False)})' for v, a in calls)
     return f"---\ncssclasses: [lifeos-dash]\n---\n```dataviewjs\n{body}\n```\n"
@@ -45,6 +50,8 @@ def all_notes() -> dict[str, str]:
         out[main] = note([("tabs", {"current": label, "pages": tabs}), (view, args)])
         for path, l, a in subs:
             out[path] = note([("tabs", {"current": l, "pages": tabs}), (view, a)])
+    for name, view in MOBILE:
+        out[f"10 总部/手机/{name}"] = f'---\ncssclasses: [lifeos-dash]\n---\n```dataviewjs\nawait dv.view("90 系统/views/m-{view}")\n```\n'
     return out
 
 

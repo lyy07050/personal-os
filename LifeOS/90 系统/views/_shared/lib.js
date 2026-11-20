@@ -175,7 +175,7 @@
   }
 
   const notice = (msg) => { if (typeof Notice !== "undefined") new Notice(msg, 2000); };
-  const link = (path, label, cls = "") => `<a class="internal-link ${cls}" data-href="${esc(path)}" href="${esc(path)}">${label}</a>`;
+  const link = (path, label, cls = "", attrs = "") => `<a class="internal-link ${cls}" data-href="${esc(path)}" href="${esc(path)}"${attrs ? " " + attrs : ""}>${label}</a>`;
 
   // 盖章：勾上的一瞬间压下去
   function stamp(el) {

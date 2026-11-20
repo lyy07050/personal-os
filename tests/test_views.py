@@ -143,3 +143,45 @@ def test_lib_iso_week():
     assert _lib('[L.isoWeek("2026-11-18"), L.isoWeek("2026-11-22"), L.isoWeek("2026-11-23"), L.isoWeek("2027-01-01")]') == \
         ["2026-W47", "2026-W47", "2026-W48", "2026-W53"]
     assert _lib('[L.weekMonday("2026-W47"), L.weekMonday("2026-W01")]') == ["2026-11-16", "2025-12-29"]
+
+
+# ---------- 手机端（Task 6） ----------
+MOBILE = {
+    "手机首页": "m-home", "冰箱": "m-fridge", "所有部门": "m-more", "随手记": "m-inbox", "每周复盘": "m-review",
+    "物品墙": "m-things", "知识库": "m-notes", "多邻国": "m-english", "教务处": "m-school", "人事部": "m-career",
+}
+PRIVATE_NOTE = "60 个人档案/个人档案"  # 不检查它在不在：脚本不碰 60 个人档案（Task 7 由用户自己建）
+
+
+def test_mobile_pages_exist():
+    for name, view in MOBILE.items():
+        rel = f"10 总部/手机/{name}.md"
+        text = (VAULT / rel).read_text(encoding="utf-8")
+        assert "cssclasses: [lifeos-dash]" in text, rel
+        assert _view_calls(text) == [f"90 系统/views/{view}"], rel
+        assert (VIEWS / view / "view.js").is_file(), view
+        r = subprocess.run(["git", "check-ignore", "-q", f"LifeOS/{rel}"], cwd=PROJECT)
+        assert r.returncode == 1, rel
+
+
+def test_more_page_links_exist():
+    text = (VIEWS / "m-more/view.js").read_text(encoding="utf-8")
+    targets = re.findall(r'to: "([^"]+)"', text)
+    assert PRIVATE_NOTE in targets
+    assert {f"10 总部/手机/{n}" for n in MOBILE if n not in ("手机首页", "所有部门")} <= set(targets)
+    for t in targets:
+        if t != PRIVATE_NOTE:
+            assert (VAULT / f"{t}.md").is_file(), t
+
+
+def test_mobile_fridge_single_page():
+    text = (VIEWS / "m-fridge/view.js").read_text(encoding="utf-8")
+    assert "views/tabs" not in text and 'class="tabs' not in text and 'class="seg' not in text
+    pos = [text.find(f'"{w}"') for w in ("冷藏", "冷冻", "常温", "购物清单")]
+    assert all(p >= 0 for p in pos) and pos == sorted(pos), pos
+
+
+def test_mobile_plus_menu():
+    text = (VIEWS / "_shared/m.js").read_text(encoding="utf-8")
+    assert "shortcuts://run-shortcut?name=" in text and "记一笔" in text
+    assert "10 总部/手机/冰箱" in text

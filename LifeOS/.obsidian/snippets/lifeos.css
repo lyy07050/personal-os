@@ -149,3 +149,55 @@
   .lifeos-dash .ban:hover .art{translate:none;rotate:none}
   .lifeos-dash .dash *{transition:none!important}
 }
+
+/* ---------- 手机页面（10 总部/手机/*，根节点 .dash.m）。数值照 demo/v4/mobile.css 和 mobile-*.html ----------
+   不依赖 .is-mobile：在电脑上打开手机页面也是这个样子，方便预览。 */
+.lifeos-dash .m{
+  --brown:#7f4f3c; --warn:#8e4a35; --muted:#5b645c; --tint:#f8fbf9; --m-yellow:#fef7de; --m-blue:#f4f8fe;
+  --r-card:28px; --gap:12px; --shadow:0 1px 2px rgba(52,72,59,.04),0 8px 24px rgba(52,72,59,.07);
+  max-width:440px; margin:0 auto; font-size:14px; color:var(--ink); position:relative;
+  overflow-x:clip; overflow-clip-margin:16px; /* 贴纸可以出边一点，但页面不能横着拖 */
+}
+.lifeos-dash .m .h{font-family:var(--sans);font-weight:600;letter-spacing:-.02em}
+.lifeos-dash .m .num{font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.lifeos-dash .m .sub{font-size:12.5px;color:var(--muted)}
+.lifeos-dash .m .brand{font-family:var(--gaegu);font-weight:700;font-size:26px;line-height:1;color:var(--ink)}
+.lifeos-dash .m .brand b{color:#a66b53;font-weight:700}
+.lifeos-dash .m .navbar{display:flex;align-items:center;gap:12px;padding:4px 4px 14px}
+.lifeos-dash .m .round{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow);flex:none}
+.lifeos-dash .m .navbar .title{flex:1;min-width:0}
+.lifeos-dash .m .navbar h1{font-family:var(--sans);font-weight:600;letter-spacing:-.02em;font-size:28px;line-height:1.15}
+.lifeos-dash .m .navbar p{font-size:13px;color:var(--ink-2);margin-top:2px}
+.lifeos-dash .m .card{border-radius:var(--r-card);background:var(--card);padding:16px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.lifeos-dash .m .label{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500;color:var(--ink-2);padding-bottom:10px;border-bottom:1px solid rgba(37,45,41,.08);margin-bottom:10px}
+.lifeos-dash .m .label .count{color:var(--brown)}
+.lifeos-dash .m .ck{width:20px;height:20px;background:rgba(255,255,255,.6)}
+.lifeos-dash .m .done>.ck,.lifeos-dash .m .ck.on{background:var(--green);border-color:var(--green)}
+.lifeos-dash .m .done .t,.lifeos-dash .m .done .t>span{text-decoration:line-through;color:var(--muted)}
+.lifeos-dash .m .chip{height:26px;padding:0 10px;font-size:12px}
+.lifeos-dash .m .chip.warn{background:var(--pink);color:var(--warn)}
+.lifeos-dash .m .chip.soft{background:var(--tint);color:var(--muted)}
+.lifeos-dash .m .sec{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}
+.lifeos-dash .m .sec .h{font-size:20px}
+.lifeos-dash .m .sec a{font-size:13px;color:var(--muted)}
+.lifeos-dash .m .chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px;scrollbar-width:none}
+.lifeos-dash .m .chips::-webkit-scrollbar{display:none}
+.lifeos-dash .m .chips button{flex:none;height:36px;padding:0 16px;border-radius:999px;background:#fff;font-size:14px;color:var(--ink-2);box-shadow:var(--shadow)}
+.lifeos-dash .m .chips button[aria-pressed="true"]{background:var(--green);color:#fff}
+.lifeos-dash .m [hidden]{display:none!important}
+.lifeos-dash .m .tape{width:70px;height:20px}
+/* 底部：「我想记…」或搜索框 + 「+」 */
+.lifeos-dash .m .dock{position:sticky;bottom:0;z-index:8;display:flex;gap:10px;align-items:center;padding:30px 0 18px;margin-top:8px;
+  background:linear-gradient(rgba(235,242,237,0),rgba(235,242,237,.92) 45%)}
+.lifeos-dash .m .capture,.lifeos-dash .m .search{flex:1;min-width:0;height:56px;border-radius:999px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 22px;box-shadow:0 10px 30px rgba(52,72,59,.14);margin:0}
+.lifeos-dash .m .dock input{flex:1;min-width:0;border:0;outline:none;background:none;box-shadow:none;padding:0;font:inherit;font-size:16px;color:var(--ink);caret-color:var(--green)}
+.lifeos-dash .m .dock input::placeholder{color:var(--muted)}
+.lifeos-dash .m .dash-fab{width:56px;height:56px;border-radius:50%;background:var(--green-deep);display:grid;place-items:center;box-shadow:0 10px 24px rgba(47,70,57,.35);flex:none;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.lifeos-dash .m .dash-fab.open{transform:rotate(45deg)}
+.lifeos-dash .m .sheet{position:absolute;left:0;right:0;bottom:86px;z-index:7;background:#fff;border-radius:26px;padding:8px;box-shadow:0 20px 50px rgba(37,45,41,.18);opacity:0;transform:translateY(16px) scale(.98);pointer-events:none;transition:all .3s cubic-bezier(.2,.8,.2,1)}
+.lifeos-dash .m .sheet.open{opacity:1;transform:none;pointer-events:auto}
+.lifeos-dash .m .sheet button{display:flex;width:100%;align-items:center;gap:12px;padding:14px 12px;border-radius:18px;font-size:16px;font-weight:500;text-align:left}
+.lifeos-dash .m .sheet button:hover,.lifeos-dash .m .sheet button:focus-visible{background:var(--tint)}
+.lifeos-dash .m .sheet .ic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
+.lifeos-dash .m .ok{font-size:13px;color:var(--green);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.lifeos-dash .m .sheet,.lifeos-dash .m .dash-fab{transition:none}}
