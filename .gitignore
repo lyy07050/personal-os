@@ -77,3 +77,4 @@ __pycache__/
 # 字体文件和由它生成的 CSS 都可以重新下载/生成，不进 git
 tools/fonts/
 LifeOS/.obsidian/snippets/lifeos-fonts.css
+.Rhistory

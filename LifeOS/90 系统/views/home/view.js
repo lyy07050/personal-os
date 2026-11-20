@@ -252,7 +252,21 @@ const STYLE = `
 .lifeos-dash .capture .ok{display:none;font-size:13px;color:var(--green);white-space:nowrap}
 .lifeos-dash .capture.saved input{display:none}
 .lifeos-dash .capture.saved .ok{display:block}
-.is-mobile .lifeos-dash .r1,.is-mobile .lifeos-dash .ov,.is-mobile .lifeos-dash .r3{grid-template-columns:1fr}`;
+.is-mobile .lifeos-dash .r1,.is-mobile .lifeos-dash .ov,.is-mobile .lifeos-dash .r3{grid-template-columns:1fr}
+.is-mobile .lifeos-dash .dash .topbar .find{width:100%}
+.is-mobile .lifeos-dash .hero{height:180px;margin:40px 0 16px;border-radius:22px}
+.is-mobile .lifeos-dash .hero h1{font-size:34px;position:relative;z-index:1}
+.is-mobile .lifeos-dash .hero p,.is-mobile .lifeos-dash .hero p .g{font-size:20px;position:relative;z-index:1}
+.is-mobile .lifeos-dash .hero .art{width:76px!important;top:-36px!important;opacity:.9}
+.is-mobile .lifeos-dash .stats{flex-wrap:wrap;padding:12px;gap:8px}
+.is-mobile .lifeos-dash .stat{width:calc(50% - 4px);height:auto;padding:12px 0;border-radius:14px!important}
+.is-mobile .lifeos-dash .dash .rec{width:72px;height:72px;font-size:18px;margin:0 auto}
+.is-mobile .lifeos-dash .foods{grid-template-columns:1fr 1fr}
+.is-mobile .lifeos-dash .food{height:200px}
+.is-mobile .lifeos-dash .food .pic .food-img{max-width:70px!important;max-height:80px!important}
+.is-mobile .lifeos-dash .prog li{grid-template-columns:110px 1fr 44px}
+.is-mobile .lifeos-dash .cal{overflow-x:auto}
+.is-mobile .lifeos-dash .week{min-width:520px}`;
 
 const root = L.mount(dv, html, STYLE);
 
