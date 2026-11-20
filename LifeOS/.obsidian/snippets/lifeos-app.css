@@ -1,6 +1,6 @@
 /* 人生 OS · App 模式（可选开关，在 设置 → 外观 → CSS 代码片段 里开关）
-   打开后：看面板时，藏起 Obsidian 自己的标题路径栏（← → 10 总部 / 首页）和右下角状态栏，只剩面板本身。
-   打开普通笔记时一切照常；关掉这个代码片段就完全恢复 Obsidian 原样。
-   左边文件列表用 Obsidian 自己的「收起侧边栏」按钮收起（会记住），最左一竖排图标在 外观 → 显示功能区 里关。 */
-.workspace-leaf-content:has(.lifeos-dash) .view-header{display:none}
-body:has(.workspace-leaf.mod-active .lifeos-dash) .status-bar{display:none}
+   打开后：面板在阅读模式下，藏起 Obsidian 自己的标题路径栏（← → 10 总部 / 首页），只剩面板本身。
+   编辑模式下标题栏照常显示，方便按书本图标切回阅读模式（快捷键 Cmd+E）。
+   只看单个标签页，不用 body:has(...)，避免面板渲染时整页反复重算样式。
+   关掉这个代码片段就完全恢复 Obsidian 原样。 */
+.workspace-leaf-content[data-mode="preview"]:has(> .view-content .lifeos-dash) > .view-header{display:none}
