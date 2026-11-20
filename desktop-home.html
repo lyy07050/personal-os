@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 首页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600&family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=Playfair+Display:wght@700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.hero{position:relative;background:#fff;border-radius:4px;box-shadow:var(--sh-card);height:300px;margin:58px 0 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.hero h1{font-family:"Playfair Display",serif;font-weight:700;font-size:72px;line-height:1;color:#111}
+.hero p{font-family:"Crimson Text",serif;font-weight:600;font-size:34px;color:var(--ink-2)}
+.hero p .g{font-size:34px;color:var(--ink)}
+.hero .art{position:absolute;pointer-events:none;filter:var(--sh-sticker)}
+
+.r1{display:grid;grid-template-columns:383px 1fr;gap:24px;margin-bottom:24px}
+.todo .list li{font-size:16px;padding:11px 0;gap:12px}
+.todo .list li .t{flex:1}
+.todo .list li small{font-size:14px;color:var(--muted)}
+.todo .list .ck{width:20px;height:20px}
+
+/* week calendar */
+.cal{padding:18px 18px 14px}
+.cal .top{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.cal .top h2{font-family:var(--zcool);font-size:26px;font-weight:400}
+.cal .top span{font-size:13px;color:var(--muted)}
+.seg{margin-left:auto;display:flex;background:var(--tile);border-radius:8px;padding:3px;border:1px solid rgba(37,45,41,.06)}
+.seg button{font-size:12px;padding:4px 12px;border-radius:6px;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.week{display:grid;grid-template-columns:40px repeat(7,1fr);font-size:12px}
+.week .dh{text-align:center;padding:4px 0 6px;color:var(--muted);font-size:12px}
+.week .dh b{display:block;font-size:22px;font-weight:400;color:var(--ink);margin-top:2px}
+.week .dh.today{color:#d2453a}
+.week .dh.today b{width:34px;height:34px;line-height:34px;border-radius:50%;background:#c13c33;color:#fff;margin:2px auto 0}
+.week .wkend{background:rgba(37,45,41,.025)}
+.allday{grid-column:1/-1;display:grid;grid-template-columns:40px repeat(7,1fr);border-top:1px solid rgba(37,45,41,.08);border-bottom:1px solid rgba(37,45,41,.08);padding:4px 0}
+.allday .lb{font-size:12px;color:var(--muted);align-self:center}
+.ev{display:block;font-size:12px;border-radius:3px;padding:2px 6px;margin:0 3px;border-left:2.5px solid;line-height:1.35;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ev.g1{background:#e8f1e4;border-color:#7f9f78;color:#3e5b4b}
+.ev.r1{background:#fbe9e7;border-color:#d07a6e;color:#8e3f33}
+.ev.b1{background:#e7f1fb;border-color:#6d97c2;color:#30577d}
+.ev.p1{background:#efe9f6;border-color:#9a83bf;color:#56417a}
+.hours{grid-column:1/-1;display:grid;grid-template-columns:40px repeat(7,1fr);grid-template-rows:repeat(5,36px);position:relative}
+.hours .hl{font-size:12px;color:var(--muted);transform:translateY(-6px)}
+.hours .cell{border-top:1px solid rgba(37,45,41,.06);border-left:1px solid rgba(37,45,41,.04)}
+.hours .ev{position:absolute;white-space:normal}
+
+/* 今日概览 */
+.ov{display:grid;grid-template-columns:1fr 300px;gap:24px;margin-bottom:24px;padding:0;background:none;box-shadow:none}
+.ov .left{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:0 0 0 0;display:grid;grid-template-rows:auto 1fr;overflow:hidden}
+.stats{display:flex;gap:12px;align-items:center;padding:0 12px 0 0}
+.stat{width:164px;height:110px;text-align:center;padding-top:18px}
+.stat small{font-size:15px;color:var(--ink-2)}
+.stat .g{display:block;font-size:40px;line-height:1.3;color:var(--green)}
+.rec{width:90px;height:90px;border-radius:50%;background:var(--green);color:#fff;font-family:var(--zcool);font-size:22px;display:grid;place-items:center;margin-left:auto;margin-right:40px;border:5px solid #dfe8db;box-shadow:0 6px 14px rgba(52,72,59,.25)}
+.spend{margin:12px 12px 12px 0;border-radius:18px;padding:16px 18px;display:flex;justify-content:space-between;align-items:flex-end}
+.spend small{font-size:14px;color:var(--ink-2)}
+.spend .g{display:block;font-size:52px;line-height:1.1;color:var(--green)}
+.spend .days{font-size:13px;color:var(--ink-2);display:flex;gap:9px}
+.word{border-radius:18px;background:#e7e0ee;box-shadow:var(--sh-card);display:flex;flex-direction:column;overflow:hidden}
+.word .top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.word .top small{font-size:14px;color:var(--ink-2)}
+.word .top .g{font-size:32px;color:var(--ink)}
+.word .top span{font-size:14px;color:var(--ink-2)}
+.word .foot{background:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.word .foot .bar{flex:1;height:3px;background:#eee}
+.word .foot .bar span{background:#b9a6cc}
+
+.r3{display:grid;grid-template-columns:779px 1fr;gap:24px}
+.fr .tabs2{display:flex;gap:26px;align-items:baseline;margin:2px 0 14px}
+.fr .tabs2 span{font-family:var(--gaegu);font-weight:700;font-size:34px;color:var(--tab-off);letter-spacing:.04em}
+.fr .tabs2 span.on{color:var(--ink)}
+.fr .tabs2 sup{font-family:"Noto Sans SC";font-size:13px;color:var(--brown);font-weight:500}
+.foods{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.food{padding:16px 14px;height:270px;position:relative}
+.food h3{font-family:var(--zcool);font-weight:400;font-size:26px}
+.food small{font-size:14px;color:var(--muted)}
+.food .left{display:flex;align-items:center;gap:8px;margin-top:22px;font-size:15px}
+.food .left .ck{width:20px;height:20px}
+.food img{position:absolute;right:16px;bottom:14px;max-width:96px;max-height:112px}
+.prog li{display:grid;grid-template-columns:170px 1fr 50px;gap:14px;align-items:center;font-size:15px;padding:9px 0;border:0}
+.prog .p{text-align:right;color:var(--ink-2);font-size:14px}
+.status{height:26px;border-radius:13px;background:var(--tile);border:1px solid rgba(37,45,41,.06);font-size:12px;color:var(--ink-2);display:grid;place-items:center}
+
+.rcol{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:16px;display:flex;flex-direction:column;gap:20px;position:relative}
+.mod{border-radius:18px;padding:16px}
+.mod .mh{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;color:var(--ink);padding-bottom:10px;border-bottom:1px solid rgba(37,45,41,.08);margin-bottom:8px}
+.mod .mh small{font-size:12px;color:var(--muted)}
+.act{display:flex;gap:14px;align-items:center;padding:9px 0}
+.date{width:60px;text-align:center;flex:none}
+.date .g{font-size:20px;color:var(--brown);display:block;line-height:1}
+.date small{font-size:12px;color:var(--muted)}
+.act b{display:block;font-weight:400;font-size:15px}
+.act span{font-size:12px;color:var(--muted)}
+.rg{margin-top:12px}
+.rg .rt{display:flex;justify-content:space-between;align-items:baseline}
+.rg .rt b{font-family:var(--zcool);font-weight:400;font-size:20px}
+.rg .rt small{font-size:12px;color:var(--muted)}
+.rg .bar{margin:8px 0 6px;height:5px;background:#e3e9f1}
+.rg ul{list-style:none;font-size:13.5px}
+.rg li{display:flex;align-items:center;gap:8px;padding:3px 0}
+.rg li .ck{width:16px;height:16px;border-radius:4px;border-width:1.3px}
+.rg li .ck svg{width:9px}
+.rg .more{font-size:12px;color:var(--muted)}
+.cloth{position:absolute;right:-20px;bottom:-28px;width:200px;pointer-events:none;filter:var(--sh-sticker)}
+.capture{padding:0 18px}
+.capture input{flex:1;border:0;outline:none;background:none;font:inherit;font-size:16px;color:var(--ink);caret-color:var(--green)}
+.capture input::placeholder{color:var(--muted)}
+.capture .ok{display:none;font-size:13px;color:var(--green);white-space:nowrap}
+.capture.saved input{display:none}.capture.saved .ok{display:block}
+</style>
+</head>
+<body data-page="home">
+<div class="app">
+<main>
+  <div class="topbar">
+    <span></span>
+    <form class="find capture" onsubmit="event.preventDefault();this.querySelector('input').value='';this.classList.add('saved');setTimeout(()=>this.classList.remove('saved'),1400)"><input placeholder="我想记…" aria-label="记进随手记"><span class="ok">已存进随手记</span></form>
+  </div>
+
+  <section class="hero" aria-label="今天">
+    <img class="art" src="assets/home-flowercat-trim.png" alt="" style="left:0;top:-80px;width:149px">
+    <img class="art" src="assets/home-lantern-trim.png" alt="" style="right:0;top:-58px;width:184px">
+    <h1>Hi Charlotte 👋</h1>
+    <p>Today is · Nov <span class="g">18</span> · Wednesday</p>
+  </section>
+
+  <div class="r1">
+    <section class="card todo" style="padding:22px 22px 18px">
+      <div class="head" style="margin-bottom:6px"><h2 style="font-size:26px">今日待办</h2></div>
+      <ul class="list">
+        <li><button class="ck" aria-label="完成"></button><span class="t">DATA 101 作业 4</span><small class="warn">23:59</small></li>
+        <li><button class="ck" aria-label="完成"></button><span class="t">买鸡蛋和牛奶</span><small>errands</small></li>
+        <li class="done"><button class="ck" aria-label="完成"></button><span class="t">背 20 个单词</span><small>english</small></li>
+        <li><button class="ck" aria-label="完成"></button><span class="t">投 2 份实习</span><small>career</small></li>
+        <li><button class="ck" aria-label="完成"></button><span class="t">整理本周账单</span><small>money</small></li>
+      </ul>
+    </section>
+    <section class="card cal" aria-label="本周日程">
+      <div class="top"><h2>本周日程</h2><span>2026年11月 · 16–22日</span><div class="seg"><button>日</button><button class="on">周</button><button>月</button><button>年</button></div></div>
+      <div class="week" id="week"></div>
+    </section>
+  </div>
+
+  <section class="ov" aria-label="今日概览">
+    <div class="left">
+      <div class="stats">
+        <div class="stat tile" style="border-radius:0 0 18px 0;border-top:0;border-left:0"><small>Tasks left</small><span class="g">4</span></div>
+        <div class="stat tile"><small>Day streak</small><span class="g">23</span></div>
+        <div class="stat tile"><small>In the fridge</small><span class="g">6</span></div>
+        <button class="rec">记一笔</button>
+      </div>
+      <div class="spend tile" style="margin-left:0;border-radius:0 18px 0 0;border-left:0;border-bottom:0">
+        <div><small>Spent this week</small><span class="g">$214.50</span></div>
+        <div style="text-align:right">
+          <svg width="180" height="44" viewBox="0 0 180 44" aria-hidden="true"><path d="M2 30 C 22 24, 34 36, 52 32 S 82 20, 100 26 S 118 8, 128 10 S 150 22, 178 20" fill="none" stroke="#8fa98a" stroke-width="1.6"/><circle cx="128" cy="10" r="3" fill="#a15c46"/></svg>
+          <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="word">
+      <div class="top"><small>Word of the day</small><span class="g">procrastinate</span><span>v. 拖延</span></div>
+      <div class="foot"><span>今天 12 / 20</span><span class="bar"><span style="width:60%"></span></span><a href="desktop-english.html">多邻国 →</a></div>
+    </div>
+  </section>
+
+  <div class="r3">
+    <div class="stack">
+      <section class="group fr" style="padding:18px 16px 16px">
+        <div class="tabs2"><span class="on">Fridge</span></div>
+        <div class="foods">
+          <div class="tile food"><h3>牛奶</h3><small>Milk · 1 L</small><div class="left"><span class="ck" style="border-color:var(--warn)"></span><span class="warn">明天过期</span></div><img src="assets/food/牛奶.png" alt=""></div>
+          <div class="tile food"><h3>鸡蛋</h3><small>Eggs · 6</small><div class="left"><span class="ck"></span>3 天</div><img src="assets/eggs.png" alt=""></div>
+          <div class="tile food"><h3>草莓</h3><small>Strawberry · 250 g</small><div class="left"><span class="ck"></span>4 天</div><img src="assets/food/草莓.png" alt=""></div>
+          <div class="tile food"><h3>小葱</h3><small>Spring onion</small><div class="left"><span class="ck"></span>5 天</div><img src="assets/food/小葱.png" alt=""></div>
+        </div>
+      </section>
+      <section class="card prog" style="padding:22px 22px 18px">
+        <div class="head" style="margin-bottom:8px"><h2 style="font-size:26px">事情进度</h2></div>
+        <ul class="list">
+          <li><span>DATA 101 作业 4</span><span class="bar"><span style="width:60%"></span></span><span class="p">60%</span></li>
+          <li><span>投 2 份实习</span><span class="bar"><span style="width:50%"></span></span><span class="p">50%</span></li>
+          <li><span>整理本周账单</span><span class="bar"><span style="width:25%"></span></span><span class="p">25%</span></li>
+          <li><span>背 20 个单词</span><span class="bar"><span style="width:60%"></span></span><span class="p">60%</span></li>
+          <li><span>买鸡蛋和牛奶</span><span class="bar"><span style="width:0"></span></span><span class="p muted">未开始</span></li>
+        </ul>
+      </section>
+    </div>
+
+    <aside class="rcol">
+      <section class="mod" style="background:var(--m-yellow)">
+        <div class="mh"><span>最近的活动</span></div>
+        <div class="act"><div class="date"><span class="g">11.21</span><small>周五</small></div><div><b>Networking event</b><span>邮件 · Bahen 1F</span></div></div>
+        <div class="act"><div class="date"><span class="g">11.29</span><small>周六</small></div><div><b>圣诞老人游行</b><span>小红书 · 市中心</span></div></div>
+        <div class="act"><div class="date"><span class="g">12.06</span><small>周六</small></div><div><b>crafting activity</b><span>小红书 · 需报名</span></div></div>
+      </section>
+      <section class="mod" style="background:var(--m-blue);flex:1;position:relative">
+        <div class="mh"><span>Reminder</span></div>
+        <div class="rg">
+          <div class="rt"><b>回🇨🇳准备</b><small>3 / 7</small></div>
+          <div class="bar"><span style="width:43%"></span></div>
+          <ul>
+            <li class="done"><button class="ck" aria-label="完成"></button><span class="t">爸爸要的鱼油 ×2</span></li>
+            <li class="done"><button class="ck" aria-label="完成"></button><span class="t">枫糖浆</span></li>
+            <li><button class="ck" aria-label="完成"></button><span class="t">冰酒</span></li>
+          </ul>
+          <span class="more">还有 4 项 →</span>
+        </div>
+        <div class="rg" style="margin-top:20px">
+          <div class="rt"><b>回🇨🇦准备</b><small>0 / 4</small></div>
+          <div class="bar"><span style="width:0"></span></div>
+          <ul>
+            <li><button class="ck" aria-label="完成"></button><span class="t">续签学签材料</span></li>
+            <li><button class="ck" aria-label="完成"></button><span class="t">带一包火锅底料</span></li>
+          </ul>
+          <span class="more">还有 2 项 →</span>
+        </div>
+      </section>
+      <img class="cloth" src="assets/home-sticker.png" alt="">
+    </aside>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>
+// 本周日程：周一到周日 16–22，今天周三
+const W=document.getElementById('week'),days=[['周一',16],['周二',17],['周三 · Today',18],['周四',19],['周五',20],['周六',21],['周日',22]];
+let h='<div></div>'+days.map((d,i)=>`<div class="dh ${i===2?'today':''} ${i>4?'wkend':''}">${d[0]}<b>${d[1]}</b></div>`).join('');
+h+='<div class="allday"><span class="lb">全天</span><div><span class="ev g1">健身</span></div><div><span class="ev r1">作业 4 截止</span></div><div><span class="ev b1">INF 1340</span></div><div></div><div></div><div><span class="ev g1">超市采购</span></div><div><span class="ev p1">周复盘</span></div></div>';
+h+='<div class="hours" id="hrs">';
+['09:00','11:00','13:00','15:00','17:00'].forEach(t=>{h+=`<span class="hl">${t}</span>`+'<span class="cell"></span>'.repeat(7)});
+h+='</div>';W.innerHTML=h;
+const hrs=document.getElementById('hrs'),col=i=>`calc(40px + (100% - 40px) / 7 * ${i} + 3px)`,w='calc((100% - 40px) / 7 - 6px)';
+[[0,1.4,'b1','INF 1340<br>10:00'],[2,3.4,'p1','小组会议<br>14:00'],[4,3.6,'r1','面试<br>15:00']].forEach(([d,r,c,t])=>{const e=document.createElement('span');e.className='ev '+c;e.innerHTML=t;e.style.cssText=`left:${col(d)};width:${w};top:${r*36}px;height:38px;margin:0`;hrs.appendChild(e)});
+</script>
+</body>
+</html>
