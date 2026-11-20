@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>韩式手绘风 · 人生 OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#fbf6e6; --paper:#fffbf1; --blue:#1554a8; --blue-d:#0e3f86;
+  --sky:#9cc3ee; --sky-l:#d6e7f8; --red:#e2433b; --ink:#1d2a44; --mute:#6b7a96;
+  --sketch:255px 15px 225px 15px/15px 225px 15px 255px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans SC",system-ui,sans-serif;color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased}
+.hand{font-family:"Nanum Pen Script","Long Cang",cursive;color:var(--red)}
+.cn-hand{font-family:"Long Cang",cursive;color:var(--red)}
+.caps{font-family:"Gaegu",sans-serif;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:13px}
+.doodle{filter:url(#wob);overflow:visible}
+.s{fill:none;stroke:var(--blue);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.r{fill:none;stroke:var(--red);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.w{fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.riso{fill:var(--sky-l)}
+
+/* ---------- 切换 ---------- */
+.switch{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:4px;background:var(--paper);padding:4px;border:2px solid var(--blue);border-radius:var(--sketch);box-shadow:3px 3px 0 var(--blue)}
+.switch button{font:700 14px "Noto Sans SC";border:0;background:none;color:var(--blue);padding:6px 14px;border-radius:999px;cursor:pointer}
+.switch button.on{background:var(--blue);color:#fff}
+body[data-v="desktop"] .phone-stage{display:none}
+body[data-v="phone"] .app{display:none}
+
+/* ---------- 电脑版 ---------- */
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh;
+  background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 50%,#dfeaf7 82%,#b3d0f1 100%)}
+.side{padding:30px 18px;border-right:2px dashed rgba(21,84,168,.18);position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.logo{font:600 30px "Outfit";color:var(--ink);letter-spacing:-.02em;margin:0 8px 26px}
+.logo small{font:400 17px "Gaegu";color:var(--blue);margin-left:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 0;border-radius:12px;color:var(--blue);text-decoration:none;font-size:14px;font-weight:500;cursor:pointer;transition:.15s}
+.nav a:hover{background:var(--sky-l)}
+.nav a.on{background:var(--blue);color:#fff}
+.nav a.sub{padding-left:38px;font-size:13px;color:var(--mute)}
+.nav a.sub::before{content:"";width:10px;height:2px;background:currentColor;border-radius:2px;margin-left:-18px;opacity:.6}
+.nav .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.5}
+.side .pals{margin-top:auto;padding:0 6px}
+.side .pals p{margin:6px 0 0;font-size:22px;transform:rotate(-3deg)}
+
+main{padding:34px 40px 60px;max-width:1180px;width:100%}
+.hero{position:relative;display:grid;grid-template-columns:1fr minmax(300px,470px);align-items:center;min-height:250px;margin-bottom:8px}
+.hero .txt{padding-top:10px;align-self:start}
+.hero .pic{position:relative;height:270px;margin-top:-16px}
+.hero .date{color:var(--ink)}
+.hero h1{font:600 46px/1.15 "Outfit","Noto Sans SC";margin:10px 0 10px;letter-spacing:-.02em}
+.hero h1 span{font-family:"Noto Sans SC";font-weight:700}
+.hero .sub{color:var(--mute);font-size:15px;margin:0}
+.hero .sub b{color:var(--blue)}
+.hero .art{position:absolute;inset:0;width:100%;height:100%}
+.vert{position:absolute;writing-mode:vertical-rl;font-size:36px;line-height:1;letter-spacing:4px}
+
+.quick{display:grid;grid-template-columns:repeat(4,1fr);background:var(--blue);border-radius:18px;padding:18px 6px;margin-bottom:12px;box-shadow:0 14px 30px -18px rgba(14,63,134,.8)}
+.quick button{background:none;border:0;color:#fff;font:500 14px "Noto Sans SC";display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;padding:4px}
+.quick button+button{border-left:2px dashed rgba(255,255,255,.45)}
+.quick button svg{transition:transform .25s}
+.quick button:hover svg{transform:rotate(-8deg) translateY(-3px)}
+.notice{display:flex;justify-content:space-between;align-items:center;background:var(--blue);color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;margin-bottom:22px}
+.notice b{color:#ffd9d6}
+
+.grid{display:grid;grid-template-columns:1.05fr 1fr;gap:20px}
+.card{background:var(--paper);border-radius:18px;padding:20px 22px 22px;position:relative;
+  box-shadow:0 1px 0 rgba(21,84,168,.08),0 14px 30px -22px rgba(21,84,168,.55);animation:pop .5s both}
+.card:nth-child(2){animation-delay:.05s}.card:nth-child(3){animation-delay:.1s}.card:nth-child(4){animation-delay:.15s}
+.card:nth-child(5){animation-delay:.2s}.card:nth-child(6){animation-delay:.25s}.card:nth-child(7){animation-delay:.3s}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}}
+.card.wide{grid-column:1/-1}
+.ch{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.ch h3{margin:0;font-size:16px;color:var(--blue);font-weight:700}
+.ch .hand{margin-left:auto;font-size:24px;transform:rotate(-5deg)}
+
+/* 待办 */
+.todo{list-style:none;margin:0;padding:0}
+.todo li{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1.5px dashed rgba(21,84,168,.15);cursor:pointer;font-size:14px}
+.todo li:last-child{border:0}
+.box{width:20px;height:20px;border:2px solid var(--blue);border-radius:var(--sketch);flex:none;position:relative}
+.done .box::after{content:"";position:absolute;left:3px;top:-7px;width:9px;height:17px;border:solid var(--red);border-width:0 3px 3px 0;transform:rotate(40deg);border-radius:2px}
+.done .t{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:var(--mute)}
+.tag{margin-left:auto;font-size:11px;padding:2px 9px;border:1.5px solid var(--blue);color:var(--blue);border-radius:var(--sketch);white-space:nowrap}
+.tag.red{border-color:var(--red);color:var(--red)}
+
+/* 日历 */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{text-align:center;font-size:12px;color:var(--mute)}
+.day .n{display:grid;place-items:center;width:30px;height:30px;margin:4px auto 8px;font:700 15px "Outfit";color:var(--ink);border-radius:50%}
+.day.today .n{background:var(--blue);color:#fff}
+.ev{font-size:11px;line-height:1.3;padding:5px 4px;border-radius:8px;margin-bottom:4px;background:var(--sky-l);color:var(--blue-d);text-align:left}
+.ev.red{background:#fde3e0;color:#b9271f}
+
+/* 花费 */
+.money{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.money b{font:600 38px "Outfit";color:var(--blue)}
+.money span{color:var(--mute);font-size:13px}
+.budget{height:14px;border:2px solid var(--blue);border-radius:var(--sketch);overflow:hidden;margin-bottom:18px}
+.budget i{display:block;height:100%;width:61%;background:repeating-linear-gradient(-45deg,var(--blue) 0 2px,transparent 2px 6px)}
+.bars{display:flex;align-items:flex-end;gap:14px;height:110px}
+.bars div{flex:1;text-align:center;font-size:11px;color:var(--mute);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;border:2px solid var(--blue);border-radius:8px 8px 3px 3px;background:var(--sky-l);margin-bottom:6px}
+.bars div:first-child i{background:repeating-linear-gradient(-45deg,var(--red) 0 2px,#fde3e0 2px 6px);border-color:var(--red)}
+.bars em{font-style:normal;font:600 12px "Outfit";color:var(--ink)}
+
+/* 热力图 */
+.heat{display:grid;grid-template-columns:52px repeat(14,1fr);gap:4px;align-items:center;font-size:12px;color:var(--mute)}
+.heat i{aspect-ratio:1;border-radius:5px;background:#ece7d6}
+.heat i.l1{background:var(--sky-l)}.heat i.l2{background:var(--sky)}.heat i.l3{background:var(--blue)}
+
+/* 冰箱 */
+.fridge{list-style:none;margin:0;padding:0}
+.fridge li{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px}
+.fridge .bar{flex:1;height:2px;background:repeating-linear-gradient(90deg,rgba(21,84,168,.3) 0 4px,transparent 4px 8px)}
+.fridge .when{font-size:13px;color:var(--mute);position:relative}
+.fridge .urgent{color:var(--red);font-weight:700;padding:0 6px}
+.fridge .urgent svg{position:absolute;inset:-9px -10px;width:calc(100% + 20px);height:calc(100% + 18px)}
+
+/* 英语 */
+.streak{display:flex;gap:18px;align-items:center}
+.streak .num{font:600 50px/1 "Outfit";color:var(--blue)}
+.streak .num small{font:400 14px "Noto Sans SC";color:var(--mute)}
+.word{flex:1;background:var(--sky-l);border-radius:14px;padding:12px 14px;position:relative}
+.word b{font:600 20px "Outfit";color:var(--blue-d)}
+.word p{margin:2px 0 0;font-size:13px;color:var(--mute)}
+.btn{display:inline-block;margin-top:16px;background:var(--blue);color:#fff;border:0;font:700 14px "Noto Sans SC";padding:10px 22px;border-radius:var(--sketch);cursor:pointer;box-shadow:3px 3px 0 var(--red);transition:.15s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--red)}
+.prog{font-size:12px;color:var(--mute);margin-left:12px}
+
+/* 小知识 */
+.tip{background:var(--blue);color:#fff;display:flex;gap:26px;align-items:center;overflow:hidden}
+.tip .q{font:72px/0.6 "Outfit";color:var(--sky);align-self:flex-start;margin-top:18px}
+.tip h3{color:#fff}
+.tip p{margin:0;font-size:16px;line-height:1.8}
+.tip .from{font-size:12px;opacity:.7;margin-top:8px}
+.tip .hand{color:#ffd0cc;font-size:28px;transform:rotate(-4deg);white-space:nowrap}
+
+@media (max-width:980px){
+  .app{grid-template-columns:1fr}.side{display:none}
+  main{padding:70px 16px 40px}
+  .hero{grid-template-columns:1fr}.hero .pic{height:240px;margin-top:0}
+  .grid{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,1fr);row-gap:14px}
+  .quick button:nth-child(3){border-left:0}
+}
+
+/* ---------- 手机版 ---------- */
+.phone-stage{min-height:100vh;display:grid;place-items:center;padding:80px 16px 40px;
+  background:radial-gradient(circle at 20% 20%,#fff8e3,transparent 50%),linear-gradient(160deg,#efe6cf,#c9dcf2)}
+.phone{width:390px;max-width:100%;height:844px;border:11px solid #121418;border-radius:58px;overflow:hidden;position:relative;
+  background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 46%,#c5dcf5 78%,#8cb7e9 100%);box-shadow:0 40px 80px -30px rgba(14,40,90,.6)}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#121418;z-index:5}
+.scr{height:100%;overflow-y:auto;padding:0 18px 120px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.sb{display:flex;justify-content:space-between;padding:16px 14px 0;font:600 15px "Outfit"}
+.ph-head{display:flex;justify-content:space-between;align-items:center;margin:22px 0 0}
+.ph-head .logo{margin:0;font-size:28px}
+.capsule{display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:6px 12px;font-size:12px;color:var(--ink);border:1px solid #eee}
+.ph-hero{position:relative;height:300px}
+.ph-hero svg.art{position:absolute;inset:0;width:100%;height:100%}
+.ph-hero .vert{font-size:32px;right:6px;top:30px}
+.ph-meta{margin:-6px 0 18px}
+.ph-meta .caps{font-size:12px;color:var(--ink);line-height:1.6}
+.ph-meta p{margin:2px 0 0;font-size:11px;color:var(--mute)}
+.ph .quick{grid-template-columns:repeat(3,1fr);padding:16px 2px;margin-bottom:10px}
+.ph .quick button{font-size:13px}
+.ph .notice{margin-bottom:12px;font-size:12px}
+.ph .card{padding:16px;border-radius:16px;margin-bottom:12px;animation:none}
+.ph .ch{margin-bottom:10px}
+.ph .ch h3{font-size:15px}
+.ph .todo li{padding:8px 0;font-size:13px}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:var(--mute)}
+.strip .n{display:grid;place-items:center;width:30px;height:30px;margin:4px auto 4px;border-radius:50%;font:600 14px "Outfit";color:var(--ink)}
+.strip .today .n{background:var(--blue);color:#fff}
+.strip .pip{display:block;width:5px;height:5px;border-radius:50%;background:var(--sky);margin:0 auto}
+.strip .pip.red{background:var(--red)}
+.strip-ev{margin-top:10px;font-size:12px;background:var(--sky-l);border-radius:10px;padding:8px 10px;color:var(--blue-d)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two .card{margin:0}
+.mini-money b{font:600 26px "Outfit";color:var(--blue);display:block}
+.mini-money span{font-size:11px;color:var(--mute)}
+.two .budget{margin:10px 0 0;height:11px}
+.mini-fridge{list-style:none;margin:0;padding:0;font-size:12px}
+.mini-fridge li{display:flex;justify-content:space-between;padding:3px 0}
+.mini-fridge li.u{color:var(--red);font-weight:700}
+.tabbar{position:absolute;left:12px;right:12px;bottom:12px;height:68px;background:var(--blue);border-radius:30px;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;box-shadow:0 10px 24px -10px rgba(14,63,134,.9);z-index:4}
+.tabbar button{background:none;border:0;color:rgba(255,255,255,.7);font:500 10px "Noto Sans SC";display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.tabbar button.on{color:#fff}
+.tabbar .plus{width:46px;height:46px;border-radius:50%;background:var(--paper);display:grid;place-items:center;margin:auto;box-shadow:0 0 0 4px var(--blue),0 0 0 6px rgba(255,255,255,.5)}
+</style>
+</head>
+<body data-v="desktop">
+
+<!-- 手绘抖动滤镜 -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.6"/></filter>
+  <!-- 冰箱 -->
+  <symbol id="fridge" viewBox="0 0 120 175">
+    <rect class="riso" x="24" y="16" width="80" height="146" rx="16"/>
+    <rect class="s" x="16" y="10" width="80" height="146" rx="16" fill="none"/>
+    <path class="s" d="M16 62 H96 M30 28 v20 M30 76 v30 M32 156 v10 M80 156 v10"/>
+    <path d="M70 30 c-4-7-14-3-9 4 l9 9 9-9 c5-7-5-11-9-4z" fill="#e2433b"/>
+    <circle cx="52" cy="104" r="3" fill="#1554a8"/><circle cx="72" cy="104" r="3" fill="#1554a8"/>
+    <path class="s" d="M55 115 q7 7 14 0"/>
+    <path class="r" d="M44 112 h-4 M80 112 h4" opacity=".6"/>
+  </symbol>
+  <!-- 牛奶盒 -->
+  <symbol id="milk" viewBox="0 0 72 112">
+    <path class="riso" d="M17 45 L17 106 L63 106 L63 45 L51 23 L29 23 Z"/>
+    <path class="s" d="M12 40 L12 100 L58 100 L58 40 L46 18 L24 18 Z M24 18 V8 H46 V18 M12 40 H58"/>
+    <text x="35" y="64" text-anchor="middle" font-family="Gaegu" font-weight="700" font-size="12" fill="#1554a8">MILK</text>
+    <circle cx="28" cy="78" r="2.2" fill="#1554a8"/><circle cx="42" cy="78" r="2.2" fill="#1554a8"/>
+    <path class="s" d="M31 85 q4 4 8 0"/>
+  </symbol>
+  <!-- 苹果 -->
+  <symbol id="apple" viewBox="0 0 64 64">
+    <path class="r" d="M32 18 c-10-8-26-2-24 16 c2 16 14 24 24 20 c10 4 22-4 24-20 c2-18-14-24-24-16z"/>
+    <path class="r" d="M32 18 q2-10 8-12 M34 12 q8-4 12 2 q-6 4-12-2"/>
+    <path class="r" d="M24 38 q8 8 16 0" />
+  </symbol>
+  <!-- 小猫们 -->
+  <symbol id="pals" viewBox="0 0 190 76">
+    <path class="s" d="M2 46 h16 M6 56 h12 M2 36 h10" opacity=".7"/>
+    <g>
+      <path class="riso" d="M34 60 q0-30 24-30 q24 0 24 30 q0 10-24 10 q-24 0-24-10z"/>
+      <path class="s" d="M28 54 q0-30 24-30 q24 0 24 30 q0 10-24 10 q-24 0-24-10z M33 33 l2-14 9 8 M60 27 l9-8 2 14"/>
+      <circle cx="44" cy="44" r="2.6" fill="#1554a8"/><circle cx="60" cy="44" r="2.6" fill="#1554a8"/><path class="s" d="M49 51 q3 3 6 0"/>
+    </g>
+    <g transform="translate(50 4)">
+      <path class="riso" d="M34 60 q0-30 24-30 q24 0 24 30 q0 10-24 10 q-24 0-24-10z"/>
+      <path class="s" d="M28 54 q0-30 24-30 q24 0 24 30 q0 10-24 10 q-24 0-24-10z M33 33 l2-14 9 8 M60 27 l9-8 2 14"/>
+      <path class="s" d="M41 44 q3-3 6 0 M57 44 q3-3 6 0"/><ellipse cx="52" cy="53" rx="4" ry="3" fill="#e2433b"/>
+    </g>
+    <g transform="translate(100 -2)">
+      <path class="riso" d="M34 60 q0-30 24-30 q24 0 24 30 q0 10-24 10 q-24 0-24-10z"/>
+      <path class="s" d="M28 54 q0-30 24-30 q24 0 24 30 q0 10-24 10 q-24 0-24-10z M33 33 l2-14 9 8 M60 27 l9-8 2 14"/>
+      <circle cx="44" cy="44" r="2.6" fill="#1554a8"/><circle cx="60" cy="44" r="2.6" fill="#1554a8"/>
+      <path class="s" d="M47 51 q5 4 10 0"/><path class="r" d="M36 50 h-5 M68 50 h5" opacity=".6"/>
+    </g>
+  </symbol>
+  <symbol id="spark" viewBox="-10 -10 20 20"><path class="s" d="M0 -8 Q1 -1 8 0 Q1 1 0 8 Q-1 1 -8 0 Q-1 -1 0 -8z"/></symbol>
+  <!-- 白色线条小图标 -->
+  <symbol id="i-coin" viewBox="0 0 40 40"><circle class="w" cx="20" cy="20" r="14"/><path class="w" d="M24 14 q-4-3-8 0 q-3 3 2 5 l4 2 q5 2 2 5 q-4 3-8 0 M20 10 v4 M20 26 v4"/></symbol>
+  <symbol id="i-fridge" viewBox="0 0 40 40"><rect class="w" x="10" y="5" width="20" height="31" rx="5"/><path class="w" d="M10 16 h20 M15 9 v4 M15 20 v6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 40 40"><path class="w" d="M20 6 a10 10 0 0 0 -6 18 v4 h12 v-4 a10 10 0 0 0 -6 -18z M15 32 h10 M17 36 h6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 40 40"><path class="w" d="M8 32 l3-9 17-17 6 6 -17 17 -9 3z M24 10 l6 6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 40 40"><path class="w" d="M7 19 L20 8 L33 19 V33 H7 Z M16 33 v-9 h8 v9"/></symbol>
+  <symbol id="i-more" viewBox="0 0 40 40"><circle cx="11" cy="20" r="2.6" fill="#fff"/><circle cx="20" cy="20" r="2.6" fill="#fff"/><circle cx="29" cy="20" r="2.6" fill="#fff"/></symbol>
+  <!-- 蓝色线条图标（卡片标题） -->
+  <symbol id="b-check" viewBox="0 0 24 24"><rect class="s" x="3" y="3" width="18" height="18" rx="5"/><path class="r" d="M7 12 l3 3 7-7"/></symbol>
+  <symbol id="b-cal" viewBox="0 0 24 24"><rect class="s" x="3" y="5" width="18" height="16" rx="4"/><path class="s" d="M3 10 h18 M8 3 v4 M16 3 v4"/></symbol>
+  <symbol id="b-coin" viewBox="0 0 24 24"><circle class="s" cx="12" cy="12" r="9"/><path class="s" d="M14.5 8.5 q-2.5-2-5 0 q-2 2 1.5 3 l2 1 q3 1.5 1 3 q-2.5 2-5 0"/></symbol>
+  <symbol id="b-grid" viewBox="0 0 24 24"><path class="s" d="M4 4 h6 v6 h-6z M14 4 h6 v6 h-6z M4 14 h6 v6 h-6z"/><rect x="14" y="14" width="6" height="6" rx="1" fill="#e2433b"/></symbol>
+  <symbol id="b-fridge" viewBox="0 0 24 24"><rect class="s" x="5" y="2" width="14" height="20" rx="4"/><path class="s" d="M5 9 h14 M9 5 v2 M9 12 v4"/></symbol>
+  <symbol id="b-owl" viewBox="0 0 24 24"><path class="s" d="M5 9 q0-6 7-6 q7 0 7 6 v6 q0 6-7 6 q-7 0-7-6z M5 6 l-1-3 M19 6 l1-3"/><circle class="s" cx="9" cy="10" r="2"/><circle class="s" cx="15" cy="10" r="2"/><path class="r" d="M11 14 l1 1.5 1-1.5"/></symbol>
+</svg>
+
+<div class="switch">
+  <button class="on" data-v="desktop">💻 电脑版</button>
+  <button data-v="phone">📱 手机版</button>
+</div>
+
+<!-- ================= 电脑版 ================= -->
+<div class="app">
+  <aside class="side">
+    <div class="logo">my os.<small>오늘</small></div>
+    <nav class="nav">
+      <a class="on"><span class="dot"></span>首页</a>
+      <a><span class="dot"></span>收件箱</a>
+      <a><span class="dot"></span>财务部</a>
+      <a><span class="dot"></span>后勤部</a>
+      <a class="sub">食物墙</a>
+      <a class="sub">物品墙</a>
+      <a><span class="dot"></span>研发部</a>
+      <a class="sub">知识库</a>
+      <a class="sub">多邻国 · 英语</a>
+      <a><span class="dot"></span>教务处</a>
+      <a><span class="dot"></span>人事部 · 求职</a>
+      <a><span class="dot"></span>个人档案 🔒</a>
+      <a><span class="dot"></span>每周复盘</a>
+    </nav>
+    <div class="pals">
+      <svg class="doodle" width="170" height="68"><use href="#pals"/></svg>
+      <p class="hand">we got this!</p>
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <div class="txt">
+      <div class="caps date">Tuesday · Nov 17</div>
+      <h1>早上好呀<span>.</span></h1>
+      <p class="sub">今天有 <b>3 件待办</b>，牛奶<b style="color:var(--red)">明天过期</b>，记得喝掉哦</p>
+      </div>
+      <div class="pic">
+      <svg class="art doodle" viewBox="0 0 470 270">
+        <defs><path id="arc1" d="M40 150 Q 90 40 210 50"/></defs>
+        <text font-family="Nanum Pen Script" font-size="27" fill="#e2433b"><textPath href="#arc1">오늘도 화이팅 · good day</textPath></text>
+        <use href="#fridge" x="170" y="56" width="120" height="175"/>
+        <use href="#milk" x="270" y="140" width="66" height="102"/>
+        <use href="#apple" x="118" y="180" width="56" height="56"/>
+        <use href="#spark" x="330" y="60" width="18" height="18"/>
+        <use href="#spark" x="98" y="150" width="12" height="12"/>
+        <use href="#spark" x="350" y="110" width="12" height="12"/>
+        <path class="s" d="M150 240 h22 M300 244 l20 0 M310 236 l14 0" />
+      </svg>
+      <div class="vert cn-hand" style="right:10px;top:20px">好好吃饭</div>
+      </div>
+    </section>
+
+    <div class="quick">
+      <button><svg class="doodle" width="40" height="40"><use href="#i-coin"/></svg>记一笔</button>
+      <button><svg class="doodle" width="40" height="40"><use href="#i-fridge"/></svg>放进冰箱</button>
+      <button><svg class="doodle" width="40" height="40"><use href="#i-bulb"/></svg>存知识</button>
+      <button><svg class="doodle" width="40" height="40"><use href="#i-pen"/></svg>写随笔</button>
+    </div>
+    <div class="notice"><span>📌 今晚 <b>23:59</b> · DATA 101 作业 4 截止</span><span>去看看 →</span></div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="22" height="22"><use href="#b-check"/></svg><h3>今日待办</h3><span class="hand">to do!</span></div>
+        <ul class="todo">
+          <li><span class="box"></span><span class="t">DATA 101 作业 4</span><span class="tag red">今晚 23:59</span></li>
+          <li><span class="box"></span><span class="t">买鸡蛋和牛奶</span><span class="tag">后勤</span></li>
+          <li class="done"><span class="box"></span><span class="t">背 20 个单词</span><span class="tag">英语</span></li>
+          <li><span class="box"></span><span class="t">整理本周账单</span><span class="tag">财务</span></li>
+          <li><span class="box"></span><span class="t">投 2 份实习</span><span class="tag">求职</span></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="22" height="22"><use href="#b-cal"/></svg><h3>本周日历</h3><span class="hand">this week</span></div>
+        <div class="week">
+          <div class="day">一<span class="n">16</span><div class="ev">INF 1340<br>10:00</div></div>
+          <div class="day today">二<span class="n">17</span><div class="ev red">作业 4 截止</div><div class="ev">健身</div></div>
+          <div class="day">三<span class="n">18</span><div class="ev">小组会议<br>14:00</div></div>
+          <div class="day">四<span class="n">19</span><div class="ev">INF 1340</div></div>
+          <div class="day">五<span class="n">20</span><div class="ev red">面试<br>15:00</div></div>
+          <div class="day">六<span class="n">21</span><div class="ev">超市采购</div></div>
+          <div class="day">日<span class="n">22</span><div class="ev">周复盘</div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="22" height="22"><use href="#b-coin"/></svg><h3>本周花费</h3><span class="hand">money</span></div>
+        <div class="money"><b>$214.50</b><span>/ 预算 $350 · 还剩 $135.50</span></div>
+        <div class="budget"><i></i></div>
+        <div class="bars">
+          <div><em>86</em><i style="height:78%"></i>餐饮</div>
+          <div><em>52</em><i style="height:48%"></i>购物</div>
+          <div><em>31</em><i style="height:29%"></i>交通</div>
+          <div><em>27</em><i style="height:25%"></i>日用</div>
+          <div><em>18</em><i style="height:17%"></i>娱乐</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="22" height="22"><use href="#b-grid"/></svg><h3>习惯打卡</h3><span class="hand">keep going</span></div>
+        <div class="heat" id="heat"></div>
+      </section>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="22" height="22"><use href="#b-fridge"/></svg><h3>我的冰箱</h3><span class="hand">eat me first</span></div>
+        <ul class="fridge">
+          <li>🥛 牛奶<span class="bar"></span><span class="when urgent">明天过期<svg class="doodle" viewBox="0 0 100 40" preserveAspectRatio="none"><ellipse class="r" cx="50" cy="20" rx="47" ry="17"/></svg></span></li>
+          <li>🥚 鸡蛋 × 3<span class="bar"></span><span class="when">3 天</span></li>
+          <li>🥬 菠菜<span class="bar"></span><span class="when">4 天</span></li>
+          <li>🍶 酸奶 × 2<span class="bar"></span><span class="when">6 天</span></li>
+          <li>🥟 冷冻饺子<span class="bar"></span><span class="when">1 个月</span></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="22" height="22"><use href="#b-owl"/></svg><h3>多邻国</h3><span class="hand">english!</span></div>
+        <div class="streak">
+          <div class="num">23<br><small>连续天数</small></div>
+          <div class="word"><b>procrastinate</b><p>v. 拖延 · I tend to procrastinate on Mondays.</p></div>
+        </div>
+        <button class="btn">开始学习</button><span class="prog">今天 12 / 20 个</span>
+      </section>
+
+      <section class="card wide tip">
+        <div class="q">“</div>
+        <div style="flex:1">
+          <div class="ch" style="margin-bottom:8px"><h3>每日小知识</h3></div>
+          <p>番茄钟：专注 25 分钟，休息 5 分钟；做满 4 轮之后，休息 15～30 分钟。</p>
+          <div class="from">来自 知识库 / 学习方法 · 3 天前存的</div>
+        </div>
+        <span class="hand">little by little ♡</span>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- ================= 手机版 ================= -->
+<div class="phone-stage">
+  <div class="phone ph">
+    <div class="island"></div>
+    <div class="scr">
+      <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+      <div class="ph-head"><div class="logo">my os.<small>오늘</small></div><div class="capsule">•••&nbsp;|&nbsp;◎</div></div>
+      <div class="ph-hero">
+        <svg class="art doodle" viewBox="0 0 354 300">
+          <defs><path id="arc2" d="M24 170 Q 60 70 170 66"/></defs>
+          <text font-family="Nanum Pen Script" font-size="24" fill="#e2433b"><textPath href="#arc2">오늘도 화이팅 · good day</textPath></text>
+          <use href="#fridge" x="118" y="70" width="112" height="164"/>
+          <use href="#milk" x="214" y="150" width="58" height="90"/>
+          <use href="#apple" x="74" y="186" width="50" height="50"/>
+          <use href="#spark" x="276" y="96" width="14" height="14"/>
+          <use href="#spark" x="60" y="140" width="10" height="10"/>
+        </svg>
+        <div class="vert cn-hand">好好吃饭</div>
+      </div>
+      <div class="ph-meta">
+        <div class="caps">My life<br>Tuesday · Nov 17</div>
+        <p>今天 3 件待办 · 本周已花 $214.50</p>
+      </div>
+
+      <div class="quick">
+        <button><svg class="doodle" width="36" height="36"><use href="#i-coin"/></svg>记一笔</button>
+        <button><svg class="doodle" width="36" height="36"><use href="#i-fridge"/></svg>放进冰箱</button>
+        <button><svg class="doodle" width="36" height="36"><use href="#i-bulb"/></svg>存知识</button>
+      </div>
+      <div class="notice"><span>📌 今晚 <b>23:59</b> 作业 4 截止</span><span>→</span></div>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="20" height="20"><use href="#b-check"/></svg><h3>今日待办</h3><span class="hand" style="font-size:21px">to do!</span></div>
+        <ul class="todo">
+          <li><span class="box"></span><span class="t">DATA 101 作业 4</span><span class="tag red">23:59</span></li>
+          <li><span class="box"></span><span class="t">买鸡蛋和牛奶</span><span class="tag">后勤</span></li>
+          <li class="done"><span class="box"></span><span class="t">背 20 个单词</span><span class="tag">英语</span></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="ch"><svg class="doodle" width="20" height="20"><use href="#b-cal"/></svg><h3>本周日历</h3></div>
+        <div class="strip">
+          <div>一<span class="n">16</span><i class="pip"></i></div>
+          <div class="today">二<span class="n">17</span><i class="pip red"></i></div>
+          <div>三<span class="n">18</span><i class="pip"></i></div>
+          <div>四<span class="n">19</span><i class="pip"></i></div>
+          <div>五<span class="n">20</span><i class="pip red"></i></div>
+          <div>六<span class="n">21</span><i class="pip"></i></div>
+          <div>日<span class="n">22</span><i class="pip"></i></div>
+        </div>
+        <div class="strip-ev">今天：作业 4 截止 · 18:00 健身</div>
+      </section>
+
+      <div class="two">
+        <section class="card">
+          <div class="ch"><svg class="doodle" width="18" height="18"><use href="#b-coin"/></svg><h3>本周已花</h3></div>
+          <div class="mini-money"><b>$214.5</b><span>预算 $350</span></div>
+          <div class="budget"><i></i></div>
+        </section>
+        <section class="card">
+          <div class="ch"><svg class="doodle" width="18" height="18"><use href="#b-fridge"/></svg><h3>我的冰箱</h3></div>
+          <ul class="mini-fridge">
+            <li class="u"><span>🥛 牛奶</span><span>明天</span></li>
+            <li><span>🥚 鸡蛋</span><span>3 天</span></li>
+            <li><span>🥬 菠菜</span><span>4 天</span></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <button class="on"><svg class="doodle" width="26" height="26"><use href="#i-home"/></svg>今天</button>
+      <button><svg class="doodle" width="26" height="26"><use href="#i-coin"/></svg>记账</button>
+      <button><span class="plus"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#1554a8" stroke-width="3" stroke-linecap="round"/></svg></span></button>
+      <button><svg class="doodle" width="26" height="26"><use href="#i-fridge"/></svg>冰箱</button>
+      <button><svg class="doodle" width="26" height="26"><use href="#i-more"/></svg>更多</button>
+    </nav>
+  </div>
+</div>
+
+<script>
+// 切换电脑 / 手机
+document.querySelectorAll('.switch button').forEach(b=>b.onclick=()=>{
+  document.body.dataset.v=b.dataset.v;
+  document.querySelectorAll('.switch button').forEach(x=>x.classList.toggle('on',x===b));
+});
+// 勾选待办
+document.querySelectorAll('.todo li').forEach(li=>li.onclick=()=>li.classList.toggle('done'));
+// 习惯热力图
+const habits={早起:[2,3,0,3,2,3,3,1,0,3,3,2,3,3],喝水:[3,3,2,3,3,3,2,3,3,3,2,3,3,2],运动:[0,2,0,0,3,0,2,0,0,3,0,2,0,1],背单词:[3,3,3,3,3,2,3,3,3,3,3,3,3,2],早睡:[1,0,2,1,0,0,1,2,0,1,2,0,1,0]};
+const h=document.getElementById('heat');
+h.innerHTML=Object.entries(habits).map(([k,v])=>`<span>${k}</span>`+v.map(x=>`<i class="l${x}"></i>`).join('')).join('');
+// 底部导航
+document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
+  if(b.querySelector('.plus'))return;
+  document.querySelectorAll('.tabbar button').forEach(x=>x.classList.toggle('on',x===b));
+});
+</script>
+</body>
+</html>

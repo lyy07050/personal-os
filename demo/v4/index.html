@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 手机版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--page:#f0f5f2;--ink:#252d29;--ink-2:#4f5c52;--muted:#5b645c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--ink);font-family:"Noto Sans SC",sans-serif;-webkit-font-smoothing:antialiased;padding:40px 32px 60px}
+header{max-width:1720px;margin:0 auto 28px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.brand{font-family:"Gaegu",cursive;font-weight:700;font-size:32px}
+.brand b{color:#a66b53}
+header p{color:var(--ink-2);font-size:14px}
+.row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+figure{display:flex;flex-direction:column;gap:12px;align-items:center}
+.frame{width:412px;height:866px;border-radius:58px;background:#111;padding:11px;box-shadow:0 30px 70px rgba(37,45,41,.18)}
+iframe{width:390px;height:844px;border:0;border-radius:46px;display:block;background:#ebf2ed}
+figcaption{font-size:14px;color:var(--ink-2)}
+figcaption a{color:inherit}
+.desk{max-width:1720px;margin:0 auto 36px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.desk b{font-weight:600;margin-right:8px}
+.desk a{height:38px;padding:0 16px;border-radius:999px;background:#fff;display:inline-flex;align-items:center;font-size:14px;color:var(--ink);text-decoration:none;box-shadow:0 1px 2px rgba(52,72,59,.05),0 4px 12px rgba(52,72,59,.08)}
+.desk a:hover{background:#dfe8db}
+.mob{max-width:1720px;margin:0 auto 16px;font-size:16px;font-weight:600}
+@media (max-width:440px){body{padding:20px 0}.frame{transform:scale(.9);transform-origin:top center}}
+</style>
+</head>
+<body>
+<header><span class="brand">my little <b>os.</b></span><p>示例数据 · 每屏可以点、可以滑</p></header>
+<nav class="desk" aria-label="网页版">
+  <b>网页版</b>
+  <a href="desktop-home.html">首页</a><a href="desktop-inbox.html">随手记</a><a href="desktop-review.html">每周复盘</a><a href="desktop-finance.html">财务部</a><a href="desktop-fridge.html">食物墙</a><a href="desktop-things.html">物品墙</a><a href="desktop-notes.html">知识库</a><a href="desktop-english.html">多邻国</a><a href="desktop-school.html">教务处</a><a href="desktop-career.html">人事部</a><a href="desktop-private.html">个人档案</a>
+</nav>
+<h2 class="mob">手机版 · 12 屏</h2>
+<div class="row">
+  <figure><div class="frame"><iframe src="mobile-home.html" title="首页"></iframe></div><figcaption>今天 · <a href="mobile-home.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-expense.html" title="记一笔"></iframe></div><figcaption>记一笔 · <a href="mobile-expense.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-fridge.html" title="冰箱"></iframe></div><figcaption>冰箱 · <a href="mobile-fridge.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-more.html" title="所有部门"></iframe></div><figcaption>更多 · <a href="mobile-more.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-inbox.html" title="随手记"></iframe></div><figcaption>随手记 · <a href="mobile-inbox.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-review.html" title="每周复盘"></iframe></div><figcaption>每周复盘 · <a href="mobile-review.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-things.html" title="物品墙"></iframe></div><figcaption>物品墙 · <a href="mobile-things.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-notes.html" title="知识库"></iframe></div><figcaption>知识库 · <a href="mobile-notes.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-english.html" title="多邻国"></iframe></div><figcaption>多邻国 · <a href="mobile-english.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-school.html" title="教务处"></iframe></div><figcaption>教务处 · <a href="mobile-school.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-career.html" title="人事部"></iframe></div><figcaption>人事部 · <a href="mobile-career.html">单独打开</a></figcaption></figure>
+  <figure><div class="frame"><iframe src="mobile-private.html" title="个人档案"></iframe></div><figcaption>个人档案 · <a href="mobile-private.html">单独打开</a></figcaption></figure>
+</div>
+</body>
+</html>

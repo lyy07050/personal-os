@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 知识库</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.idea .nh{display:flex;justify-content:space-between;font-size:15px;color:var(--ink-2);padding-bottom:14px;border-bottom:1px solid rgba(37,45,41,.1);margin-bottom:20px}
+.idea p{font-family:var(--zcool);font-size:27px;line-height:1.5}
+.cats{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+.cat{height:150px;text-align:left;font:inherit;color:inherit;border:0;cursor:pointer;border-radius:16px;padding:16px 14px 14px;display:flex;flex-direction:column;cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.cat:hover{transform:translateY(-2px)}
+.cat h3{font-family:var(--zcool);font-weight:400;font-size:20px}
+.cat .g{font-size:40px;line-height:1.2;color:var(--green)}
+.cat small{margin-top:auto;font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.cat[aria-pressed="true"]{outline:2px solid var(--green);outline-offset:-2px}
+.filter{height:34px;padding:0 14px;border-radius:17px;background:var(--green);color:#fff;font-size:15px;display:inline-flex;align-items:center;gap:8px}
+.filter[hidden]{display:none}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.k{border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;min-height:193px}
+.k[hidden]{display:none}
+.k h3{font-family:var(--zcool);font-weight:400;font-size:26px;margin-bottom:10px}
+.k p{font-size:16px;color:var(--ink-2);line-height:1.6;margin-bottom:16px}
+.k .meta{margin-top:auto;display:flex;align-items:center;gap:14px;font-size:15px;color:var(--ink-2)}
+.k .meta .d{margin-left:auto}
+</style>
+</head>
+<body data-page="notes">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs"><button class="cjk on">知识卡</button><button class="cjk">灵感</button><button class="cjk">胡思乱想</button></div>
+    <div class="find">⌕ 搜索知识…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">40 · NOTES</p>
+    <h1>知识库</h1>
+    <p class="facts">38 张知识卡 · 今天要复习<b>6 张</b> · 本周新增 9 张</p>
+    <div class="btns"><button class="btn pri">开始复习</button><button class="btn sec">＋ 存一条</button></div>
+    <img class="art" src="assets/notes-flower.png" alt="" style="left:961px;top:37px;width:238px">
+  </section>
+
+  <div class="stack">
+    <section class="card" aria-label="分类">
+      <div class="head"><h2>分类</h2><a href="#" class="note" style="color:var(--ink)">＋ 新分类</a></div>
+      <div class="cats" id="cats">
+        <button class="cat" data-c="生活小知识" style="background:var(--beige)" aria-pressed="false"><h3>生活小知识</h3><span class="g">10</span></button>
+        <button class="cat" data-c="体态" style="background:var(--sage)" aria-pressed="false"><h3>体态</h3><span class="g">5</span></button>
+        <button class="cat" data-c="变美" style="background:var(--pink)" aria-pressed="false"><h3>变美</h3><span class="g">7</span><small>化妆 · 穿搭</small></button>
+        <button class="cat" data-c="多伦多生活" style="background:var(--blue)" aria-pressed="false"><h3>多伦多生活</h3><span class="g">5</span></button>
+        <button class="cat" data-c="回国吃喝玩乐" style="background:var(--yellow)" aria-pressed="false"><h3>回国吃喝玩乐</h3><span class="g">3</span></button>
+        <button class="cat" data-c="学习" style="background:var(--purple)" aria-pressed="false"><h3>学习</h3><span class="g">5</span></button>
+        <button class="cat" data-c="求职" style="background:var(--apricot)" aria-pressed="false"><h3>求职</h3><span class="g">3</span></button>
+      </div>
+    </section>
+
+    <section class="card" aria-label="最近的知识卡">
+      <div class="head"><h2>最近的知识卡</h2><button class="filter" id="filterNote" hidden></button></div>
+      <div class="cards" id="cards">
+        <article class="tile k" data-c="生活小知识"><h3>一周备餐：5 天午饭</h3><p>周日做两种主菜 + 一种蔬菜，分 5 盒冷藏，第 4、5 天的放冷冻。</p><div class="meta"><span class="chip pink">小红书</span>生活小知识<span class="d">昨天</span></div></article>
+        <article class="tile k" data-c="学习"><h3>pandas 的 groupby</h3><p>df.groupby('类别')['金额'].sum() —— 按类别求和，用在账本分析上正合适。</p><div class="meta"><span class="chip beige">课堂</span>学习<span class="d">11.16</span></div></article>
+        <article class="tile k" data-c="求职"><h3>面试 STAR 法则</h3><p>情境 Situation、任务 Task、行动 Action、结果 Result，每个故事控制在 2 分钟。</p><div class="meta"><span class="chip">网页</span>求职<span class="d">11.15</span></div></article>
+        <article class="tile k" data-c="学习"><h3>番茄钟</h3><p>专注 25 分钟，休息 5 分钟；做满 4 轮之后休息 15 – 30 分钟。</p><div class="meta"><span class="chip purple">抖音</span>学习<span class="d">11.14</span></div></article>
+        <article class="tile k" data-c="多伦多生活"><h3>加拿大报税 T2202</h3><p>学费抵税表在 ACORN 下载，二月底前出，报税时填进去。</p><div class="meta"><span class="chip">网页</span>多伦多生活<span class="d">11.12</span></div></article>
+        <article class="tile k" data-c="变美"><h3>冬天护手</h3><p>洗手后 1 分钟内涂护手霜，晚上厚涂 + 戴棉手套。</p><div class="meta"><span class="chip pink">小红书</span>变美<span class="d">11.10</span></div></article>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>
+const F=document.getElementById('filterNote');
+function setFilter(c){document.querySelectorAll('.cat').forEach(x=>x.setAttribute('aria-pressed',x===c));
+  document.querySelectorAll('#cards .k').forEach(k=>k.hidden=!!c&&k.dataset.c!==c.dataset.c);
+  F.hidden=!c;if(c)F.innerHTML=c.dataset.c+' <span aria-hidden="true">✕</span>';F.setAttribute('aria-label',c?'取消筛选 '+c.dataset.c:'');}
+document.getElementById('cats').addEventListener('click',e=>{const c=e.target.closest('.cat');if(!c)return;setFilter(c.getAttribute('aria-pressed')==='true'?null:c);});
+F.onclick=()=>setFilter(null);
+</script>
+</body>
+</html>

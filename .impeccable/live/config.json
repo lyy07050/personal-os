@@ -1,0 +1,6 @@
+{
+  "files": ["demo/v4/desktop-*.html", "demo/v4/mobile-*.html"],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}

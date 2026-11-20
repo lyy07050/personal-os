@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 财务部</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.big{font-size:88px;line-height:1;color:var(--green);margin:6px 0 22px}
+.big small{font-size:32px;color:var(--ink-2)}
+.prog{height:12px;border-radius:6px;background:#e8eee9;overflow:hidden;margin-bottom:16px}
+.prog span{display:block;height:100%;width:58%;background:#f6d6d2;border-radius:6px}
+.cat-wrap{display:grid;grid-template-columns:200px 1fr;gap:36px;align-items:center}
+.pie{width:200px;height:200px;display:block}
+.pie path{stroke:#fff;stroke-width:2.5;stroke-linejoin:round;transition:transform .25s cubic-bezier(.2,.8,.2,1);transform-origin:100px 100px}
+.pie path:hover{transform:scale(1.04)}
+.pie text{font-family:var(--gaegu);font-weight:700;font-size:15px;fill:#4a524c;text-anchor:middle}
+.cats li{display:grid;grid-template-columns:22px 1fr auto;align-items:center;font-size:16px;padding:10px 0}
+.cats .sw{width:13px;height:13px;border-radius:3px}
+tr.pending td{background:#faf1ee}
+.guess{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(37,45,41,.07)}
+.guess b{display:block;font-weight:500;font-size:18px}
+.guess small{font-size:15px;color:var(--muted)}
+.guess .btn{height:40px;font-size:15px}
+.subs li{display:grid;grid-template-columns:30px 1fr auto;align-items:center;font-size:16px;padding:13px 0}
+.subs .sw{width:15px;height:15px;border-radius:3px}
+.budget{display:flex;align-items:center;gap:16px}
+.budget .prog{flex:1;position:relative;margin:0;overflow:visible}
+.budget .prog span{border-radius:6px}
+.budget .tick{position:absolute;left:60%;top:-5px;width:2px;height:22px;background:var(--ink-2);border-radius:1px}
+.budget>span{font-size:17px;color:var(--ink-2);white-space:nowrap}
+.budget b{font-weight:500;color:var(--ink)}
+.ends{display:flex;justify-content:space-between;width:calc(100% - 150px);font-size:13px;color:var(--muted);margin-top:8px}
+.pick{display:flex;gap:8px}
+.pick .chg{height:40px;font-size:15px}
+/* 纽扣花边压在「每周花费」卡右下角、横跨底边：图片是竖图，转 -90° 后视觉宽 397、高 95 */
+.fin-buttons{position:absolute;width:95px;height:397px;right:186px;bottom:-190px;transform:rotate(-90deg);pointer-events:none;filter:var(--sh-sticker);z-index:2}
+</style>
+</head>
+<body data-page="finance">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs"><button class="lat">Week</button><button class="lat on">November</button><button class="lat">Year</button></div>
+    <div class="find">⌕ 搜索账单…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">20 · FINANCE · CAD</p>
+    <h1>财务部</h1>
+    <p class="facts">十一月已花 <b>$812.40</b> / 预算 $1,400 · 2 笔待分类</p>
+    <div class="btns"><button class="btn pri">＋ 记一笔</button><button class="btn sec">整理账本</button><button class="btn sec">导出本月</button></div>
+    <img class="art" src="assets/fin-stamps.png" alt="" style="left:986px;top:-34px;width:226px">
+  </section>
+
+  <div class="stack">
+    <div class="row c2" style="position:relative">
+      <section class="card">
+        <div class="head"><h2>本月</h2><span class="note">11.01 – 11.18</span></div>
+        <div class="big g">$812<small>.40</small></div>
+        <div class="budget"><div class="prog"><span></span><i class="tick" title="本月过去 60%"></i></div><span>还剩 <b>$587.60</b></span></div>
+      </section>
+      <section class="card">
+        <div class="head"><h2>分类</h2></div>
+        <div class="cat-wrap">
+          <svg class="pie" viewBox="0 0 200 200" role="img" aria-label="十一月花费分类饼图"></svg>
+          <ul class="list cats">
+            <li data-v="276.20" data-c="#f3c7c0"><span class="sw"></span>餐饮<span class="mono">$276.20</span></li>
+            <li data-v="178.70" data-c="#cfe2f0"><span class="sw"></span>购物<span class="mono">$178.70</span></li>
+            <li data-v="113.70" data-c="#fbe5a3"><span class="sw"></span>交通<span class="mono">$113.70</span></li>
+            <li data-v="90.00" data-c="#ddd3e8"><span class="sw"></span>服饰<span class="mono">$90.00</span></li>
+            <li data-v="80.00" data-c="#f9e0dc"><span class="sw"></span>美妆<span class="mono">$80.00</span></li>
+            <li data-v="73.80" data-c="#eadfc5"><span class="sw"></span>其他<span class="mono">$73.80</span></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="height:330px;position:relative">
+      <img class="fin-buttons" src="assets/fin-buttons.png" alt="">
+      <div class="head"><h2>每周花费 · 近 8 周</h2></div>
+      <svg width="640" height="200" viewBox="0 0 640 200" aria-label="近 8 周每周花费走势">
+        <line x1="20" y1="150" x2="520" y2="150" stroke="#cfd8d0" stroke-dasharray="4 4"/>
+        <path d="M20 128 C 60 110, 90 70, 130 80 S 190 120, 220 118 S 280 60, 330 58 S 400 96, 440 92 S 500 80, 520 76" fill="none" stroke="#7f8f6e" stroke-width="2.4"/>
+        <circle cx="520" cy="76" r="5" fill="#d07a6e"/>
+        <g font-size="14" fill="#636d64" font-family="Noto Sans SC"><text x="6" y="186">10/5</text><text x="70" y="186">10/12</text><text x="136" y="186">10/19</text><text x="202" y="186">10/26</text><text x="270" y="186">11/2</text><text x="334" y="186">11/9</text><text x="398" y="186">11/16</text><text x="488" y="186">本周</text><text x="526" y="154">周预算 $350</text><text x="470" y="64" fill="#a15c46">$214</text></g>
+      </svg>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>账单流水</h2></div>
+      <table>
+        <thead><tr><th>日期</th><th>项目</th><th>分类</th><th>方式</th><th style="text-align:right">金额</th></tr></thead>
+        <tbody>
+          <tr><td>11.18</td><td>奶茶</td><td><span class="chip pink">餐饮</span></td><td>Apple Pay</td><td class="amt">$6.50</td></tr>
+          <tr class="pending"><td>11.18</td><td>SQ *KOBO STORE</td><td><span class="chip plain">待分类</span></td><td>Apple Pay</td><td class="amt">$14.99</td></tr>
+          <tr><td>11.17</td><td>TTC 月票</td><td><span class="chip">交通</span></td><td>Apple Pay</td><td class="amt">$128.15</td></tr>
+          <tr><td>11.17</td><td>No Frills 超市</td><td><span class="chip pink">餐饮</span></td><td>Apple Pay</td><td class="amt">$42.86</td></tr>
+          <tr class="pending"><td>11.16</td><td>AMZN Mktp CA</td><td><span class="chip plain">待分类</span></td><td>信用卡</td><td class="amt">$23.40</td></tr>
+          <tr><td>11.16</td><td>Uniqlo 毛衣</td><td><span class="chip purple">服饰</span></td><td>Apple Pay</td><td class="amt">$49.90</td></tr>
+          <tr><td>11.15</td><td>Shoppers 洗面奶</td><td><span class="chip yellow">美妆</span></td><td>Apple Pay</td><td class="amt">$17.99</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <div class="head" style="margin-bottom:4px"><h2>待分类</h2></div>
+      <div class="guess"><div><b>SQ *KOBO STORE</b><small class="mono">$14.99</small></div><div class="pick"><button class="btn pri">学习 ✓</button><button class="btn sec chg">改</button></div></div>
+      <div class="guess" style="border:0"><div><b>AMZN Mktp CA</b><small class="mono">$23.40</small></div><div class="pick"><button class="btn pri">日用 ✓</button><button class="btn sec chg">改</button></div></div>
+      <div class="head" style="margin:26px 0 4px"><h2>订阅</h2></div>
+      <ul class="list subs">
+        <li><span class="sw" style="background:var(--green)"></span>Spotify 学生<span class="mono">$6.49/月</span></li>
+        <li><span class="sw" style="background:#a66b53"></span>iCloud 50 GB<span class="mono">$1.29/月</span></li>
+        <li><span class="sw" style="background:#e8dccb"></span>Obsidian Sync<span class="mono">$5.00/月</span></li>
+      </ul>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>
+// 分类饼图：从列表里的金额算扇区，最大的在 12 点钟方向起顺时针排
+(function(){const svg=document.querySelector('.pie');const lis=[...document.querySelectorAll('.cats li')];
+  const tot=lis.reduce((a,l)=>a+ +l.dataset.v,0);let a0=-Math.PI/2,h='';
+  const pt=(a,r)=>[100+r*Math.cos(a),100+r*Math.sin(a)];
+  lis.forEach(l=>{const v=+l.dataset.v,c=l.dataset.c,a1=a0+v/tot*2*Math.PI;l.querySelector('.sw').style.background=c;
+    const [x0,y0]=pt(a0,96),[x1,y1]=pt(a1,96);
+    h+=`<path d="M100 100L${x0.toFixed(1)} ${y0.toFixed(1)}A96 96 0 ${a1-a0>Math.PI?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}Z" fill="${c}"><title>${l.firstChild.nextSibling.textContent.trim()} ${Math.round(v/tot*100)}%</title></path>`;
+    const p=Math.round(v/tot*100);if(p>=10){const [tx,ty]=pt((a0+a1)/2,62);h+=`<text x="${tx.toFixed(1)}" y="${(ty+5).toFixed(1)}">${p}%</text>`;}
+    a0=a1;});svg.innerHTML=h;})();
+</script>
+<script>
+const CATS=['餐饮','购物','交通','日用','学习','服饰','美妆'];
+document.querySelectorAll('.guess').forEach(g=>{const ok=g.querySelector('.pri'),chg=g.querySelector('.chg');let cat=ok.textContent.replace(' ✓','');
+  chg.onclick=()=>{if(g.classList.contains('done'))return;cat=CATS[(CATS.indexOf(cat)+1)%CATS.length];ok.textContent=cat+' ✓';};
+  ok.onclick=()=>{const d=g.classList.toggle('done');ok.textContent=d?'撤销':cat+' ✓';chg.hidden=d;g.querySelector('div').style.opacity=d?.4:1;};});
+</script>
+</body>
+</html>

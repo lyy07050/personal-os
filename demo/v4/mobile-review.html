@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 每周复盘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mobile.css?v=6">
+<style>
+.plan{margin-bottom:12px}
+.three{list-style:none;display:flex;flex-direction:column;gap:8px}
+.three li{display:flex;align-items:center;gap:12px;background:var(--tint);border-radius:14px;padding:6px 14px;border:1px solid rgba(37,45,41,.06);position:relative}
+.three .n{font-weight:600;color:var(--green);width:14px}
+.three input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:15px;outline:none;min-height:34px;caret-color:var(--green)}
+.three li:focus-within{border-color:var(--green)}
+.three li::before{content:"";position:absolute;left:-8px;top:50%;width:34px;height:14px;translate:0 -50%;rotate:-8deg;scale:0;opacity:.85;background:#f8dcd8;border-radius:2px;transition:scale .35s cubic-bezier(.2,.8,.2,1)}
+.three.pinned li::before{scale:1}.three.pinned li:nth-child(2)::before{transition-delay:.12s;background-color:#fef0c4}.three.pinned li:nth-child(3)::before{transition-delay:.24s;background-color:#dfe8db}
+.save{width:100%;height:48px;border-radius:999px;background:var(--green);color:#fff;font-size:15px;font-weight:600;margin-top:12px}
+.save:disabled{opacity:.55}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:12px}
+.st{padding:14px 16px;text-align:center}
+.label2{display:block;font-size:13px;color:var(--ink-2)}
+.st .num{display:block;font-size:34px;line-height:1.15;color:var(--green)}
+.st .num small{font-size:16px;color:var(--ink-2)}
+.hr{display:grid;grid-template-columns:44px repeat(7,1fr);align-items:center;padding:3px 0}
+.hr.head .d{font-size:12px;color:var(--muted);text-align:center}
+.hn{font-size:13.5px}
+.dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--outline);background:#f6f8f4;display:grid;place-items:center;margin:0 auto}
+.dot svg{opacity:0}.dot.on{background:var(--green);border-color:var(--green)}.dot.on svg{opacity:1}
+.strip{display:flex;height:36px;border-radius:10px;overflow:hidden;gap:3px}
+.strip span{display:flex;align-items:center;padding:0 8px;font-size:12.5px;color:#303a33;min-width:0;overflow:hidden;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll">
+        <div class="status"><span>9:41</span><svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/></g></svg></div>
+        <header class="navbar"><a class="round" href="mobile-more.html" aria-label="返回所有部门"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3 5 9l6 6" fill="none" stroke="#252d29" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="title"><h1 class="h">每周复盘</h1><p>Week 47 · 11.16 – 11.22</p></div></header>
+
+        <section class="card plan" aria-label="下周三件要事">
+          <div class="label"><span>下周三件要事</span></div>
+          <ol class="three"><li><span class="n">1</span><input value="交 INF 1340 Assignment 3" aria-label="第 1 件"></li><li><span class="n">2</span><input value="投 3 份实习" aria-label="第 2 件"></li><li><span class="n">3</span><input value="" aria-label="第 3 件"></li></ol>
+          <button class="save" id="toHome">放进首页待办</button>
+        </section>
+        <div class="stats">
+          <div class="card st"><span class="label2">完成待办</span><b class="num">18<small>/23</small></b></div>
+          <div class="card st"><span class="label2">本周花费</span><b class="num">$214</b></div>
+          <div class="card st"><span class="label2">学英语</span><b class="num">6<small>天</small></b></div>
+          <div class="card st"><span class="label2">新知识卡</span><b class="num">9</b></div>
+        </div>
+        <section class="card" aria-label="习惯打卡">
+          <div class="label"><span>习惯打卡</span></div>
+          <div class="hr head"><span class="hn"></span><span class="d">一</span><span class="d">二</span><span class="d">三</span><span class="d">四</span><span class="d">五</span><span class="d">六</span><span class="d">日</span></div>
+          <div class="hr"><span class="hn">早起</span><button class="dot on" aria-label="早起 周一"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="早起 周二"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="早起 周三"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="早起 周四"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="早起 周五"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="早起 周六"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="早起 周日"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="hr"><span class="hn">喝水</span><button class="dot on" aria-label="喝水 周一"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="喝水 周二"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="喝水 周三"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="喝水 周四"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="喝水 周五"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="喝水 周六"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="喝水 周日"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="hr"><span class="hn">运动</span><button class="dot" aria-label="运动 周一"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="运动 周二"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="运动 周三"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="运动 周四"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="运动 周五"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="运动 周六"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="运动 周日"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="hr"><span class="hn">背词</span><button class="dot on" aria-label="背词 周一"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="背词 周二"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="背词 周三"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="背词 周四"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="背词 周五"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="背词 周六"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="背词 周日"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="hr"><span class="hn">早睡</span><button class="dot on" aria-label="早睡 周一"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="早睡 周二"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="早睡 周三"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="早睡 周四"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="早睡 周五"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot on" aria-label="早睡 周六"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="dot" aria-label="早睡 周日"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        </section>
+        <section class="card" aria-label="钱花在哪" style="margin-top:12px">
+          <div class="label"><span>钱花在哪</span><span class="count">还剩 $135.50</span></div>
+          <div class="strip"><span style="flex:86;background:#f8dcd8">餐饮</span><span style="flex:52;background:var(--blue)">购物</span><span style="flex:31;background:#fff0be">交通</span><span style="flex:27;background:#ece6ef">日用</span></div>
+        </section>
+      </div>
+      
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CK='<svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{d.classList.toggle('on');if(d.classList.contains('on')){d.classList.remove('stamp');void d.offsetWidth;d.classList.add('stamp');}});
+document.getElementById('toHome').onclick=e=>{const b=e.currentTarget;b.textContent='已放进首页待办';b.disabled=true;document.querySelector('.three').classList.add('pinned');};
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>

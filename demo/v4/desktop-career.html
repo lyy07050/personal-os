@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 人事部</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.board{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;align-items:start}
+.col{border-radius:22px;padding:18px 16px 16px}
+.col .ch{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 12px}
+.col h3{font-family:var(--zcool);font-weight:400;font-size:26px}
+.col .ch span{font-size:16px;color:var(--brown);font-weight:500}
+.co{background:#fff;border-radius:16px;border:1px solid rgba(37,45,41,.06);padding:16px 18px;margin-bottom:12px;box-shadow:0 1px 2px rgba(52,72,59,.04)}
+.co b{display:block;font-weight:500;font-size:18px}
+.co small{display:block;font-size:14px;color:var(--muted);margin:3px 0 12px}
+.empty{font-size:15px;color:var(--muted);padding:4px}
+.tip .nh{display:flex;justify-content:space-between;font-size:15px;color:var(--ink-2);padding-bottom:14px;border-bottom:1px solid rgba(37,45,41,.1);margin-bottom:20px}
+.tip p{font-family:var(--zcool);font-size:24px;line-height:1.5;max-width:32em}
+.slot{height:96px;border:1.5px dashed rgba(37,45,41,.14);border-radius:16px}
+.more{display:block;padding:6px 4px 0;font-size:15px;color:var(--ink-2)}
+</style>
+</head>
+<body data-page="career">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs"><button class="lat on">Pipeline</button><button class="lat">Interviews</button><button class="lat">Notes</button></div>
+    <div class="find">⌕ 搜索公司…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">50 · CAREER</p>
+    <h1>人事部</h1>
+    <p class="facts">投递 14 · 面试中 2 · 周五 <b>15:00 面试</b></p>
+    <div class="btns"><button class="btn pri">打开 JobSync</button><button class="btn sec">＋ 记一次投递</button></div>
+    <img class="art" src="assets/career-flower.png" alt="" style="left:828px;top:118px;width:160px">
+    <img class="art" src="assets/career-shell1.png" alt="" style="left:881px;top:95px;width:96px">
+    <img class="art" src="assets/career-lotus2.png" alt="" style="left:952px;top:63px;width:232px">
+    <img class="art" src="assets/career-shell2.png" alt="" style="left:1126px;top:191px;width:83px">
+    <img class="art" src="assets/career-butterflies.png" alt="" style="left:990px;top:-88px;width:307px;filter:none">
+  </section>
+
+  <div class="stack">
+    <section class="group board" aria-label="求职流程"><h2 class="sr">求职流程</h2>
+      <div class="col tile"><div class="ch"><h3>想投</h3><span>5</span></div>
+        <div class="co"><b>Shopify</b><small>Data Analyst Intern · Toronto</small><span class="chip apricot">截止 11.30</span></div>
+        <div class="co"><b>RBC</b><small>Business Insights Co-op</small><span class="chip apricot">截止 12.05</span></div><a class="more" href="#">另外 3 家 →</a></div>
+      <div class="col tile"><div class="ch"><h3>已投递</h3><span>7</span></div>
+        <div class="co"><b>TD Bank</b><small>Data Science Intern</small><span class="chip">11.10 投递</span></div>
+        <div class="co"><b>Wealthsimple</b><small>Analytics Intern</small><span class="chip">11.06 投递</span></div>
+        <div class="co"><b>Loblaw Digital</b><small>Product Analyst Co-op</small><span class="chip">11.02 投递</span></div><a class="more" href="#">另外 4 家 →</a></div>
+      <div class="col tile"><div class="ch"><h3>面试中</h3><span>2</span></div>
+        <div class="co"><b>Manulife</b><small>Data Analyst Intern</small><span class="chip pink">周五 15:00 二面</span></div>
+        <div class="co"><b>CIBC</b><small>Risk Analytics Co-op</small><span class="chip yellow">等结果</span></div></div>
+      <div class="col tile"><div class="ch"><h3 class="g" style="font-family:var(--gaegu);font-size:30px">Offer</h3><span>0</span></div>
+        <div class="slot" aria-hidden="true"></div></div>
+    </section>
+
+    <section class="card"><div class="head" style="margin-bottom:6px"><h2>周五面试准备</h2><span class="note">Manulife · 二面 · 视频</span></div>
+      <ul class="list">
+        <li class="done"><button class="ck" aria-label="完成" style="width:30px;height:30px"></button><span class="t">复习简历上的 3 个项目</span></li>
+        <li><button class="ck" aria-label="完成" style="width:30px;height:30px"></button><span class="t">准备 2 个 STAR 故事（团队冲突、赶截止）</span></li>
+        <li><button class="ck" aria-label="完成" style="width:30px;height:30px"></button><span class="t">SQL 窗口函数再练 5 题</span></li>
+        <li><button class="ck" aria-label="完成" style="width:30px;height:30px"></button><span class="t">想好 3 个反问问题</span></li>
+      </ul>
+    </section>
+
+    <section class="card tip"><div class="nh"><span>求职小知识</span><a href="desktop-notes.html">知识库 →</a></div>
+      <p>面试结束 24 小时内发感谢邮件，提一句面试里聊到的具体内容。</p>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 物品墙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.items{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.item{border-radius:22px;padding:24px 24px 26px;height:382px;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.item:hover{transform:translateY(-2px)}
+.item[hidden]{display:none}
+.ph{height:150px;border-radius:12px;position:relative;display:grid;place-items:center;margin-bottom:18px}
+.ph .chip{position:absolute;left:14px;top:14px;height:28px;font-size:14px;background:rgba(255,255,255,.7);color:var(--ink-2)}
+.ph .g{font-size:35px;color:rgba(37,45,41,.55);letter-spacing:.06em}
+.item h3{font-family:var(--zcool);font-weight:400;font-size:26px;margin-bottom:6px}
+.item dl{display:grid;grid-template-columns:42px 1fr;row-gap:4px;font-size:16px}
+.item dt{color:var(--muted)}
+.item dd{color:var(--table)}
+.where{display:flex;align-items:center;gap:7px;font-size:18px;color:var(--ink);margin:2px 0 10px}
+</style>
+</head>
+<body data-page="things">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs" id="cats"><button class="cjk on" data-c="all">全部</button><button class="cjk" data-c="电子">电子</button><button class="cjk" data-c="小玩意">小玩意</button><button class="cjk" data-c="衣物">衣物</button><button class="cjk" data-c="化妆品">化妆品</button><button class="cjk" data-c="厨房">厨房</button></div>
+    <div class="find">⌕ 东西放哪了…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">31 · THINGS</p>
+    <h1>物品墙</h1>
+    <p class="facts">42 件 · 最近添加：降噪耳机 · 2 件保修快到期</p>
+    <div class="btns"><button class="btn pri">＋ 添加物品</button><button class="btn sec">按位置看</button></div>
+    <img class="art" src="assets/things-lantern.png" alt="" style="left:698px;top:-92px;width:346px">
+    <img class="art" src="assets/things-snuff.png" alt="" style="left:971px;top:39px;width:185px">
+  </section>
+
+  <section class="group items" id="items" aria-label="物品"><h2 class="sr">物品</h2>
+    <article class="tile item" data-c="电子"><div class="ph" style="background:var(--pink)"><span class="chip">电子</span></div><h3>降噪耳机</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>书桌抽屉</p><dl><dt>购入</dt><dd>2026.11.02 · $249</dd><dt>保修</dt><dd>到 2027.11</dd></dl></article>
+    <article class="tile item" data-c="衣物"><div class="ph" style="background:var(--blue)"><span class="chip">衣物</span></div><h3>驼色大衣</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>衣柜左边</p><dl><dt>购入</dt><dd>2025.10.20 · $189</dd><dt>尺码</dt><dd>S</dd></dl></article>
+    <article class="tile item" data-c="厨房"><div class="ph" style="background:var(--yellow)"><span class="chip">厨房</span></div><h3>电饭煲</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>厨房台面</p><dl><dt>购入</dt><dd>2025.09.03 · $69</dd><dt>保修</dt><dd class="warn">12 月到期</dd></dl></article>
+    <article class="tile item" data-c="化妆品"><div class="ph" style="background:var(--apricot)"><span class="chip">化妆品</span></div><h3>防晒霜</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>浴室镜柜</p><dl><dt>购入</dt><dd>2026.05.02 · $28</dd><dt>开封</dt><dd>2026.06 · <span class="warn">12 月要换</span></dd></dl></article>
+    <article class="tile item" data-c="电子"><div class="ph" style="background:var(--pink)"><span class="chip">电子</span></div><h3>Kindle</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>床头</p><dl><dt>购入</dt><dd>2024.12.25 · $139</dd><dt>保修</dt><dd class="warn">已过期</dd></dl></article>
+    <article class="tile item" data-c="衣物"><div class="ph" style="background:var(--blue)"><span class="chip">衣物</span></div><h3>雪地靴</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>门口鞋柜</p><dl><dt>购入</dt><dd>2025.11.30 · $120</dd><dt>尺码</dt><dd>37</dd></dl></article>
+    <article class="tile item" data-c="厨房"><div class="ph" style="background:var(--yellow)"><span class="chip">厨房</span></div><h3>手冲壶</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>厨房上柜</p><dl><dt>购入</dt><dd>2026.03.14 · $45</dd><dt>备注</dt><dd>滤纸在旁边</dd></dl></article>
+    <article class="tile item" data-c="小玩意"><div class="ph" style="background:var(--purple)"><span class="chip">小玩意</span></div><h3>香薰蜡烛</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>床头柜</p><dl><dt>购入</dt><dd>2026.10.11 · $22</dd><dt>备注</dt><dd>还剩一半</dd></dl></article>
+    <article class="tile item" data-c="小玩意"><div class="ph" style="background:var(--purple)"><span class="chip">小玩意</span></div><h3>拍立得相纸</h3><p class="where"><svg width="13" height="16" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>书桌第二个抽屉</p><dl><dt>购入</dt><dd>2026.08.20 · $19</dd><dt>剩余</dt><dd>7 张</dd></dl></article>
+  </section>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>
+document.getElementById('cats').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#items .item').forEach(i=>i.hidden=!(b.dataset.c==='all'||i.dataset.c===b.dataset.c));});
+</script>
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>视觉方向 · 人生 OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=ZCOOL+XiaoWei&family=Long+Cang&family=Nanum+Pen+Script&family=Noto+Sans+SC:wght@400;500;700&family=Italiana&family=Courier+Prime&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;-webkit-font-smoothing:antialiased}
+/* ===== 切换器 ===== */
+.bar{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99;display:flex;gap:6px;align-items:center;background:rgba(40,36,32,.88);backdrop-filter:blur(10px);padding:5px;border-radius:999px;font:500 13px "Noto Sans SC";box-shadow:0 8px 24px -10px rgba(0,0,0,.4);max-width:calc(100vw - 24px);overflow-x:auto}
+.bar button{border:0;background:none;color:#e9e3d8;padding:7px 13px;border-radius:999px;cursor:pointer;font:inherit;white-space:nowrap}
+.bar button.on{background:#fffaf2;color:#2a2520}
+.bar i{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 2px}
+body[data-s="s1"] .s2,body[data-s="s2"] .s1{display:none}
+body[data-v="dk"] .phwrap,body[data-v="ph"] .dk{display:none}
+
+/* ===================================================== */
+/* 风格 1 · 韩式手绘 · 奶茶店小程序                       */
+/* ===================================================== */
+body[data-p="blue"]  {--a:#1f4fa0;--a2:#dce6f4;--b:#e0503f;--b2:#fadcd5;--leaf:#6f9a5b}
+body[data-p="berry"] {--a:#cf3f45;--a2:#fbe0dc;--b:#3f7d4e;--b2:#dcebd8;--leaf:#5f9a5a}
+body[data-p="matcha"]{--a:#587a38;--a2:#e4ead3;--b:#c8762e;--b2:#f6e4cd;--leaf:#7e9f55}
+.s1{--bg:#f7f4ec;--card:#fffdf8;--ink1:#2b2620;--mute:#8a8174;color:var(--ink1);font-family:"Noto Sans SC",sans-serif;min-height:100vh;
+  background:radial-gradient(rgba(60,40,20,.035) 1px,transparent 1.2px) 0 0/5px 5px,linear-gradient(180deg,var(--bg) 0%,var(--bg) 52%,var(--a2) 100%)}
+.s1 .serif{font-family:"Fraunces","ZCOOL XiaoWei",serif}
+.s1 .zh{font-family:"ZCOOL XiaoWei","Fraunces",serif}
+.s1 .hand{font-family:"Nanum Pen Script","Long Cang",cursive}
+.s1 .cnh{font-family:"Long Cang",cursive}
+.ink{filter:url(#wob);overflow:visible}
+.k{fill:none;stroke:var(--ink1,#2b2620);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sa{fill:none;stroke:var(--a);stroke-width:2;stroke-linecap:round}
+.wl{fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.fa{fill:var(--a)}.fa2{fill:var(--a2)}.fb{fill:var(--b)}.fb2{fill:var(--b2)}.fl{fill:var(--leaf)}
+.fy{fill:#f2c056}.fw{fill:#fffdf8}.fr{fill:#e2503f}
+
+.s1 .dk{max-width:1200px;margin:0 auto;padding:70px 36px 60px}
+.top1{display:flex;align-items:center;gap:26px;margin-bottom:10px}
+.logo1{font:italic 400 28px "Fraunces";letter-spacing:-.01em}
+.logo1 b{font-style:normal;font-weight:600;color:var(--a)}
+.logo1 small{font:400 18px "Nanum Pen Script";color:var(--b);margin-left:4px}
+.pills{display:flex;gap:6px;margin-left:auto}
+.pills a{font-size:13px;padding:7px 15px;border-radius:999px;color:var(--ink1);cursor:pointer}
+.pills a.on{background:var(--a);color:#fff}
+.pills a:hover:not(.on){background:var(--a2)}
+
+.hero1{display:grid;grid-template-columns:1fr 1.15fr;align-items:center;gap:20px;min-height:330px}
+.eyebrow{font:600 12px "Fraunces";letter-spacing:.22em;text-transform:uppercase}
+.hero1 h1{margin:14px 0 14px;line-height:1.1}
+.hero1 h1 em{font:italic 400 56px "Fraunces";letter-spacing:-.02em;display:block}
+.hero1 h1 .zh{font-size:38px;font-weight:400;color:var(--a)}
+.hero1 p{color:var(--mute);font-size:14px;margin:0}
+.hero1 p b{color:var(--ink1);font-weight:500}
+.hero1 .note{display:inline-block;margin-top:18px;font-size:28px;color:var(--b);transform:rotate(-4deg)}
+.scene{width:100%;height:330px}
+
+.qb{display:grid;grid-template-columns:repeat(4,1fr);background:var(--a);border-radius:22px;padding:18px 6px;margin:6px 0 26px;box-shadow:0 18px 30px -22px var(--a)}
+.qb button{background:none;border:0;color:#fff;font:500 14px "Noto Sans SC";display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer}
+.qb button+button{border-left:2px dashed rgba(255,255,255,.45)}
+.qb svg{transition:transform .25s}.qb button:hover svg{transform:rotate(-8deg) translateY(-3px)}
+
+.g1{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.c1{background:var(--card);border-radius:24px;padding:22px 24px;box-shadow:0 1px 0 rgba(43,38,32,.05),0 16px 30px -24px rgba(43,38,32,.45)}
+.c1.w2{grid-column:span 2}
+.c1 h3{display:flex;align-items:baseline;gap:10px;margin:0 0 16px;font:400 21px "ZCOOL XiaoWei"}
+.c1 h3 i{font:italic 400 14px "Fraunces";color:var(--a)}
+.c1 h3 .hand{margin-left:auto;font-size:22px;color:var(--b);transform:rotate(-4deg)}
+.t1{list-style:none;margin:0;padding:0}
+.t1 li{display:flex;align-items:center;gap:12px;padding:9px 0;font-size:14px;cursor:pointer;border-bottom:1px dashed rgba(43,38,32,.12)}
+.t1 li:last-child{border:0}
+.t1 .o{width:20px;height:20px;border-radius:50%;border:1.8px solid var(--ink1);flex:none;position:relative}
+.t1 .done .o{background:var(--b);border-color:var(--b)}
+.t1 .done .o::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(40deg)}
+.t1 .done span{text-decoration:line-through;color:var(--mute)}
+.t1 em{margin-left:auto;font:italic 12px "Fraunces";color:var(--mute)}
+.t1 em.r{color:var(--b)}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;text-align:center}
+.wk div{font-size:12px;color:var(--mute)}
+.wk b{display:grid;place-items:center;width:36px;height:36px;margin:6px auto 8px;border-radius:50%;font:600 16px "Fraunces";color:var(--ink1)}
+.wk .td b{background:var(--a);color:#fff}
+.wk span{display:block;font-size:11px;padding:5px 2px;border-radius:10px;background:var(--a2);color:var(--ink1);margin-bottom:4px}
+.wk span.r{background:var(--b2)}
+.price{font:600 46px "Fraunces";color:var(--a);letter-spacing:-.02em}
+.price sup{font-size:20px;vertical-align:28px;margin-left:2px}
+.price small{font:400 13px "Noto Sans SC";color:var(--mute);margin-left:8px;letter-spacing:0}
+.bars1{display:flex;align-items:flex-end;gap:10px;height:96px;margin-top:14px}
+.bars1 div{flex:1;text-align:center;font-size:11px;color:var(--mute);height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.bars1 i{display:block;border-radius:12px 12px 4px 4px;background:var(--a2);margin-bottom:6px}
+.bars1 div:first-child i{background:var(--a)}
+.mart{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mart .it{display:grid;grid-template-columns:auto 1fr;align-items:end;gap:4px 8px}
+.mart svg{grid-row:span 2;width:64px;height:76px}
+.mart .nm{font:400 22px "Long Cang";line-height:1}
+.mart .nm small{display:block;font:italic 11px "Fraunces";color:var(--mute)}
+.mart .d{font:600 34px/1 "Fraunces";color:var(--ink1)}
+.mart .d sup{font:500 11px "Noto Sans SC";vertical-align:16px;margin-left:2px;color:var(--mute)}
+.mart .u .d{color:var(--b)}
+.duo{display:flex;align-items:center;gap:18px}
+.duo .n{font:600 60px/1 "Fraunces";color:var(--a)}
+.duo .n small{display:block;font:400 12px "Noto Sans SC";color:var(--mute)}
+.duo .wd{flex:1;background:var(--a2);border-radius:16px;padding:12px 14px}
+.duo .wd b{font:italic 400 21px "Fraunces"}
+.duo .wd p{margin:2px 0 0;font-size:12px;color:var(--mute)}
+.btn1{margin-top:16px;background:var(--ink1);color:#fff;border:0;font:500 13px "Noto Sans SC";padding:10px 22px;border-radius:999px;cursor:pointer}
+.tip1{background:var(--a);color:#fff;display:flex;gap:20px;align-items:center}
+.tip1 h3{color:#fff}.tip1 h3 i{color:var(--a2)}
+.tip1 .q{font:italic 400 80px/0.5 "Fraunces";opacity:.5;align-self:flex-start;margin-top:30px}
+.tip1 p{margin:0;font-size:15px;line-height:1.8;font-family:"ZCOOL XiaoWei";font-size:18px}
+.tip1 svg{flex:none}
+
+/* 手机 · 风格1 */
+.phwrap{min-height:100vh;display:grid;place-items:center;padding:76px 16px 40px}
+.phone{width:390px;max-width:100%;height:844px;border:11px solid #1b1a18;border-radius:58px;overflow:hidden;position:relative;box-shadow:0 40px 80px -30px rgba(30,20,10,.5)}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#1b1a18;z-index:5}
+.scr{height:100%;overflow-y:auto;padding:0 18px 120px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.sb{display:flex;justify-content:space-between;padding:16px 14px 0;font:600 15px "Fraunces"}
+.s1 .phone{background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 48%,var(--a2) 100%)}
+.ph1h{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
+.cap{background:#fff;border-radius:20px;padding:5px 12px;font-size:12px;border:1px solid #eee}
+.ph1hero{position:relative;height:290px}
+.ph1hero svg{width:100%;height:100%}
+.ph1hero .v{position:absolute;right:4px;top:10px;writing-mode:vertical-rl;font-size:32px;color:var(--b);letter-spacing:6px}
+.s1 .phone .qb{grid-template-columns:repeat(3,1fr);padding:16px 2px;margin:10px 0 12px;border-radius:18px}
+.s1 .phone .qb button{font-size:12px}
+.s1 .phone .c1{padding:16px 18px;border-radius:20px;margin-bottom:12px}
+.s1 .phone .c1 h3{font-size:18px;margin-bottom:10px}
+.s1 .phone .mart{grid-template-columns:repeat(2,1fr);gap:10px}
+.s1 .phone .mart svg{width:48px;height:58px}
+.s1 .phone .mart .d{font-size:26px}
+.tab1{position:absolute;left:12px;right:12px;bottom:12px;height:66px;background:var(--a);border-radius:30px;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;z-index:4}
+.tab1 span{color:rgba(255,255,255,.75);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab1 span:first-child{color:#fff}
+.tab1 .plus{width:46px;height:46px;border-radius:50%;background:var(--card);display:grid;place-items:center;margin:auto;color:var(--a);font:400 30px/1 "Fraunces"}
+
+/* ===================================================== */
+/* 风格 2 · 螺钿 · 国风 · 自然                             */
+/* ===================================================== */
+.s2{--bg:#eeebe4;--ink2:#3d3b36;--mute2:#8d877c;--gold:#a88c5c;--jade:#6c8a76;--line:#d6cdbd;
+  color:var(--ink2);font-family:"Noto Serif SC",serif;font-weight:300;min-height:100vh;position:relative;background:var(--bg);isolation:isolate}
+.shell{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.55;animation:hue 24s linear infinite}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+.s2 .kai{font-family:"LXGW WenKai","Kaiti SC","STKaiti",serif;font-weight:400}
+.s2 .tw{font-family:"Courier Prime",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute2)}
+.s2 .ita{font-family:"Italiana",serif}
+.pearl{background:linear-gradient(115deg,#fffaf3 0%,#f3d9e3 17%,#d7eee6 34%,#e9e1f6 52%,#faeed7 70%,#dceaf6 86%,#fffaf3 100%);background-size:300% 300%;animation:pearl 12s ease-in-out infinite alternate}
+@keyframes pearl{to{background-position:100% 100%}}
+.sheen{position:relative;overflow:hidden}
+.sheen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.85) 50%,transparent 62%);background-size:260% 100%;animation:sheen 5.5s ease-in-out infinite;mix-blend-mode:soft-light}
+@keyframes sheen{from{background-position:160% 0}to{background-position:-60% 0}}
+
+.s2 .dk{max-width:1180px;margin:0 auto;padding:66px 40px 70px}
+.top2{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.top2 .r{text-align:right}
+.logo2{text-align:center;font:400 34px "Italiana";letter-spacing:.08em;line-height:1}
+.logo2 small{display:block;font:400 11px "LXGW WenKai","Kaiti SC",serif;letter-spacing:.6em;color:var(--gold);margin-top:6px}
+.nav2{display:flex;justify-content:center;gap:34px;padding:14px 0;border-bottom:1px solid var(--line);margin-bottom:40px}
+.nav2 a{font-size:14px;cursor:pointer;color:var(--ink2);display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav2 a small{font:400 9px "Courier Prime";letter-spacing:.2em;color:var(--mute2)}
+.nav2 a.on{color:var(--gold)}
+.nav2 a.on::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:3px}
+
+.hero2{display:grid;grid-template-columns:460px 1fr;gap:60px;align-items:center;margin-bottom:56px}
+.frame{position:relative;padding:14px;border:1px solid var(--gold);background:rgba(255,255,255,.35)}
+.frame::before{content:"";position:absolute;inset:6px;border:1px solid rgba(168,140,92,.45);pointer-events:none}
+.frame .in{height:500px;display:grid;place-items:center;background:linear-gradient(170deg,#f7f4ee,#e7ece6 60%,#efe7e4)}
+.frame .in svg{width:88%;height:94%}
+.frame .cn{position:absolute;width:34px;height:34px}
+.frame .cn.a{top:-1px;left:-1px}.frame .cn.b{top:-1px;right:-1px;transform:scaleX(-1)}
+.frame .cn.c{bottom:-1px;left:-1px;transform:scaleY(-1)}.frame .cn.d{bottom:-1px;right:-1px;transform:scale(-1)}
+.h2t h1{font-size:76px;margin:18px 0 6px;letter-spacing:.12em;line-height:1.1}
+.h2t .en{font:400 26px "Italiana";letter-spacing:.06em;color:var(--gold)}
+.h2t p{font-size:15px;line-height:2.1;margin:26px 0 30px;max-width:420px}
+.h2t p b{font-weight:400;color:var(--jade);border-bottom:1px solid var(--jade)}
+.pbtn{display:inline-flex;align-items:center;gap:14px;padding:14px 30px;border:1px solid var(--gold);font:400 14px "Noto Serif SC";letter-spacing:.3em;color:var(--ink2);cursor:pointer}
+.pbtn small{font:400 10px "Courier Prime";letter-spacing:.2em;color:var(--mute2)}
+.g2{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.c2{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 28px 30px;background:rgba(251,249,245,.55);backdrop-filter:blur(6px);position:relative}
+.c2.w2{grid-column:span 2}
+.c2::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;opacity:0;transition:.4s}
+.c2:hover::before{opacity:1}
+.c2.pearl-top::before{opacity:1}
+.c2 .hd{display:flex;align-items:baseline;gap:12px;margin-bottom:20px}
+.c2 .hd .no{font:400 11px "Courier Prime";color:var(--gold)}
+.c2 .hd h3{margin:0;font:400 22px "LXGW WenKai","Kaiti SC",serif;letter-spacing:.15em}
+.c2 .hd .tw{margin-left:auto}
+.t2{list-style:none;margin:0;padding:0}
+.t2 li{display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(214,205,189,.6);font-size:14px;cursor:pointer}
+.t2 li:last-child{border:0}
+.t2 .num{font:400 15px "LXGW WenKai","Kaiti SC",serif;color:var(--gold);width:18px}
+.t2 .tw{margin-left:auto}
+.t2 .done span{text-decoration:line-through;text-decoration-color:var(--gold);color:var(--mute2)}
+.wk2{display:grid;grid-template-columns:repeat(7,1fr)}
+.wk2 div{border-left:1px solid rgba(214,205,189,.7);padding:0 10px;min-height:150px;font-size:12px}
+.wk2 div:first-child{border:0;padding-left:0}
+.wk2 .d{font:400 30px "Italiana";display:block;margin:6px 0 12px}
+.wk2 .td .d{color:var(--gold)}
+.wk2 .td{position:relative}
+.wk2 .td::after{content:"今";position:absolute;top:0;right:8px;font:400 12px "LXGW WenKai","Kaiti SC",serif;color:#fff;background:var(--jade);width:20px;height:20px;border-radius:50%;display:grid;place-items:center}
+.wk2 p{margin:0 0 6px;line-height:1.5;color:var(--ink2)}
+.wk2 p.r{color:#a2584f}
+.amt{font:400 64px/1 "Italiana";letter-spacing:.02em}
+.amt small{font:400 12px "Courier Prime";color:var(--mute2);margin-left:10px;letter-spacing:.1em}
+.ln{margin-top:24px}
+.ln div{display:grid;grid-template-columns:44px 1fr 40px;align-items:center;gap:12px;font-size:13px;margin-bottom:10px}
+.ln i{height:9px;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(168,140,92,.6)}
+.dots i.on{box-shadow:inset 0 0 0 1px rgba(168,140,92,.6)}
+.ln b{font:400 12px "Courier Prime";text-align:right;color:var(--mute2)}
+.labels{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.lab{border:1px solid var(--ink2);padding:12px 10px 10px;background:#fbf9f4;text-align:center;font-family:"Courier Prime",monospace;font-size:10px;letter-spacing:.08em;position:relative}
+.lab::before{content:"";position:absolute;inset:3px;border:1px solid rgba(61,59,54,.25);pointer-events:none}
+.lab b{display:block;font:400 18px "LXGW WenKai","Kaiti SC",serif;letter-spacing:.2em;margin:6px 0 4px}
+.lab .dd{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed rgba(61,59,54,.3)}
+.lab.u{border-color:#a2584f;color:#a2584f}
+.dots{display:grid;grid-template-columns:52px repeat(14,1fr);gap:6px;align-items:center;font-size:12px}
+.dots i{aspect-ratio:1;border-radius:50%;border:1px solid var(--line)}
+.dots i.on{border:0}
+.quote{display:flex;gap:30px;align-items:center}
+.quote p{font:400 20px/1.9 "LXGW WenKai","Kaiti SC",serif;margin:0;letter-spacing:.06em}
+.quote .tw{margin-top:10px;display:block}
+
+/* 手机 · 风格2 */
+.s2 .phone{background:#f3f0ea}
+.s2 .phone .scr{padding:0 22px 110px}
+.ph2h{text-align:center;padding:26px 0 14px;border-bottom:1px solid var(--line)}
+.ph2h .logo2{font-size:28px}
+.s2 .phone .frame{margin:22px 0 18px;padding:10px}
+.s2 .phone .frame .in{height:330px}
+.ph2t{text-align:center}
+.ph2t h1{font-size:40px;letter-spacing:.2em;margin:4px 0 2px}
+.ph2t .en{font:400 18px "Italiana";color:var(--gold)}
+.sec2{margin-top:26px}
+.sec2 .hd{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:6px}
+.sec2 .hd h3{margin:0;font:400 18px "LXGW WenKai","Kaiti SC",serif;letter-spacing:.2em}
+.s2 .phone .labels{grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.s2 .phone .lab b{font-size:15px}
+.tab2{position:absolute;left:0;right:0;bottom:0;height:78px;background:rgba(251,249,245,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding-bottom:12px;z-index:4}
+.tab2 span{text-align:center;font:400 13px "LXGW WenKai","Kaiti SC",serif;color:var(--mute2);letter-spacing:.1em}
+.tab2 span small{display:block;font:400 8px "Courier Prime";letter-spacing:.15em}
+.tab2 span.on{color:var(--gold)}
+.tab2 .pp{width:44px;height:44px;border-radius:50%;margin:auto;display:grid;place-items:center;border:1px solid var(--gold);font:300 24px "Noto Serif SC";color:var(--gold)}
+
+@media (max-width:900px){
+  .s1 .dk,.s2 .dk{padding:70px 16px 40px}
+  .hero1,.hero2{grid-template-columns:1fr}.g1,.g2{grid-template-columns:1fr}
+  .c1.w2,.c2.w2{grid-column:auto}.pills,.nav2{display:none}
+  .mart,.labels{grid-template-columns:repeat(2,1fr)}.qb{grid-template-columns:repeat(2,1fr);row-gap:14px}
+  .qb button:nth-child(3){border-left:0}.frame .in{height:380px}.h2t h1{font-size:52px}
+}
+</style>
+</head>
+<body data-s="s1" data-p="blue" data-v="dk">
+
+<!-- ================= 共用 SVG ================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>
+    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf4"/><stop offset=".22" stop-color="#f3d6e1"/><stop offset=".42" stop-color="#d4eee5"/>
+      <stop offset=".6" stop-color="#e8def7"/><stop offset=".8" stop-color="#fbecd2"/><stop offset="1" stop-color="#fffaf4"/>
+      <animateTransform attributeName="gradientTransform" type="rotate" values="0 .5 .5;360 .5 .5" dur="16s" repeatCount="indefinite"/>
+    </linearGradient>
+    <linearGradient id="pg2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbeedb"/><stop offset=".3" stop-color="#ffffff"/><stop offset=".55" stop-color="#d9ecf3"/>
+      <stop offset=".8" stop-color="#f4dbe6"/><stop offset="1" stop-color="#e1f1e8"/>
+      <animateTransform attributeName="gradientTransform" type="rotate" values="360 .5 .5;0 .5 .5" dur="20s" repeatCount="indefinite"/>
+    </linearGradient>
+    <linearGradient id="lg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#58775a"/><stop offset=".5" stop-color="#8fae8b"/><stop offset="1" stop-color="#cfe0cb"/>
+    </linearGradient>
+    <pattern id="glit" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".7" fill="#fff" opacity=".8"/><circle cx="5.5" cy="5" r=".5" fill="#fbecc8" opacity=".9"/></pattern>
+    <filter id="shellf"><feTurbulence type="fractalNoise" baseFrequency="0.0035 0.018" numOctaves="4" seed="11"/>
+      <feColorMatrix type="matrix" values="0.45 0 0 0 0.62  0 0.45 0 0 0.6  0 0 0.45 0 0.64  0 0 0 0 1"/></filter>
+  </defs>
+
+  <!-- ===== 风格1 插画 ===== -->
+  <symbol id="vase" viewBox="0 0 170 230">
+    <path class="k" d="M84 112 C80 82 62 62 44 44 M86 112 C88 72 86 52 88 26 M90 112 C100 84 116 70 128 52 M88 112 C96 98 104 92 114 84"/>
+    <path class="fl" d="M72 86 q-24-6-28 10 q16 6 28-10z"/><path class="fl" d="M98 72 q22-14 32-2 q-14 12-32 2z"/>
+    <g transform="translate(44 44) rotate(-22)"><path class="fb" transform="translate(3 2)" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24 q-11 9-22 0z"/><path class="k" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24"/></g>
+    <g transform="translate(88 26)"><path class="fy" transform="translate(3 2)" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24 q-11 9-22 0z"/><path class="k" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24"/></g>
+    <g transform="translate(128 52) rotate(24)"><path class="fb" transform="translate(3 2)" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24 q-11 9-22 0z"/><path class="k" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24"/></g>
+    <g transform="translate(114 84) rotate(40) scale(.8)"><path class="fy" transform="translate(3 2)" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24 q-11 9-22 0z"/><path class="k" d="M-11 2 q-2-20 6-24 l5 9 5-9 q8 4 6 24"/></g>
+    <path class="fa2" transform="translate(5 4)" d="M66 112 h40 q-2 10 8 18 q22 18 16 52 q-6 34-40 36 q-34-2-40-36 q-6-34 16-52 q10-8 8-18z"/>
+    <path class="k" d="M66 112 h40 q-2 10 8 18 q22 18 16 52 q-6 34-40 36 q-34-2-40-36 q-6-34 16-52 q10-8 8-18z"/>
+    <path class="sa" d="M52 150 q6-6 12 0 t12 0 t12 0 t12 0 t12 0 M50 196 q6 6 12 0 t12 0 t12 0 t12 0 t12 0"/>
+    <circle class="fb" cx="68" cy="172" r="4.5"/><circle class="fy" cx="86" cy="166" r="3.5"/><circle class="fb" cx="104" cy="174" r="4.5"/>
+    <path class="fl" d="M76 178 q4-6 8 0 q-4 4-8 0z M92 180 q4-6 8 0 q-4 4-8 0z"/>
+  </symbol>
+  <symbol id="cup" viewBox="0 0 120 84">
+    <path class="k" d="M45 16 q-5-6 1-13 M60 16 q-5-6 1-13"/>
+    <ellipse class="k" cx="58" cy="70" rx="50" ry="9"/>
+    <path class="fw" d="M22 24 h66 q-2 34-33 38 q-31-4-33-38z"/>
+    <path class="k" d="M22 24 h66 q-2 34-33 38 q-31-4-33-38z M88 32 q16 0 12 14 q-4 8-14 6"/>
+    <circle class="fr" cx="40" cy="38" r="4"/><circle class="fr" cx="58" cy="46" r="4.5"/><circle class="fr" cx="72" cy="34" r="4"/><circle class="fr" cx="52" cy="31" r="2.5"/>
+  </symbol>
+  <symbol id="croi" viewBox="0 0 150 76">
+    <ellipse class="k" cx="70" cy="48" rx="64" ry="20"/>
+    <ellipse class="k" cx="70" cy="48" rx="50" ry="13" stroke-dasharray="2 5" opacity=".6"/>
+    <path class="fy" transform="translate(3 3)" d="M28 42 q10-26 42-28 q32 2 42 28 q-12 6-20-2 q-10 8-22 2 q-12 6-22-2 q-8 8-20 2z"/>
+    <path class="k" d="M28 42 q10-26 42-28 q32 2 42 28 q-12 6-20-2 q-10 8-22 2 q-12 6-22-2 q-8 8-20 2z M52 24 q4 10 2 20 M70 17 q2 12 0 24 M88 24 q-4 10-2 20"/>
+    <path class="k" d="M146 24 l-18 30"/><ellipse class="k" cx="146" cy="20" rx="4" ry="7" transform="rotate(32 146 20)"/>
+  </symbol>
+  <symbol id="milk" viewBox="0 0 60 90">
+    <path class="fa2" transform="translate(4 3)" d="M10 34 L10 84 L50 84 L50 34 L40 16 L20 16 Z"/>
+    <path class="k" d="M10 34 L10 84 L50 84 L50 34 L40 16 L20 16 Z M20 16 V6 H40 V16 M10 34 H50"/>
+    <text x="30" y="58" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" class="fa">milk</text>
+    <path class="fb" d="M24 68 q6 6 12 0 q-6 3-12 0z"/>
+  </symbol>
+  <symbol id="egg" viewBox="0 0 70 84">
+    <ellipse class="fw" cx="35" cy="30" rx="15" ry="20"/><ellipse class="k" cx="35" cy="30" rx="15" ry="20"/>
+    <circle class="fr" cx="30" cy="22" r="2"/><circle class="fr" cx="40" cy="28" r="2.4"/><circle class="fr" cx="33" cy="36" r="2"/><circle class="fr" cx="42" cy="18" r="1.6"/>
+    <path class="fa2" transform="translate(3 2)" d="M18 44 h34 q-2 14-17 16 q-15-2-17-16z"/>
+    <path class="k" d="M18 44 h34 q-2 14-17 16 q-15-2-17-16z M35 60 v10 M24 72 h22"/>
+  </symbol>
+  <symbol id="berry" viewBox="0 0 70 76">
+    <path class="fr" transform="translate(3 3)" d="M35 66 q-26-14-24-36 q4-12 24-10 q20-2 24 10 q2 22-24 36z"/>
+    <path class="k" d="M35 66 q-26-14-24-36 q4-12 24-10 q20-2 24 10 q2 22-24 36z"/>
+    <path class="k" d="M24 34 l1 3 M36 32 l1 3 M47 36 l1 3 M29 46 l1 3 M42 46 l1 3 M35 56 l1 3" stroke-width="1.4"/>
+    <path class="fl" d="M20 22 q15-12 30 0 q-8 4-15 0 q-7 4-15 0z"/><path class="k" d="M35 20 q0-10 6-14"/>
+  </symbol>
+  <symbol id="yog" viewBox="0 0 60 84">
+    <path class="fw" d="M12 26 h36 l-4 50 h-28z"/>
+    <path class="fb2" transform="translate(2 2)" d="M14 44 h32 l-1.5 16 h-29z"/>
+    <path class="k" d="M12 26 h36 l-4 50 h-28z"/>
+    <ellipse class="fb" cx="30" cy="24" rx="20" ry="5"/><ellipse class="k" cx="30" cy="24" rx="20" ry="5"/>
+    <text x="30" y="56" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="9" fill="#2b2620">yogurt</text>
+  </symbol>
+  <!-- 白色线条图标 -->
+  <symbol id="i-coin" viewBox="0 0 40 40"><circle class="wl" cx="20" cy="20" r="14"/><path class="wl" d="M24 14 q-4-3-8 0 q-3 3 2 5 l4 2 q5 2 2 5 q-4 3-8 0 M20 10 v4 M20 26 v4"/></symbol>
+  <symbol id="i-fridge" viewBox="0 0 40 40"><rect class="wl" x="10" y="5" width="20" height="31" rx="5"/><path class="wl" d="M10 16 h20 M15 9 v4 M15 20 v6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 40 40"><path class="wl" d="M20 6 a10 10 0 0 0 -6 18 v4 h12 v-4 a10 10 0 0 0 -6 -18z M15 32 h10 M17 36 h6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 40 40"><path class="wl" d="M8 32 l3-9 17-17 6 6 -17 17 -9 3z M24 10 l6 6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 40 40"><path class="wl" d="M7 19 L20 8 L33 19 V33 H7 Z M16 33 v-9 h8 v9"/></symbol>
+  <symbol id="i-more" viewBox="0 0 40 40"><circle cx="11" cy="20" r="2.6" fill="#fff"/><circle cx="20" cy="20" r="2.6" fill="#fff"/><circle cx="29" cy="20" r="2.6" fill="#fff"/></symbol>
+
+  <!-- ===== 风格2 螺钿萱草 ===== -->
+  <symbol id="bloom" viewBox="-60 -60 120 120">
+    <g stroke="#b59a68" stroke-width=".7">
+      <path fill="url(#pg)" d="M0 0 C11 -14 13 -40 0 -55 C-13 -40 -11 -14 0 0Z"/>
+      <path fill="url(#pg2)" transform="rotate(60)" d="M0 0 C10 -14 12 -38 0 -52 C-12 -38 -10 -14 0 0Z"/>
+      <path fill="url(#pg)" transform="rotate(120)" d="M0 0 C11 -14 13 -40 0 -55 C-13 -40 -11 -14 0 0Z"/>
+      <path fill="url(#pg2)" transform="rotate(180)" d="M0 0 C10 -14 12 -36 0 -48 C-12 -36 -10 -14 0 0Z"/>
+      <path fill="url(#pg)" transform="rotate(240)" d="M0 0 C11 -14 13 -40 0 -55 C-13 -40 -11 -14 0 0Z"/>
+      <path fill="url(#pg2)" transform="rotate(300)" d="M0 0 C10 -14 12 -38 0 -52 C-12 -38 -10 -14 0 0Z"/>
+    </g>
+    <g stroke="rgba(181,154,104,.55)" stroke-width=".5" fill="none">
+      <path d="M0 -4 V-46 M0 -4 V-46" transform="rotate(0)"/><path d="M0 -4 V-44" transform="rotate(120)"/><path d="M0 -4 V-44" transform="rotate(240)"/>
+    </g>
+    <g stroke="#b08c4e" stroke-width=".8" fill="none"><path d="M0 0 q6 -12 14 -24 M0 0 q-4 -14 -12 -24 M0 0 q12 -6 24 -8 M0 0 q-12 -2 -22 4 M0 0 q2 -16 2 -28"/></g>
+    <g fill="#c7a058"><circle cx="14" cy="-24" r="2"/><circle cx="-12" cy="-24" r="2"/><circle cx="24" cy="-8" r="2"/><circle cx="-22" cy="4" r="2"/><circle cx="2" cy="-28" r="2.2"/></g>
+  </symbol>
+  <symbol id="bud" viewBox="-12 -50 24 54">
+    <path fill="url(#pg2)" stroke="#b59a68" stroke-width=".7" d="M0 0 C7 -10 7 -34 0 -46 C-7 -34 -7 -10 0 0Z"/>
+    <path fill="url(#pg)" stroke="#b59a68" stroke-width=".6" d="M0 0 C4 -10 3 -28 -2 -40 C-5 -28 -4 -10 0 0Z"/>
+  </symbol>
+  <symbol id="lily" viewBox="0 0 320 400">
+    <g stroke="#6f8c69" stroke-width="2" fill="none" stroke-linecap="round">
+      <path d="M160 400 C158 320 146 240 104 150"/><path d="M164 400 C172 300 196 220 226 128"/>
+      <path d="M162 400 C162 330 168 270 176 214"/><path d="M150 300 C130 270 100 250 70 240"/><path d="M190 260 C210 240 236 236 260 238"/>
+    </g>
+    <g>
+      <path fill="url(#lg)" d="M150 400 C140 320 90 270 26 250 C96 262 150 310 166 400Z"/>
+      <path fill="url(#lg)" d="M170 400 C186 330 236 300 300 290 C236 312 196 348 182 400Z"/>
+      <path fill="url(#lg)" d="M158 400 C150 340 130 300 96 280 C140 296 164 340 168 400Z"/>
+      <path fill="url(#lg)" d="M164 400 C176 350 200 330 236 320 C204 338 184 362 176 400Z"/>
+      <path fill="url(#glit)" d="M150 400 C140 320 90 270 26 250 C96 262 150 310 166 400Z M170 400 C186 330 236 300 300 290 C236 312 196 348 182 400Z"/>
+    </g>
+    <use href="#bloom" x="44" y="80" width="120" height="120"/>
+    <use href="#bloom" x="170" y="64" width="112" height="112"/>
+    <use href="#bloom" x="122" y="166" width="100" height="100"/>
+    <use href="#bud" x="56" y="210" width="24" height="54" transform="rotate(-30 68 237)"/>
+    <use href="#bud" x="250" y="190" width="20" height="46" transform="rotate(26 260 213)"/>
+    <use href="#bud" x="196" y="22" width="18" height="44"/>
+    <g transform="translate(250 330)">
+      <path fill="url(#pg)" stroke="#b59a68" stroke-width=".6" d="M0 0 C-14 -16 -26 -4 -14 6 Z M0 0 C14 -16 26 -4 14 6Z"/>
+      <path fill="url(#pg2)" stroke="#b59a68" stroke-width=".6" d="M0 2 C-10 10 -14 18 -4 16Z M0 2 C10 10 14 18 4 16Z"/>
+      <path stroke="#8d7a58" stroke-width=".8" d="M0 -4 V12 M0 -4 l-4 -6 M0 -4 l4 -6"/>
+    </g>
+  </symbol>
+  <symbol id="lotus" viewBox="0 0 120 84">
+    <g stroke="#b59a68" stroke-width=".7">
+      <path fill="url(#pg2)" transform="rotate(-58 60 74)" d="M60 74 C50 56 52 30 60 18 C68 30 70 56 60 74Z"/>
+      <path fill="url(#pg2)" transform="rotate(58 60 74)" d="M60 74 C50 56 52 30 60 18 C68 30 70 56 60 74Z"/>
+      <path fill="url(#pg)" transform="rotate(-28 60 74)" d="M60 74 C48 54 50 24 60 10 C70 24 72 54 60 74Z"/>
+      <path fill="url(#pg)" transform="rotate(28 60 74)" d="M60 74 C48 54 50 24 60 10 C70 24 72 54 60 74Z"/>
+      <path fill="url(#pg2)" d="M60 74 C47 52 50 18 60 4 C70 18 73 52 60 74Z"/>
+    </g>
+    <path d="M20 78 Q60 70 100 78" stroke="#6f8c69" stroke-width="1.4" fill="none"/>
+  </symbol>
+  <symbol id="corner" viewBox="0 0 40 40">
+    <path d="M1 39 V12 Q1 1 12 1 H39" fill="none" stroke="#a88c5c" stroke-width="1"/>
+    <path d="M7 39 V15 Q7 7 15 7 H39" fill="none" stroke="#a88c5c" stroke-width=".6"/>
+    <path d="M12 12 q10 1 12 12 q-11 -1 -12 -12z" fill="url(#pg)" stroke="#a88c5c" stroke-width=".6"/>
+  </symbol>
+</svg>
+
+<div class="bar">
+  <button data-k="s1:blue" class="on">① 青花奶茶</button>
+  <button data-k="s1:berry">② 草莓牛奶</button>
+  <button data-k="s1:matcha">③ 抹茶拿铁</button>
+  <button data-k="s2:">④ 螺钿萱草</button>
+  <i></i>
+  <button data-dv="dk" class="dv on">💻</button>
+  <button data-dv="ph" class="dv">📱</button>
+</div>
+
+<!-- ========================================================= -->
+<!-- 风格 1                                                     -->
+<!-- ========================================================= -->
+<div class="s1">
+  <div class="dk">
+    <header class="top1">
+      <div class="logo1">my <b>little</b> os.<small>오늘</small></div>
+      <nav class="pills"><a class="on">首页</a><a>财务</a><a>冰箱</a><a>物品</a><a>知识库</a><a>学校</a><a>更多</a></nav>
+    </header>
+
+    <section class="hero1">
+      <div>
+        <div class="eyebrow">Wednesday · Nov 18</div>
+        <h1><em>Good morning,</em><span class="zh">今天也要好好生活</span></h1>
+        <p><b>3 件待办</b> · 牛奶<b style="color:var(--b)">明天过期</b> · 本周已花 <b>$214.50</b></p>
+        <span class="note hand">오늘도 화이팅 ♡</span>
+      </div>
+      <svg class="scene ink" viewBox="0 0 520 330">
+        <path class="k" d="M10 300 H510" />
+        <path class="k" d="M30 312 H490" stroke-dasharray="1 9" />
+        <use href="#vase" x="40" y="40" width="190" height="262"/>
+        <use href="#cup" x="226" y="226" width="120" height="84"/>
+        <use href="#croi" x="340" y="236" width="160" height="80"/>
+        <use href="#berry" x="372" y="150" width="56" height="62"/>
+        <text x="300" y="112" font-family="Nanum Pen Script" font-size="34" class="fb" transform="rotate(-6 300 112)">breakfast club</text>
+        <path class="sa" d="M300 124 q40 -8 92 -6"/>
+        <path class="k" d="M470 60 l0 14 M463 67 l14 0 M240 70 l0 10 M235 75 l10 0"/>
+      </svg>
+    </section>
+
+    <div class="qb">
+      <button><svg class="ink" width="40" height="40"><use href="#i-coin"/></svg>记一笔</button>
+      <button><svg class="ink" width="40" height="40"><use href="#i-fridge"/></svg>放进冰箱</button>
+      <button><svg class="ink" width="40" height="40"><use href="#i-bulb"/></svg>存知识</button>
+      <button><svg class="ink" width="40" height="40"><use href="#i-pen"/></svg>写随笔</button>
+    </div>
+
+    <div class="g1">
+      <section class="c1">
+        <h3>今日待办 <i>to-do</i></h3>
+        <ul class="t1">
+          <li><span class="o"></span><span>DATA 101 作业 4</span><em class="r">tonight</em></li>
+          <li><span class="o"></span><span>买鸡蛋和牛奶</span><em>后勤</em></li>
+          <li class="done"><span class="o"></span><span>背 20 个单词</span><em>英语</em></li>
+          <li><span class="o"></span><span>投 2 份实习</span><em>求职</em></li>
+        </ul>
+      </section>
+      <section class="c1 w2">
+        <h3>本周日历 <i>this week</i><span class="hand">busy bee!</span></h3>
+        <div class="wk">
+          <div>一<b>16</b><span>INF 1340</span></div>
+          <div>二<b>17</b><span>健身</span></div>
+          <div class="td">三<b>18</b><span class="r">作业 4 截止</span><span>小组会议</span></div>
+          <div>四<b>19</b><span>INF 1340</span></div>
+          <div>五<b>20</b><span class="r">面试 15:00</span></div>
+          <div>六<b>21</b><span>超市</span></div>
+          <div>日<b>22</b><span>周复盘</span></div>
+        </div>
+      </section>
+
+      <section class="c1 w2">
+        <h3>我的冰箱 <i>fridge mart</i><span class="hand">eat me first</span></h3>
+        <div class="mart">
+          <div class="it u"><svg class="ink"><use href="#milk"/></svg><div class="nm">牛奶<small>Milk</small></div><div class="d">1<sup>天</sup></div></div>
+          <div class="it"><svg class="ink"><use href="#egg"/></svg><div class="nm">鸡蛋<small>Eggs ×3</small></div><div class="d">3<sup>天</sup></div></div>
+          <div class="it"><svg class="ink"><use href="#berry"/></svg><div class="nm">草莓<small>Strawberry</small></div><div class="d">4<sup>天</sup></div></div>
+          <div class="it"><svg class="ink"><use href="#yog"/></svg><div class="nm">酸奶<small>Yogurt ×2</small></div><div class="d">6<sup>天</sup></div></div>
+        </div>
+      </section>
+      <section class="c1">
+        <h3>本周花费 <i>spent</i></h3>
+        <div class="price">$214<sup>.50</sup><small>/ $350</small></div>
+        <div class="bars1">
+          <div><i style="height:80%"></i>餐饮</div><div><i style="height:50%"></i>购物</div>
+          <div><i style="height:30%"></i>交通</div><div><i style="height:26%"></i>日用</div><div><i style="height:18%"></i>娱乐</div>
+        </div>
+      </section>
+
+      <section class="c1">
+        <h3>多邻国 <i>english</i></h3>
+        <div class="duo"><div class="n">23<small>连续天数</small></div>
+          <div class="wd"><b>procrastinate</b><p>v. 拖延</p></div></div>
+        <button class="btn1">开始学习 →</button>
+      </section>
+      <section class="c1 w2 tip1">
+        <div class="q">“</div>
+        <div style="flex:1">
+          <h3>每日小知识 <i>a little thing</i></h3>
+          <p>番茄钟：专注 25 分钟，休息 5 分钟；做满 4 轮，再好好休息一下。</p>
+        </div>
+        <svg class="ink" width="120" height="84" style="--ink1:#fff"><use href="#cup"/></svg>
+      </section>
+    </div>
+  </div>
+
+  <div class="phwrap">
+    <div class="phone">
+      <div class="island"></div>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+        <div class="ph1h"><div class="logo1">my <b>little</b> os.</div><div class="cap">••• | ◎</div></div>
+        <div class="ph1hero">
+          <svg class="ink" viewBox="0 0 354 290">
+            <use href="#vase" x="20" y="40" width="160" height="220"/>
+            <use href="#cup" x="160" y="196" width="100" height="70"/>
+            <use href="#berry" x="250" y="210" width="44" height="50"/>
+            <path class="k" d="M6 266 H348"/>
+            <text x="150" y="70" font-family="Nanum Pen Script" font-size="26" class="fb" transform="rotate(-8 150 70)">오늘도 화이팅</text>
+          </svg>
+          <div class="v cnh">好好生活</div>
+        </div>
+        <div class="eyebrow">Wed · Nov 18</div>
+        <div style="font-size:12px;color:var(--mute);margin-top:4px">3 件待办 · 本周已花 $214.50</div>
+        <div class="qb">
+          <button><svg class="ink" width="34" height="34"><use href="#i-coin"/></svg>记一笔</button>
+          <button><svg class="ink" width="34" height="34"><use href="#i-fridge"/></svg>放进冰箱</button>
+          <button><svg class="ink" width="34" height="34"><use href="#i-bulb"/></svg>存知识</button>
+        </div>
+        <section class="c1">
+          <h3>今日待办 <i>to-do</i></h3>
+          <ul class="t1">
+            <li><span class="o"></span><span>DATA 101 作业 4</span><em class="r">tonight</em></li>
+            <li><span class="o"></span><span>买鸡蛋和牛奶</span><em>后勤</em></li>
+            <li class="done"><span class="o"></span><span>背 20 个单词</span><em>英语</em></li>
+          </ul>
+        </section>
+        <section class="c1">
+          <h3>我的冰箱 <i>fridge</i></h3>
+          <div class="mart">
+            <div class="it u"><svg class="ink"><use href="#milk"/></svg><div class="nm">牛奶</div><div class="d">1<sup>天</sup></div></div>
+            <div class="it"><svg class="ink"><use href="#egg"/></svg><div class="nm">鸡蛋</div><div class="d">3<sup>天</sup></div></div>
+          </div>
+        </section>
+      </div>
+      <nav class="tab1">
+        <span><svg class="ink" width="24" height="24"><use href="#i-home"/></svg>今天</span>
+        <span><svg class="ink" width="24" height="24"><use href="#i-coin"/></svg>记账</span>
+        <span><b class="plus">+</b></span>
+        <span><svg class="ink" width="24" height="24"><use href="#i-fridge"/></svg>冰箱</span>
+        <span><svg class="ink" width="24" height="24"><use href="#i-more"/></svg>更多</span>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 风格 2                                                     -->
+<!-- ========================================================= -->
+<div class="s2">
+  <svg class="shell" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#shellf)"/></svg>
+  <div class="dk">
+    <header class="top2">
+      <span class="tw">N° 1118 · Toronto</span>
+      <div class="logo2">my os.<small>螺 钿 · 萱 草</small></div>
+      <span class="tw r">中 / EN</span>
+    </header>
+    <nav class="nav2">
+      <a class="on">首页<small>HOME</small></a><a>财务<small>LEDGER</small></a><a>冰箱<small>PANTRY</small></a>
+      <a>物品<small>OBJECTS</small></a><a>知识<small>NOTES</small></a><a>学校<small>SCHOOL</small></a><a>档案<small>ARCHIVE</small></a>
+    </nav>
+
+    <section class="hero2">
+      <div class="frame">
+        <div class="in sheen"><svg viewBox="0 0 320 400"><use href="#lily"/></svg></div>
+        <svg class="cn a"><use href="#corner"/></svg><svg class="cn b"><use href="#corner"/></svg>
+        <svg class="cn c"><use href="#corner"/></svg><svg class="cn d"><use href="#corner"/></svg>
+      </div>
+      <div class="h2t">
+        <div class="tw">Wednesday · 2026.11.18 · 晴</div>
+        <h1 class="kai">萱草忘忧</h1>
+        <div class="en">Daylily, the flower of no worries</div>
+        <p>一日一事，平安无忧。<br>今天有 <b>三件事</b> 要做，牛奶 <b>明日</b> 到期，<br>本周花了 214.50 元，尚在预算之内。</p>
+        <span class="pbtn sheen pearl">开始今天 <small>BEGIN</small></span>
+      </div>
+    </section>
+
+    <div class="g2">
+      <section class="c2">
+        <div class="hd"><span class="no">01</span><h3>今日</h3><span class="tw">Today</span></div>
+        <ul class="t2">
+          <li><span class="num">壹</span><span>DATA 101 作业 4</span><span class="tw">23:59</span></li>
+          <li><span class="num">贰</span><span>买鸡蛋和牛奶</span><span class="tw">Pantry</span></li>
+          <li class="done"><span class="num">叁</span><span>背二十个单词</span><span class="tw">English</span></li>
+          <li><span class="num">肆</span><span>投两份实习</span><span class="tw">Career</span></li>
+        </ul>
+      </section>
+      <section class="c2 w2">
+        <div class="hd"><span class="no">02</span><h3>本周</h3><span class="tw">This week</span></div>
+        <div class="wk2">
+          <div>一<span class="d">16</span><p>INF 1340</p></div>
+          <div>二<span class="d">17</span><p>健身</p></div>
+          <div class="td">三<span class="d">18</span><p class="r">作业四截止</p><p>小组会议</p></div>
+          <div>四<span class="d">19</span><p>INF 1340</p></div>
+          <div>五<span class="d">20</span><p class="r">面试 三时</p></div>
+          <div>六<span class="d">21</span><p>采买</p></div>
+          <div>日<span class="d">22</span><p>周省</p></div>
+        </div>
+      </section>
+
+      <section class="c2 w2 pearl-top">
+        <div class="hd"><span class="no">03</span><h3>冰箱</h3><span class="tw">Pantry · best before</span></div>
+        <div class="labels">
+          <div class="lab u">N° 01<b>牛奶</b>MILK 1L<span class="dd">11.19 · 明日</span></div>
+          <div class="lab">N° 02<b>鸡蛋</b>EGGS × 3<span class="dd">11.21</span></div>
+          <div class="lab">N° 03<b>草莓</b>STRAWBERRY<span class="dd">11.22</span></div>
+          <div class="lab">N° 04<b>酸奶</b>YOGURT × 2<span class="dd">11.24</span></div>
+          <div class="lab">N° 05<b>饺子</b>DUMPLINGS<span class="dd">12.18</span></div>
+        </div>
+      </section>
+      <section class="c2">
+        <div class="hd"><span class="no">04</span><h3>账目</h3><span class="tw">Ledger</span></div>
+        <div class="amt">$214.50<small>/ 350</small></div>
+        <div class="ln">
+          <div>餐饮<i class="pearl" style="width:84%"></i><b>86</b></div>
+          <div>购物<i class="pearl" style="width:52%"></i><b>52</b></div>
+          <div>交通<i class="pearl" style="width:32%"></i><b>31</b></div>
+        </div>
+      </section>
+
+      <section class="c2">
+        <div class="hd"><span class="no">05</span><h3>习惯</h3><span class="tw">Rituals</span></div>
+        <div class="dots" id="dots"></div>
+      </section>
+      <section class="c2 w2">
+        <div class="hd"><span class="no">06</span><h3>小知</h3><span class="tw">A note to self</span></div>
+        <div class="quote">
+          <svg width="150" height="105"><use href="#lotus"/></svg>
+          <div><p>专注二十五分钟，歇五分钟；<br>四轮之后，再好好休息。</p><span class="tw">From · 知识库 / 学习方法</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="phwrap">
+    <div class="phone">
+      <div class="island"></div>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+        <div class="ph2h"><div class="logo2">my os.<small>螺 钿 · 萱 草</small></div></div>
+        <div class="frame">
+          <div class="in sheen"><svg viewBox="0 0 320 400"><use href="#lily"/></svg></div>
+          <svg class="cn a"><use href="#corner"/></svg><svg class="cn b"><use href="#corner"/></svg>
+          <svg class="cn c"><use href="#corner"/></svg><svg class="cn d"><use href="#corner"/></svg>
+        </div>
+        <div class="ph2t"><div class="tw">2026.11.18 · Wed</div><h1 class="kai">萱草忘忧</h1><div class="en">a quiet, good day</div></div>
+        <div class="sec2">
+          <div class="hd"><h3>今日</h3><span class="tw">Today</span></div>
+          <ul class="t2">
+            <li><span class="num">壹</span><span>DATA 101 作业 4</span><span class="tw">23:59</span></li>
+            <li><span class="num">贰</span><span>买鸡蛋和牛奶</span><span class="tw">Pantry</span></li>
+            <li class="done"><span class="num">叁</span><span>背二十个单词</span><span class="tw">English</span></li>
+          </ul>
+        </div>
+        <div class="sec2">
+          <div class="hd"><h3>冰箱</h3><span class="tw">Pantry</span></div>
+          <div class="labels">
+            <div class="lab u">N° 01<b>牛奶</b><span class="dd">明日</span></div>
+            <div class="lab">N° 02<b>鸡蛋</b><span class="dd">11.21</span></div>
+            <div class="lab">N° 03<b>草莓</b><span class="dd">11.22</span></div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab2">
+        <span class="on">今日<small>TODAY</small></span><span>账目<small>LEDGER</small></span>
+        <span><b class="pp">＋</b></span><span>冰箱<small>PANTRY</small></span><span>更多<small>MORE</small></span>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+const B=document.body;
+document.querySelectorAll('.bar button[data-k]').forEach(b=>b.onclick=()=>{
+  const [s,p]=b.dataset.k.split(':');B.dataset.s=s;if(p)B.dataset.p=p;
+  document.querySelectorAll('.bar button[data-k]').forEach(x=>x.classList.toggle('on',x===b));
+});
+document.querySelectorAll('.bar .dv').forEach(b=>b.onclick=()=>{
+  B.dataset.v=b.dataset.dv;document.querySelectorAll('.bar .dv').forEach(x=>x.classList.toggle('on',x===b));
+});
+document.querySelectorAll('.t1 li,.t2 li').forEach(li=>li.onclick=()=>li.classList.toggle('done'));
+const H={早起:'11011101011101',喝水:'11111111111111',运动:'01001010010100',背词:'11111101111111',早睡:'00101001010010'};
+document.getElementById('dots').innerHTML=Object.entries(H).map(([k,v])=>`<span class="kai">${k}</span>`+[...v].map(x=>x==='1'?'<i class="on pearl"></i>':'<i></i>').join('')).join('');
+</script>
+</body>
+</html>

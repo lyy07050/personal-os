@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 多邻国</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.streak .g{font-size:56px;line-height:1;color:var(--green)}
+.streak .g small{font-size:32px;color:var(--ink-2)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:22px;text-align:center;font-size:15px;color:var(--ink-2)}
+.days i{display:block;height:40px;border-radius:10px;margin-bottom:10px;background:var(--sage)}
+.days i.on{background:var(--blue);border:1px solid #cfe3ee}
+.wod{height:212px;border-radius:14px;background:#e6ede2;box-shadow:var(--sh-lift);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.wod .g{font-size:56px}
+.wod p{font-size:16px;color:var(--ink-2)}
+.miss li{display:grid;grid-template-columns:26px 1fr auto;font-size:16px;padding:11px 0}
+.miss .sq{width:14px;height:14px;border-radius:3px;background:var(--brown);align-self:center}
+.mast{display:flex;gap:4px}
+.mast i{width:9px;height:9px;border-radius:50%;background:#dfe5df}
+.mast i.on{background:var(--green)}
+.beads{display:flex;gap:6px;align-items:center}
+.beads i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#f4d9d4 55%,#e9c3bc);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.beads i.off{background:#dfe5df}
+</style>
+</head>
+<body data-page="english">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs"><button class="lat on">Today</button><button class="lat">Words</button><button class="lat">Mistakes</button></div>
+    <div class="find">⌕ 查单词…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">41 · ENGLISH</p>
+    <h1>多邻国</h1>
+    <p class="facts">连续 <b>23 天</b> · 今天 12 / 20 个 · 单词本 186 个</p>
+    <div class="btns"><button class="btn pri">开始学习</button><button class="btn sec">＋ 收一个词</button></div>
+    <img class="art" src="assets/notepaper.png" alt="" style="left:865px;top:-91px;width:277px">
+  </section>
+
+  <div class="stack">
+    <div class="row c2">
+      <section class="card streak" style="height:338px"><div class="head"><h2>连续学习</h2><span class="note">本周</span></div>
+        <span class="g">23<small>天</small></span>
+        <div class="days"><span><i class="on"></i>一</span><span><i class="on"></i>二</span><span><i class="on"></i>三</span><span><i></i>四</span><span><i></i>五</span><span><i></i>六</span><span><i></i>日</span></div>
+      </section>
+      <section class="card" style="height:338px"><div class="head"><h2>今日单词</h2></div>
+        <div class="wod"><span class="g">procrastinate</span><p>v. 拖延 · I tend to procrastinate on Mondays.</p></div>
+      </section>
+    </div>
+
+    <section class="card"><div class="head"><h2>错词本</h2></div>
+      <ul class="list miss">
+        <li><span class="sq"></span>meticulous<span>一丝不苟的</span></li>
+        <li><span class="sq"></span>tentative<span>暂定的</span></li>
+        <li><span class="sq"></span>alleviate<span>减轻</span></li>
+        <li><span class="sq"></span>scrutinize<span>仔细检查</span></li>
+      </ul>
+    </section>
+
+    <section class="card"><div class="head"><h2>单词本</h2></div>
+      <table>
+        <thead><tr><th>单词</th><th>释义</th><th>来源</th><th>掌握</th></tr></thead>
+        <tbody>
+          <tr><td><b>procrastinate</b></td><td>拖延</td><td><span class="chip">多邻国</span></td><td><span class="mast"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td></tr>
+          <tr><td><b>stakeholder</b></td><td>利益相关方</td><td><span class="chip plain">求职</span></td><td><span class="mast"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+          <tr><td><b>regression</b></td><td>回归（统计）</td><td><span class="chip beige">课堂</span></td><td><span class="mast"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td></tr>
+          <tr><td><b>meticulous</b></td><td>一丝不苟的</td><td><span class="chip pink">小红书</span></td><td><span class="mast"><i class="on"></i><i></i><i></i><i></i><i></i></span></td></tr>
+          <tr><td><b>leverage</b></td><td>利用、借助</td><td><span class="chip plain">求职</span></td><td><span class="mast"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card"><div class="head"><h2>最近 14 天</h2></div>
+      <div style="display:flex;gap:24px;align-items:center"><span style="font-size:16px;color:var(--ink-2)">背词</span><span class="beads" id="beads"></span></div>
+      <p style="font-size:16px;color:var(--ink-2);margin-top:18px">平均每天 17 个 · 最长连续 31 天</p>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>document.getElementById('beads').innerHTML=[1,1,1,1,1,1,1,1,1,1,1,1,1,1].map(v=>`<i class="${v?'':'off'}"></i>`).join('');</script>
+</body>
+</html>

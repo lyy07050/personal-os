@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人生 OS 首页预览</title>
+<style>
+:root{
+  --bg:#f6f4f0; --panel:#ffffff; --side:#efece6; --ink:#2b2a28; --muted:#8a857c; --line:#e4dfd6;
+  --accent:#c2683f; --accent-soft:#f4e3d9; --green:#5b8c6a; --green-1:#dfeadf; --green-2:#b4d1b9; --green-3:#7fae89; --green-4:#4f8a5e;
+  --bar:#ece7df; --warn:#c9483b;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1e1d1b; --panel:#272523; --side:#22201e; --ink:#ece8e1; --muted:#9a948a; --line:#3a3733;
+    --accent:#e08a5f; --accent-soft:#3d2d24; --green:#86b892; --green-1:#2c3a2f; --green-2:#3f5c46; --green-3:#5e8a68; --green-4:#86b892;
+    --bar:#34312d; --warn:#e26b5e;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1e1d1b; --panel:#272523; --side:#22201e; --ink:#ece8e1; --muted:#9a948a; --line:#3a3733;
+  --accent:#e08a5f; --accent-soft:#3d2d24; --green:#86b892; --green-1:#2c3a2f; --green-2:#3f5c46; --green-3:#5e8a68; --green-4:#86b892;
+  --bar:#34312d; --warn:#e26b5e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",sans-serif}
+.app{display:flex;min-height:100vh}
+/* Obsidian-like sidebar */
+.side{width:230px;background:var(--side);border-right:1px solid var(--line);padding:14px 10px;font-size:13.5px;flex-shrink:0}
+.side h4{margin:4px 8px 10px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.side a{display:block;padding:4px 8px;border-radius:6px;color:var(--ink);text-decoration:none;white-space:nowrap}
+.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.side a.lock{color:var(--muted)}
+.main{flex:1;min-width:0}
+.tabbar{height:38px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;padding:0 12px;gap:4px;background:var(--side)}
+.tab{background:var(--bg);border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;padding:6px 14px;font-size:13px}
+.content{max-width:1040px;margin:0 auto;padding:28px 28px 60px}
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.hello h1{margin:0;font-size:26px;font-weight:700}
+.hello .date{color:var(--muted);margin-top:2px}
+.pill{background:var(--accent-soft);color:var(--accent);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;border:none}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card h3{margin:0 0 12px;font-size:15px;display:flex;justify-content:space-between;align-items:baseline}
+.card h3 small{color:var(--muted);font-weight:400;font-size:12.5px}
+.wide{grid-column:1/-1}
+.todo{list-style:none;margin:0;padding:0}
+.todo li{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none}
+.todo li:last-child{border-bottom:none}
+.box{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:5px;flex-shrink:0;display:grid;place-items:center;font-size:12px;color:#fff}
+.todo li.done .box{background:var(--green);border-color:var(--green)}
+.todo li.done span.t{text-decoration:line-through;color:var(--muted)}
+.tag{margin-left:auto;font-size:11.5px;color:var(--muted);background:var(--bar);padding:1px 8px;border-radius:999px;white-space:nowrap}
+.big{font-size:30px;font-weight:700;letter-spacing:-.01em}
+.delta{color:var(--green);font-size:13px;margin-left:8px;font-weight:600}
+.row{display:grid;grid-template-columns:52px 1fr 62px;gap:10px;align-items:center;font-size:13.5px;margin:8px 0}
+.track{height:8px;background:var(--bar);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:99px}
+.row .v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.week{display:flex;gap:6px;align-items:flex-end;height:64px;margin-top:14px}
+.week div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.week i{display:block;width:100%;background:var(--accent);opacity:.75;border-radius:4px 4px 2px 2px}
+.week .today i{opacity:1}
+.proj{margin:12px 0}
+.proj .top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+.proj .top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
+.proj .fill{background:var(--green)}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:3px;overflow-x:auto}
+.heat i{width:13px;height:13px;border-radius:3px;background:var(--bar)}
+.heat i.l1{background:var(--green-1)}.heat i.l2{background:var(--green-2)}.heat i.l3{background:var(--green-3)}.heat i.l4{background:var(--green-4)}
+.habits{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.habits button{border:1px solid var(--line);background:transparent;color:var(--ink);padding:3px 10px;border-radius:999px;font-size:12.5px;cursor:pointer}
+.habits button.on{background:var(--green);border-color:var(--green);color:#fff}
+.legend{display:flex;gap:3px;align-items:center;font-size:11px;color:var(--muted);margin-top:8px;justify-content:flex-end}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.fridge{display:flex;gap:10px;flex-wrap:wrap}
+.food{border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13.5px}
+.food b{display:block}
+.food small{color:var(--muted)}
+.food.soon{border-color:var(--warn)}
+.food.soon small{color:var(--warn);font-weight:600}
+.know{border-left:3px solid var(--accent);padding:6px 0 6px 12px;margin:10px 0}
+.know .k{font-weight:600;font-size:14px}
+.know .n{color:var(--muted);font-size:13px}
+.know .h{font-size:11.5px;color:var(--accent)}
+.note{margin-top:26px;font-size:12.5px;color:var(--muted);text-align:center}
+.toggle{position:fixed;right:14px;bottom:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer}
+@media (max-width:760px){
+  .side,.tabbar{display:none}
+  .content{padding:18px 16px 60px}
+  .grid{grid-template-columns:1fr}
+  .hello h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side">
+    <h4>LifeOS</h4>
+    <a>📥 00 收件箱</a>
+    <a class="on">🏠 10 总部 · 首页</a>
+    <a>💰 20 财务部</a>
+    <a>📦 30 后勤部</a>
+    <a>📚 40 研发部</a>
+    <a>💼 50 人事部</a>
+    <a class="lock">🔒 60 个人档案</a>
+    <a>⚙️ 90 系统</a>
+  </nav>
+  <div class="main">
+    <div class="tabbar"><div class="tab">首页</div></div>
+    <div class="content">
+      <div class="hello">
+        <div>
+          <h1 id="greet">早上好 ☀️</h1>
+          <div class="date" id="today"></div>
+        </div>
+        <button class="pill" title="示例：点开会进入收件箱">📥 收件箱 3 条待处理</button>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h3>📋 今日待办 <small id="todoCount"></small></h3>
+          <ul class="todo" id="todo"></ul>
+        </section>
+
+        <section class="card">
+          <h3>💰 本周花费 <small>11/09 – 11/15</small></h3>
+          <div><span class="big">¥426</span><span class="delta">比上周 ↓12%</span></div>
+          <div id="cats"></div>
+          <div class="week" id="week"></div>
+        </section>
+
+        <section class="card">
+          <h3>🚀 项目进度 <small>进行中 3 个</small></h3>
+          <div id="projects"></div>
+        </section>
+
+        <section class="card">
+          <h3>🔥 习惯热力图 <small>最近 16 周</small></h3>
+          <div class="habits" id="habits"></div>
+          <div class="heat" id="heat"></div>
+          <div class="legend">少 <i style="background:var(--bar)"></i><i style="background:var(--green-1)"></i><i style="background:var(--green-2)"></i><i style="background:var(--green-3)"></i><i style="background:var(--green-4)"></i> 多</div>
+        </section>
+
+        <section class="card">
+          <h3>🥚 冰箱 <small>快过期的排在前面</small></h3>
+          <div class="fridge">
+            <div class="food soon"><b>牛奶</b><small>明天过期</small></div>
+            <div class="food soon"><b>鸡蛋 ×4</b><small>3 天后</small></div>
+            <div class="food"><b>番茄 ×3</b><small>5 天后</small></div>
+            <div class="food"><b>速冻饺子</b><small>冷冻 · 1 月</small></div>
+          </div>
+          <p style="margin:12px 0 0;font-size:13px;color:var(--muted)">💡 AI 建议：番茄炒蛋 + 热牛奶，用掉快过期的</p>
+        </section>
+
+        <section class="card">
+          <h3>📚 今天重温 <small>随机 2 张知识卡</small></h3>
+          <div class="know"><div class="h">#变美体态</div><div class="k">3 个动作改善圆肩驼背</div><div class="n">💬 站姿时肋骨下沉，别挺胸</div></div>
+          <div class="know"><div class="h">#求职</div><div class="k">面试结尾一定要问的 3 个问题</div><div class="n">💬 问团队现在最大的挑战是什么</div></div>
+        </section>
+      </div>
+
+      <p class="note">这是效果预览，数据都是示例。真实版本会放在 Obsidian 里，由 DataviewJS 从你的笔记里自动读取。</p>
+    </div>
+  </div>
+</div>
+<button class="toggle" id="themeBtn">🌓 切换深浅色</button>
+
+<script>
+const d=new Date(), wk='日一二三四五六';
+document.getElementById('today').textContent=`${d.getMonth()+1}月${d.getDate()}日 周${wk[d.getDay()]}`;
+const h=d.getHours();
+document.getElementById('greet').textContent=h<11?'早上好 ☀️':h<18?'下午好 🌤':'晚上好 🌙';
+
+const todos=[['投递 2 份简历','求职',false],['买洗衣液','后勤',false],['体态练习 15 分钟','习惯',true],['整理收件箱','总部',false],['给妈妈打电话','生活',false]];
+const ul=document.getElementById('todo');
+function renderTodo(){
+  ul.innerHTML='';
+  todos.forEach((t,i)=>{
+    const li=document.createElement('li'); if(t[2]) li.className='done';
+    li.innerHTML=`<span class="box">${t[2]?'✓':''}</span><span class="t">${t[0]}</span><span class="tag">${t[1]}</span>`;
+    li.onclick=()=>{t[2]=!t[2];renderTodo()};
+    ul.appendChild(li);
+  });
+  document.getElementById('todoCount').textContent=`${todos.filter(t=>t[2]).length}/${todos.length} 完成`;
+}
+renderTodo();
+
+const cats=[['餐饮',221],['购物',98],['交通',62],['日用',45]], total=426;
+document.getElementById('cats').innerHTML=cats.map(([n,v])=>`<div class="row"><span>${n}</span><div class="track"><div class="fill" style="width:${v/total*100}%"></div></div><span class="v">¥${v}</span></div>`).join('');
+const days=[['一',68],['二',142],['三',35],['四',88],['五',93],['六',0],['日',0]], max=142;
+const todayIdx=(d.getDay()+6)%7;
+document.getElementById('week').innerHTML=days.map(([n,v],i)=>`<div class="${i===todayIdx?'today':''}"><i style="height:${Math.max(3,v/max*44)}px;${v?'':'opacity:.2'}"></i>${n}</div>`).join('');
+
+const projects=[['求职准备',80],['整理衣柜',30],['学会做 5 道家常菜',40]];
+document.getElementById('projects').innerHTML=projects.map(([n,p])=>`<div class="proj"><div class="top"><span>${n}</span><span>${p}%</span></div><div class="track"><div class="fill" style="width:${p}%"></div></div></div>`).join('');
+
+const habits=['全部','早睡','运动','体态','喝水'];
+let cur=0, seed=7;
+function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+function renderHeat(){
+  document.getElementById('habits').innerHTML=habits.map((n,i)=>`<button class="${i===cur?'on':''}" data-i="${i}">${n}</button>`).join('');
+  document.querySelectorAll('#habits button').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;renderHeat()});
+  seed=7+cur*13; let html='';
+  for(let i=0;i<16*7;i++){const r=rnd(), boost=i/112*.35; const lv=r+boost>1.05?4:r+boost>.85?3:r+boost>.6?2:r+boost>.4?1:0; html+=`<i class="${lv?'l'+lv:''}"></i>`}
+  document.getElementById('heat').innerHTML=html;
+}
+renderHeat();
+
+const root=document.documentElement;
+document.getElementById('themeBtn').onclick=()=>{
+  const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme=dark?'light':'dark';
+};
+</script>
+</body>
+</html>

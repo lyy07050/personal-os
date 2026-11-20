@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 随手记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mobile.css?v=6">
+<style>
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;height:36px;padding:0 16px;border-radius:999px;background:#fff;font-size:14px;color:var(--ink-2);box-shadow:var(--shadow)}
+.chips button[aria-pressed="true"]{background:var(--green);color:#fff}
+.masonry{columns:2;column-gap:10px}
+.note{break-inside:avoid;margin-bottom:10px;padding:14px;border-radius:22px}
+.note[hidden]{display:none}
+.note .k{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.note b{display:block;font-size:16px;font-weight:600;letter-spacing:-.02em;line-height:1.3}
+.note p{font-size:13px;color:var(--ink-2);margin-top:4px;line-height:1.5}
+.note ul{list-style:none;margin-top:6px}
+.note li{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:3px 0}
+.note li .ck{width:18px;height:18px}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll">
+        <div class="status"><span>9:41</span><svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/></g></svg></div>
+        <header class="navbar"><a class="round" href="mobile-more.html" aria-label="返回所有部门"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3 5 9l6 6" fill="none" stroke="#252d29" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="title"><h1 class="h">随手记</h1><p>11 条 · 还没整理 4 条</p></div></header>
+
+        <div class="chips" role="group" aria-label="类型">
+          <button aria-pressed="true" data-f="all">全部</button><button aria-pressed="false" data-f="活动">活动</button><button aria-pressed="false" data-f="备忘">备忘</button><button aria-pressed="false" data-f="灵感">灵感</button><button aria-pressed="false" data-f="清单">清单</button><button aria-pressed="false" data-f="链接">链接</button>
+        </div>
+        <div class="masonry" id="wall">
+          <article class="card note" data-k="活动" style="background:var(--m-yellow)"><span class="k">活动 · 11.21 周五</span><b>Networking event</b><p>Bahen 1F · 18:00，带两份简历</p></article>
+          <article class="card note" data-k="备忘" style="background:var(--m-blue)"><span class="k">备忘</span><b>回🇨🇳准备</b><ul><li class="done"><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="t">枫糖浆</span></li><li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="t">冰酒</span></li><li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="t">爸爸要的鱼油</span></li></ul></article>
+          <article class="card note" data-k="灵感" style="background:#e6ede2"><span class="k">灵感</span><b>把日子过成一张地图</b><p>喜欢的咖啡馆、散步路线、安静的小角落</p></article>
+          <article class="card note" data-k="清单" style="background:#fff"><span class="k">清单</span><b>下次逛超市</b><ul><li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="t">燕麦</span></li><li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="t">酸奶</span></li><li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="t">厨房纸</span></li></ul></article>
+          <article class="card note" data-k="活动" style="background:var(--m-yellow)"><span class="k">活动 · 11.29 周六</span><b>圣诞老人游行</b><p>市中心 · 下午开始</p></article>
+          <article class="card note" data-k="链接" style="background:#fff"><span class="k">链接</span><b>周复盘模板</b><p>notion.so · 看到第 3 节</p></article>
+          <article class="card note" data-k="灵感" style="background:#faf0dc"><span class="k">灵感</span><b>读书笔记模板</b><p>书名、金句、我的想法</p></article>
+        </div>
+      </div>
+      <div class="dock"><form class="capture"><input placeholder="我想记…" aria-label="记进随手记" enterkeyhint="done"></form><button class="fab" aria-label="新建"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CK='<svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+(()=>{const h=decodeURIComponent(location.hash.slice(1));if(h==='new'){setTimeout(()=>document.querySelector('form.capture input').focus(),300);return;}const b=document.querySelector(`.chips button[data-f="${h}"]`);if(b)setTimeout(()=>b.click(),0);})();
+document.querySelectorAll('.note .ck').forEach(b=>b.onclick=()=>b.closest('li').classList.toggle('done'));
+document.querySelector('.chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.chips button').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelectorAll('#wall .note').forEach(n=>n.hidden=!(b.dataset.f==='all'||n.dataset.k===b.dataset.f));});
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>

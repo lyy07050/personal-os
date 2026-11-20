@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>人生 OS · 全部页面</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --card:#F8FAF0; --tile:#F3F6EA; --linen:#F3F2EF;
+  --ink:#2E2A27; --mute:#6E655E; --line:rgba(46,42,39,.09);
+  --coffee:#8B6A5B; --blush:#EFD9D5; --rose:#C98F8C; --euc:#BFC9B3; --sage:#7F8F6E; --ivory:#E8DCCB;
+  --r:10px;
+  --sh:0 1px 1px rgba(46,42,39,.04),0 4px 10px -4px rgba(46,42,39,.10),0 18px 30px -20px rgba(46,42,39,.22);
+  --sh2:0 2px 3px rgba(46,42,39,.06),0 12px 20px -8px rgba(46,42,39,.18),0 30px 44px -26px rgba(46,42,39,.30);
+}
+*{box-sizing:border-box}
+body{margin:0;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .38  0 0 0 0 .36  0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),var(--bg);color:var(--ink);font-family:"Noto Sans SC",sans-serif;font-weight:400;-webkit-font-smoothing:antialiased}
+.cap{font:400 12px "Noto Sans SC";color:var(--mute)}
+.up{font:500 11px "Noto Sans SC";letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.hand{font-family:"Gaegu","ZCOOL KuaiLe",cursive;font-weight:700}
+.zk{font-family:"ZCOOL KuaiLe","Gaegu",cursive}
+.pearl{background:linear-gradient(115deg,#fffaf6 0%,#f2d9d8 18%,#dfe9d8 36%,#ece3ef 54%,#f8ecdc 72%,#e2ece4 88%,#fffaf6 100%);background-size:300% 300%;animation:pearl 9s ease-in-out infinite alternate}
+@keyframes pearl{to{background-position:100% 100%}}
+.stk{filter:url(#stk);overflow:visible}
+.col{filter:drop-shadow(0 10px 10px rgba(46,42,39,.16));overflow:visible}
+
+.bar{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99;display:flex;gap:4px;background:rgba(46,42,39,.9);padding:4px;border-radius:8px;box-shadow:var(--sh)}
+.bar button{border:0;background:none;color:#f2f1ee;font:400 13px "Noto Sans SC";padding:6px 14px;border-radius:5px;cursor:pointer}
+.bar button.on{background:#f2f1ee;color:var(--ink)}
+body[data-v="dk"] .phwrap,body[data-v="ph"] .app{display:none}
+
+/* ============ 电脑版 ============ */
+.app{display:grid;grid-template-columns:212px 1fr;min-height:100vh;max-width:1420px;margin:0 auto}
+.side{padding:34px 22px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.logo{font:700 30px/1 "Gaegu","ZCOOL KuaiLe",cursive}
+.logo i{color:var(--rose)}
+.side .up{margin:26px 0 8px}
+.nav a{display:flex;justify-content:space-between;padding:7px 0;font-size:14px;color:var(--mute);cursor:pointer;transition:.15s}
+.nav a:hover{color:var(--ink)}
+.nav a.on{color:var(--ink);font-weight:500}
+.nav a sup{font:500 10px "Noto Sans SC";color:var(--rose)}
+.nav a.sub{padding-left:14px;font-size:13px}
+.side .foot{margin-top:auto;font-size:22px;white-space:nowrap;color:var(--coffee);transform:rotate(-3deg)}
+
+main{padding:30px 40px 70px 14px;min-width:0}
+.top{display:flex;align-items:flex-end;gap:26px}
+.tabs{display:flex;gap:24px;font:700 36px/1 "Gaegu","ZCOOL KuaiLe",cursive;color:#c2b9b0}
+.tabs span{cursor:pointer}.tabs span.on{color:var(--ink)}
+.tabs sup{font:500 11px "Noto Sans SC";margin-left:3px;color:var(--rose)}
+.find{margin-left:auto;width:270px;height:42px;border-radius:21px;background:var(--card);display:flex;align-items:center;gap:10px;padding:0 18px;font-size:13px;color:var(--mute);box-shadow:var(--sh)}
+
+/* 横幅：亚麻布 + 拼贴 */
+.ban{position:relative;height:300px;margin:86px 0 64px;border-radius:4px;background:
+  repeating-linear-gradient(0deg,rgba(110,100,85,.075) 0 1px,transparent 1px 3px),
+  repeating-linear-gradient(90deg,rgba(110,100,85,.06) 0 1px,transparent 1px 3px),var(--linen);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),var(--sh)}
+.ban-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2;padding-bottom:6px}
+.ban h1{margin:8px 0 2px;font:700 72px/1 "Gaegu","ZCOOL KuaiLe",cursive}
+.ban h1 i{color:var(--coffee)}
+.ban .zh{font:400 26px "ZCOOL KuaiLe","Gaegu",cursive;letter-spacing:.22em;margin:8px 0 0 .22em;color:var(--sage)}
+.ban .meta{font-size:13px;color:#5f5750;margin-top:18px;letter-spacing:.04em}
+.ban .meta b{font-weight:500;color:#a5615d}
+.ban .hand{position:absolute;left:50%;bottom:22px;transform:translateX(70px) rotate(-5deg);font-size:21px;color:var(--coffee)}
+.c-flower{position:absolute;left:-46px;top:-70px;width:190px;z-index:3}
+.c-left{position:absolute;left:-30px;bottom:-44px;width:300px;z-index:3}
+.c-right{position:absolute;right:-34px;bottom:-44px;width:340px;z-index:3}
+
+/* 便当格 */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.c{background:var(--card);border-radius:var(--r);box-shadow:inset 0 0 0 1px rgba(127,143,110,.10),var(--sh);position:relative;transition:transform .2s,box-shadow .2s}
+.c.lift:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.r2{grid-row:span 2}
+.pad{padding:20px 22px}
+.hd{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.hd h3{margin:0;font:400 20px "ZCOOL KuaiLe","Gaegu",cursive;letter-spacing:.04em}
+.hd .cap{margin-left:auto}
+.note-h{position:absolute;font-size:22px;color:var(--rose);transform:rotate(-6deg);pointer-events:none;white-space:nowrap}
+.todo{list-style:none;margin:0;padding:0}
+.todo li{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer}
+.ck{width:20px;height:20px;border-radius:50%;border:1px solid #c9c3bb;flex:none;display:grid;place-items:center;background:#fff;box-shadow:0 1px 2px rgba(46,42,39,.1)}
+.done .ck{background:var(--sage);border-color:var(--sage)}
+.done .ck::after{content:"";width:4px;height:8px;border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(40deg) translate(-1px,-1px)}
+.done .t{color:var(--mute);text-decoration:line-through}
+.todo .cap{margin-left:auto}.todo .cap.r{color:#a5615d}
+.st{height:132px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:14px 10px 12px}
+.st b{font:700 56px/1 "Gaegu","ZCOOL KuaiLe",cursive;color:var(--coffee)}
+.st b small{font-size:22px;color:var(--mute)}
+.round{display:grid;place-items:center;isolation:isolate}
+.go{width:112px;height:112px;border-radius:50%;border:0;background:var(--coffee);color:#fff;font:400 19px "ZCOOL KuaiLe","Gaegu",cursive;letter-spacing:.08em;cursor:pointer;position:relative;box-shadow:0 14px 22px -10px rgba(74,58,51,.75);transition:transform .25s}
+.go::before{content:"";position:absolute;inset:-7px;border-radius:50%;z-index:-1;background:conic-gradient(#f2d9d8,#dfe9d8,#ece3ef,#f8ecdc,#e2ece4,#f2d9d8);animation:spin 10s linear infinite;box-shadow:0 2px 6px rgba(46,42,39,.15)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.go:hover{transform:scale(1.05)}
+.bud{display:grid;grid-template-columns:auto 1fr;gap:6px 24px;align-items:end;height:100%}
+.bud b{font:700 58px/1 "Gaegu","ZCOOL KuaiLe",cursive;color:var(--coffee)}
+.bud svg{width:100%;height:64px}
+.bud .days{grid-column:2;display:flex;justify-content:space-between}
+.word{height:100%;display:flex;flex-direction:column}
+.word .tint{flex:1;background:#E6EADF;border-radius:var(--r) var(--r) 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.word .tint b{font:700 32px "Gaegu","ZCOOL KuaiLe",cursive;color:#56624a}
+.word .ft{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:12px;color:#4f4842}
+.word .pr{flex:1;height:4px;border-radius:4px;background:#ecebe7;overflow:hidden}
+.word .pr i{display:block;height:100%;width:60%;border-radius:4px}
+.dayt{grid-column:span 12;display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+.dy{min-height:138px;padding:12px 12px 14px;display:flex;flex-direction:column;align-items:center}
+.dy b{font:700 42px/1.1 "Gaegu","ZCOOL KuaiLe",cursive}
+.dy p{align-self:stretch;margin:6px 0 0;font-size:12px;line-height:1.5;display:flex;gap:6px;color:#4f4842}
+.dy p::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--euc);margin-top:6px;flex:none}
+.dy p.r::before{background:var(--rose)}
+.dy.td{background:var(--blush)}
+.sec{grid-column:span 12;display:flex;align-items:flex-end;gap:20px;margin:30px 0 4px}
+.sec .tabs{font-size:30px}
+.sec .hand{margin-left:auto;font-size:26px;color:var(--rose);transform:rotate(-3deg)}
+.pd{background:var(--tile);height:206px;padding:16px;box-shadow:inset 0 0 0 1px rgba(127,143,110,.10),var(--sh)}
+.pd b{display:block;font:400 21px "ZCOOL KuaiLe","Gaegu",cursive}
+.pd small{font:400 11px "Noto Sans SC";color:var(--mute)}
+.pd .dd{display:flex;align-items:center;gap:8px;font-size:12px;color:#4f4842;margin-top:12px}
+.pd.u .dd{color:#a5615d}.pd.u .ck{border-color:var(--rose)}
+.pd svg{position:absolute;right:10px;bottom:12px;height:112px;width:auto}
+.nt{padding:16px 18px;background:var(--blush)}
+.nt.g{background:#DFE5D7}
+.nt .nh{display:flex;justify-content:space-between;font-size:11px;padding-bottom:9px;border-bottom:1px solid rgba(46,42,39,.12);margin-bottom:12px}
+.nt p{margin:0;font:400 18px/1.7 "ZCOOL KuaiLe","Gaegu",cursive;max-width:78%}
+.nt svg{position:absolute;right:14px;bottom:10px}
+.heat{display:grid;grid-template-columns:48px repeat(14,24px);gap:9px 12px;align-items:center;font-size:12px;color:#4f4842}
+.heat i{aspect-ratio:1;border-radius:50%;background:#efeeea}
+.heat i.on{background:linear-gradient(135deg,#ecc4c1,#fff6f2 45%,#cfdcc6);box-shadow:inset 0 0 0 1px rgba(201,143,140,.45),0 1px 2px rgba(46,42,39,.14)}
+
+@media (max-width:1080px){.app{grid-template-columns:1fr}.side{display:none}main{padding:64px 16px 40px}
+  .c-right{width:230px}.c-left{width:210px}.ban h1{font-size:48px}
+  .s2,.s3{grid-column:span 4}.s4,.s5{grid-column:span 6}.s8{grid-column:span 12}.dayt{grid-template-columns:repeat(4,1fr)}}
+
+/* ============ 手机版 ============ */
+.phwrap{min-height:100vh;display:grid;place-items:center;padding:70px 16px 40px}
+.phone{width:390px;max-width:100%;height:844px;border:10px solid #23201e;border-radius:56px;overflow:hidden;position:relative;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .38  0 0 0 0 .36  0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),var(--bg);box-shadow:0 40px 80px -30px rgba(46,42,39,.5)}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#23201e;z-index:6}
+.scr{height:100%;overflow-y:auto;overflow-x:hidden;padding:0 14px 110px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.sb{display:flex;justify-content:space-between;padding:16px 16px 0;font:500 14px "Noto Sans SC"}
+.mnav{display:flex;justify-content:space-between;margin:22px 6px 0;font:700 18px/1.2 "Gaegu","ZCOOL KuaiLe",cursive;color:#bdb3a9}
+.mnav b{font-weight:400;color:var(--ink);display:block}
+.ph .ban{height:300px;margin:54px 0 46px}
+.ph .ban-t{justify-content:flex-start;padding-top:24px}
+.ph .ban h1{font-size:46px;margin-top:6px}
+.ph .ban .zh{font-size:19px;letter-spacing:.16em}
+.ph .c-flower{width:96px;left:-24px;top:-42px}
+.ph .c-left{width:172px;left:-14px;bottom:-24px}
+.ph .c-right{width:150px;right:-18px;bottom:-24px}
+.ph .tabs{font-size:32px;margin:0 4px 12px;white-space:nowrap}
+.ph .bento{grid-template-columns:repeat(6,1fr);gap:8px}
+.ph .s2{grid-column:span 2}.ph .s4{grid-column:span 4}.ph .s3{grid-column:span 3}.ph .s6{grid-column:span 6}
+.ph .st{height:104px}.ph .st b{font-size:38px}
+.ph .go{width:92px;height:92px;font-size:14px}
+.ph .pd{height:168px;padding:12px}.ph .pd svg{height:96px}
+.ph .sec{grid-column:span 6;margin:18px 0 0}
+.dock{position:absolute;left:12px;right:12px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:5}
+.dock .q{flex:1;height:54px;border-radius:27px;background:rgba(248,250,240,.97);display:flex;align-items:center;gap:10px;padding:0 20px;color:var(--mute);font-size:14px;box-shadow:var(--sh2)}
+.dock .b{width:54px;height:54px;border-radius:50%;background:rgba(248,250,240,.97);display:grid;place-items:center;font:700 26px "Gaegu","ZCOOL KuaiLe",cursive;box-shadow:var(--sh2)}
+.dock .b.k{background:var(--coffee);color:#fff}
+</style>
+<style>
+/* ===== 多页面 + Figma 平铺 ===== */
+.frame{display:none}
+.frame.on{display:block}
+.bar{gap:4px}
+.bar select{border:0;border-radius:5px;background:#f2f1ee;color:var(--ink);font:400 13px "Noto Sans SC";padding:6px 8px}
+body.board{background:#e7e6e2}
+body.board .frame{display:block;width:1440px;margin:90px auto 0;position:relative;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .38  0 0 0 0 .36  0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),#fff;
+  box-shadow:0 30px 60px -30px rgba(0,0,0,.25)}
+body.board .frame::before{content:attr(data-title);position:absolute;top:-40px;left:0;font:500 18px "Noto Sans SC";color:#6b665f}
+body.board .frame.phframe{width:auto;max-width:1900px}
+body.board .app{min-height:0;max-width:none}
+body.board .side{position:relative;height:auto}
+.frame .app{min-height:100vh}
+
+.side .nav a{text-decoration:none}
+.side .phl{margin-top:auto;font-size:13px;color:var(--coffee);cursor:pointer;padding:8px 0}
+
+/* 页头横幅 */
+.ban.pbn{height:176px;margin:44px 0 34px}
+.pbn .pt{position:absolute;left:40px;top:30px;z-index:2}
+.pbn h1{margin:8px 0 12px;font:400 50px/1 "ZCOOL KuaiLe","Gaegu",cursive;color:var(--ink)}
+.pbn h1 i{font-style:normal;color:var(--coffee)}
+.pbn .meta{font-size:13px;color:#5f5750}
+.pbn .meta b{font-weight:500;color:#a5615d}
+.pbn .acts{position:absolute;left:40px;bottom:-19px;display:flex;gap:10px;z-index:3}
+.pbn .pa{position:absolute;right:26px;bottom:-34px;height:236px;width:auto;z-index:2}
+
+.btn{height:38px;padding:0 18px;border-radius:19px;border:0;background:var(--coffee);color:#fff;font:500 13px "Noto Sans SC";cursor:pointer;box-shadow:0 8px 16px -8px rgba(74,58,51,.7);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn.g{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(127,143,110,.18),var(--sh)}
+.btn.s{height:28px;padding:0 12px;font-size:12px;border-radius:14px}
+.chip{display:inline-flex;align-items:center;font:500 11px "Noto Sans SC";padding:3px 10px;border-radius:999px;background:#E6EADF;color:#56624a;white-space:nowrap}
+.chip.p{background:var(--blush);color:#9c5b57}
+.chip.y{background:#F2E8D3;color:#8B6A5B}
+.chip.k{background:#ECE6EF;color:#6f5a78}
+.chip.o{background:transparent;box-shadow:inset 0 0 0 1px rgba(46,42,39,.15);color:#4f4842}
+.s6{grid-column:span 6}.s7{grid-column:span 7}.s9{grid-column:span 9}
+.big{font:700 54px/1 "Gaegu","ZCOOL KuaiLe",cursive;color:var(--coffee)}
+.big small{font-size:24px;color:var(--mute)}
+.mid{font:700 34px/1 "Gaegu","ZCOOL KuaiLe",cursive;color:var(--coffee)}
+.sub{font-size:12px;color:var(--mute)}
+.bar2{height:10px;border-radius:5px;background:#ebeee3;overflow:hidden;margin:14px 0 8px;box-shadow:inset 0 1px 2px rgba(46,42,39,.08)}
+.bar2 i{display:block;height:100%;border-radius:5px;background:var(--sage)}
+.bar2 i.p{background:var(--rose)}
+.stack{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:14px 0 16px}
+.leg div{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-top:1px solid var(--line)}
+.leg div:first-child{border:0}
+.leg i{width:10px;height:10px;border-radius:3px;flex:none}
+.leg span{margin-left:auto;font:400 12px "DM Mono";color:#4f4842}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font:500 11px "Noto Sans SC";letter-spacing:.08em;color:var(--mute);padding:0 8px 10px;border-bottom:1px solid var(--line)}
+.tbl td{padding:11px 8px;border-bottom:1px solid var(--line);color:#3d3833}
+.tbl tr:last-child td{border:0}
+.tbl .num{text-align:right;font:400 13px "DM Mono"}
+.tbl tr.flag td{background:rgba(239,217,213,.45)}
+.rows .row{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.rows .row:first-child{border:0;padding-top:4px}
+.rows .row .tx{flex:1;min-width:0}
+.rows .row .tx b{display:block;font-weight:500;font-size:14px;margin-bottom:3px}
+.rows .row .to{font-size:12px;color:#4f4842;white-space:nowrap}
+.rows .row .to b{color:var(--coffee);font-weight:500}
+.ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;font:700 15px "Gaegu","ZCOOL KuaiLe";color:#fff}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px}
+.kv span:nth-child(odd){color:var(--mute)}
+.pd.plain .bigd{position:absolute;right:18px;bottom:14px;font:700 64px/1 "Gaegu";color:#d9ddcf}
+.recipe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.recipe .r{background:#fff8;border-radius:8px;padding:14px;box-shadow:inset 0 0 0 1px rgba(127,143,110,.15)}
+.recipe .r b{display:block;font:400 18px "ZCOOL KuaiLe";margin-bottom:6px}
+.recipe .r p{margin:0 0 10px;font-size:12px;color:#4f4842;line-height:1.6}
+.check li{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px;list-style:none}
+.check{margin:0;padding:0}
+.check li:first-child{border:0}
+.photo{height:150px;border-radius:8px;margin-bottom:12px;position:relative;display:grid;place-items:center;overflow:hidden}
+.photo .hand{font-size:26px;color:rgba(46,42,39,.55)}
+.photo .tagp{position:absolute;left:10px;top:10px}
+.item b{font:400 18px "ZCOOL KuaiLe";display:block;margin-bottom:6px}
+.item .kv{font-size:12px;gap:4px 12px}
+.flash{height:230px;border-radius:10px;background:var(--blush);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;position:relative;box-shadow:inset 0 0 0 1px rgba(201,143,140,.25)}
+.flash b{font:400 22px/1.5 "ZCOOL KuaiLe";max-width:260px}
+.flash .cap{position:absolute;top:14px;left:16px}
+.kc{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kcard{background:#fff9;border-radius:8px;padding:16px;box-shadow:inset 0 0 0 1px rgba(127,143,110,.15);display:flex;flex-direction:column;gap:8px}
+.kcard b{font:400 18px "ZCOOL KuaiLe"}
+.kcard p{margin:0;font-size:12px;line-height:1.7;color:#4f4842}
+.kcard .ft{display:flex;gap:6px;align-items:center;margin-top:auto}
+.kcard .ft .sub{margin-left:auto}
+.dots5{display:inline-flex;gap:3px}
+.dots5 i{width:7px;height:7px;border-radius:50%;background:#e2e6d8}
+.dots5 i.on{background:var(--sage)}
+.course{overflow:hidden;padding:0}
+.course .band{height:64px;position:relative;padding:14px 18px}
+.course .band .code{font:700 26px "Gaegu";color:rgba(46,42,39,.75)}
+.course .bd{padding:14px 18px 18px}
+.course .bd b{font:400 17px "ZCOOL KuaiLe";display:block;margin-bottom:10px}
+.tl .ev2{display:grid;grid-template-columns:76px 1fr auto;gap:14px;align-items:center;padding:13px 0;border-top:1px solid var(--line)}
+.tl .ev2:first-child{border:0}
+.tl .dte{font:700 22px/1 "Gaegu";color:var(--coffee)}
+.tl .dte small{display:block;font:400 11px "Noto Sans SC";color:var(--mute);margin-top:3px}
+.tl b{font-weight:500;font-size:14px;display:block}
+.file{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+.file:first-child{border:0}
+.file .ft{width:30px;height:38px;border-radius:3px 9px 3px 3px;background:#fff;box-shadow:inset 0 0 0 1px rgba(46,42,39,.15);display:grid;place-items:end center;font:500 8px "DM Mono";padding-bottom:5px;flex:none}
+.file .ft.pdf{color:#a5615d}.file .ft.ppt{color:#8B6A5B}
+.file .sub{margin-left:auto}
+.kan{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.col4{background:#f3f5ec;border-radius:10px;padding:14px;box-shadow:inset 0 0 0 1px rgba(127,143,110,.12)}
+.col4 h4{margin:0 0 12px;display:flex;align-items:center;gap:8px;font:400 18px "ZCOOL KuaiLe"}
+.col4 h4 .sub{margin-left:auto}
+.job{background:var(--card);border-radius:8px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--sh)}
+.job b{font-weight:500;font-size:14px;display:block}
+.job .sub{display:block;margin:3px 0 8px}
+.lock{min-height:250px;display:flex;flex-direction:column}
+.lock .ln2{height:10px;border-radius:5px;background:#e8ebe0;margin:9px 0;filter:blur(1.5px)}
+.lock .lk{margin:auto auto 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.lock .pad-lock{width:46px;height:46px;border-radius:50%;background:var(--blush);display:grid;place-items:center;font-size:20px}
+.qa{display:flex;flex-direction:column;gap:14px}
+.qa div{border-top:1px solid var(--line);padding-top:12px}
+.qa div:first-child{border:0;padding-top:0}
+.qa .q{font-size:12px;color:var(--mute);margin-bottom:6px}
+.qa .a{font:400 17px/1.6 "ZCOOL KuaiLe";color:#3d3833}
+.wkdots{display:flex;gap:6px;margin-top:12px}
+.wkdots span{flex:1;text-align:center;font-size:11px;color:var(--mute)}
+.wkdots i{display:block;height:28px;border-radius:7px;background:#e6eadf;margin-bottom:5px}
+.wkdots i.on{background:var(--sage)}
+
+/* 手机：其他页 */
+.phrow{display:flex;gap:56px;justify-content:center;flex-wrap:wrap;padding:70px 40px}
+.phrow .phone{flex:none}
+.mt{font:400 34px/1 "ZCOOL KuaiLe";margin:26px 4px 6px}
+.ms{font-size:12px;color:var(--mute);margin:0 4px 16px}
+.amt{text-align:center;margin:20px 0 6px}
+.amt b{font:700 64px/1 "Gaegu";color:var(--coffee)}
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0}
+.cats span{height:56px;border-radius:12px;background:var(--card);display:grid;place-items:center;font-size:12px;box-shadow:var(--sh)}
+.cats span.on{background:var(--coffee);color:#fff}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.keys span{height:54px;border-radius:12px;background:var(--card);display:grid;place-items:center;font:700 26px "Gaegu";box-shadow:var(--sh)}
+.keys span.ok{background:var(--sage);color:#fff;font:500 15px "Noto Sans SC"}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mgrid .c{height:104px;padding:14px;display:flex;flex-direction:column;justify-content:space-between}
+.mgrid .c b{font:400 19px "ZCOOL KuaiLe"}
+.mgrid .c.lockd{background:#f1f1ec;color:var(--mute)}
+.flist .c{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:8px}
+.flist svg{width:52px;height:52px;flex:none}
+.flist b{font:400 17px "ZCOOL KuaiLe";display:block}
+.flist .d{margin-left:auto;font:700 22px "Gaegu";color:var(--coffee)}
+.flist .u .d{color:#a5615d}
+.s4 .heat,.s5 .heat{grid-template-columns:48px repeat(14,minmax(0,1fr));column-gap:5px}
+body.board .frame.phframe{width:max-content;max-width:none}
+body.board .phrow{flex-wrap:nowrap}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <!-- 手绘质感：边缘轻微抖动 + 颗粒 -->
+  <filter id="paint" x="-6%" y="-6%" width="112%" height="112%">
+    <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="2" result="w"/>
+    <feDisplacementMap in="SourceGraphic" in2="w" scale="1.8" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 .3  0 0 0 0 .22  0 0 0 0 .18  0 0 0 .55 -.2" result="g"/>
+    <feComposite in="g" in2="d" operator="in" result="gg"/>
+    <feMerge><feMergeNode in="d"/><feMergeNode in="gg"/></feMerge>
+  </filter>
+  <!-- 贴纸：白边 + 投影 + 颗粒 -->
+  <filter id="stk" x="-25%" y="-25%" width="150%" height="160%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="2.2" result="d"/>
+    <feFlood flood-color="#ffffff"/><feComposite in2="d" operator="in" result="outline"/>
+    <feGaussianBlur in="d" stdDeviation="3.5" result="b"/><feOffset in="b" dx="1" dy="5" result="bo"/>
+    <feFlood flood-color="#2e2a27" flood-opacity=".22"/><feComposite in2="bo" operator="in" result="sh"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 .3  0 0 0 0 .22  0 0 0 0 .18  0 0 0 .5 -.18" result="nn"/>
+    <feComposite in="nn" in2="SourceGraphic" operator="in" result="grain"/>
+    <feMerge><feMergeNode in="sh"/><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/><feMergeNode in="grain"/></feMerge>
+  </filter>
+  <filter id="wash"><feGaussianBlur stdDeviation="7"/></filter>
+
+  <linearGradient id="gPetal" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fffaf4"/><stop offset=".5" stop-color="#f8e0dc"/><stop offset="1" stop-color="#df9cab"/></linearGradient>
+  <linearGradient id="gPetal2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fbeae4"/><stop offset=".55" stop-color="#eebcc2"/><stop offset="1" stop-color="#cf7f93"/></linearGradient>
+  <linearGradient id="gPearl" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fffaf5"/><stop offset=".3" stop-color="#f5d9de"/><stop offset=".55" stop-color="#e0ecdd"/><stop offset=".78" stop-color="#ebe2f2"/><stop offset="1" stop-color="#fbeedd"/></linearGradient>
+  <radialGradient id="gLeaf" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#b9c7ac"/><stop offset=".55" stop-color="#8fa286"/><stop offset="1" stop-color="#637860"/></radialGradient>
+  <linearGradient id="gMag" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#b55772"/><stop offset=".5" stop-color="#d4889c"/><stop offset="1" stop-color="#ebb9c2"/></linearGradient>
+  <linearGradient id="gCat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffbf4"/><stop offset="1" stop-color="#f1e6d6"/></linearGradient>
+  <radialGradient id="gJar" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#fdf8ec"/><stop offset="1" stop-color="#e9dcc4"/></radialGradient>
+  <radialGradient id="gEgg" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#fffdf8"/><stop offset="1" stop-color="#eedfca"/></radialGradient>
+  <radialGradient id="gEggB" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#f0d6b8"/><stop offset="1" stop-color="#d3ad88"/></radialGradient>
+  <radialGradient id="gSb" cx=".35" cy=".28" r=".85"><stop offset="0" stop-color="#f3a297"/><stop offset=".55" stop-color="#d9625f"/><stop offset="1" stop-color="#bd4b50"/></radialGradient>
+  <linearGradient id="gStalk" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fffdf6"/><stop offset=".28" stop-color="#f3f4e1"/><stop offset=".5" stop-color="#b6ca99"/><stop offset="1" stop-color="#6d8e56"/></linearGradient>
+  <linearGradient id="gCalla" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".6" stop-color="#e9bfc2" stop-opacity=".7"/><stop offset="1" stop-color="#c98f8c" stop-opacity=".75"/></linearGradient>
+
+  <g id="ptl"><path d="M0 0 C-20 -28 -19 -74 0 -100 C19 -74 20 -28 0 0Z"/><path d="M0 -8 C-1 -40 -1 -70 0 -92 M-5 -14 C-10 -40 -9 -64 -3 -84 M5 -14 C10 -40 9 -64 3 -84" fill="none" stroke="#c57f90" stroke-width=".5" opacity=".45"/></g>
+  <g id="budg"><path d="M0 0 C-13 -14 -11 -38 0 -50 C11 -38 13 -14 0 0Z" fill="url(#gPetal2)" stroke="#c57f90" stroke-width=".6"/><path d="M0 0 C-9 -12 -12 -30 -5 -42 C-1 -30 0 -12 0 0Z" fill="url(#gPetal)" stroke="#c57f90" stroke-width=".5"/><path d="M0 0 C9 -12 12 -30 5 -42 C1 -30 0 -12 0 0Z" fill="url(#gPetal)" stroke="#c57f90" stroke-width=".5"/></g>
+</defs>
+
+<!-- ===== 荷花 ===== -->
+<symbol id="lotus" viewBox="0 0 220 170">
+  <g stroke="#c98f99" stroke-width=".7">
+    <use href="#ptl" fill="url(#gPetal2)" transform="translate(110 150) rotate(-104) scale(.8)"/><use href="#ptl" fill="url(#gPetal2)" transform="translate(110 150) rotate(104) scale(.8)"/>
+    <use href="#ptl" fill="url(#gPetal2)" transform="translate(110 150) rotate(-84)"/><use href="#ptl" fill="url(#gPetal2)" transform="translate(110 150) rotate(84)"/>
+    <use href="#ptl" fill="url(#gPetal2)" transform="translate(110 150) rotate(-62)"/><use href="#ptl" fill="url(#gPetal2)" transform="translate(110 150) rotate(62)"/>
+    <use href="#ptl" fill="url(#gPetal)" transform="translate(110 150) rotate(-40)"/><use href="#ptl" fill="url(#gPetal)" transform="translate(110 150) rotate(40)"/>
+    <use href="#ptl" fill="url(#gPetal)" transform="translate(110 150) rotate(-14) scale(1.04)"/><use href="#ptl" fill="url(#gPetal)" transform="translate(110 150) rotate(14) scale(1.04)"/>
+    <use href="#ptl" fill="url(#gPearl)" transform="translate(110 150) rotate(-52) scale(.88)"/><use href="#ptl" fill="url(#gPearl)" transform="translate(110 150) rotate(52) scale(.88)"/>
+    <use href="#ptl" fill="url(#gPearl)" transform="translate(110 150) rotate(-26) scale(.9)"/><use href="#ptl" fill="url(#gPearl)" transform="translate(110 150) rotate(26) scale(.9)"/>
+    <use href="#ptl" fill="url(#gPearl)" transform="translate(110 150) scale(.92)"/>
+  </g>
+  <ellipse cx="110" cy="112" rx="15" ry="9" fill="#dcc27c" stroke="#b99a52" stroke-width=".6"/>
+  <g fill="#b99a52"><circle cx="104" cy="110" r="1.2"/><circle cx="110" cy="108" r="1.2"/><circle cx="116" cy="110" r="1.2"/><circle cx="107" cy="114" r="1.2"/><circle cx="113" cy="114" r="1.2"/></g>
+  <g stroke="#d8b25e" stroke-width="1" stroke-linecap="round" fill="none"><path d="M110 146 L84 100 M110 146 L92 94 M110 146 L128 94 M110 146 L136 100 M110 146 L100 92 M110 146 L120 92"/></g>
+  <g fill="#e8c878"><circle cx="84" cy="100" r="1.8"/><circle cx="92" cy="94" r="1.8"/><circle cx="128" cy="94" r="1.8"/><circle cx="136" cy="100" r="1.8"/><circle cx="100" cy="92" r="1.8"/><circle cx="120" cy="92" r="1.8"/></g>
+  <g stroke="#c98f99" stroke-width=".7">
+    <use href="#ptl" fill="url(#gPetal)" transform="translate(110 152) rotate(-34) scale(.7)"/><use href="#ptl" fill="url(#gPetal)" transform="translate(110 152) rotate(34) scale(.7)"/>
+    <use href="#ptl" fill="url(#gPetal)" transform="translate(110 152) rotate(-10) scale(.66)"/><use href="#ptl" fill="url(#gPetal)" transform="translate(110 152) rotate(12) scale(.66)"/>
+  </g>
+</symbol>
+<!-- ===== 荷叶 ===== -->
+<symbol id="leaf" viewBox="0 0 220 120">
+  <path d="M10 62 C8 30 60 8 112 10 C170 8 214 34 210 64 C212 74 196 70 190 80 C170 104 130 112 104 110 C70 114 30 100 22 84 C12 80 8 72 10 62Z" fill="url(#gLeaf)" stroke="#55695a" stroke-width=".8"/>
+  <path d="M22 84 C40 96 70 104 104 102 C130 104 168 96 190 80 C170 104 130 112 104 110 C70 114 30 100 22 84Z" fill="#4f6452" opacity=".55"/>
+  <g stroke="#55695a" stroke-width=".7" fill="none" opacity=".55"><path d="M110 56 L14 62 M110 56 L40 28 M110 56 L84 12 M110 56 L134 11 M110 56 L176 24 M110 56 L208 58 M110 56 L186 84 M110 56 L146 106 M110 56 L98 108 M110 56 L52 98 M110 56 L24 82"/></g>
+  <ellipse cx="110" cy="56" rx="7" ry="4" fill="#cdd8c0" stroke="#55695a" stroke-width=".5"/>
+  <path d="M40 40 C70 22 120 18 160 30" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".16"/>
+</symbol>
+<!-- ===== 粉色大花 ===== -->
+<symbol id="mag" viewBox="0 0 220 220">
+  <path d="M96 150 C80 176 96 200 76 208 C62 212 60 196 70 194" fill="none" stroke="#b55772" stroke-width="2.2" stroke-linecap="round"/>
+  <g stroke="#a94c68" stroke-width=".7">
+    <use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(8) scale(1.02)"/><use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(58)"/>
+    <use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(112) scale(.96)"/><use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(164)"/>
+    <use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(214) scale(1.02)"/><use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(262) scale(.94)"/>
+    <use href="#ptl" fill="url(#gMag)" transform="translate(110 110) rotate(312)"/>
+  </g>
+  <g stroke="#cfae98" stroke-width=".6">
+    <use href="#ptl" fill="#f6e8da" transform="translate(110 110) rotate(34) scale(.46)"/><use href="#ptl" fill="#f1dccb" transform="translate(110 110) rotate(94) scale(.44)"/>
+    <use href="#ptl" fill="#f6e8da" transform="translate(110 110) rotate(152) scale(.46)"/><use href="#ptl" fill="#f1dccb" transform="translate(110 110) rotate(212) scale(.44)"/>
+    <use href="#ptl" fill="#f6e8da" transform="translate(110 110) rotate(272) scale(.46)"/><use href="#ptl" fill="#f1dccb" transform="translate(110 110) rotate(332) scale(.44)"/>
+  </g>
+  <g stroke="#e9d6a6" stroke-width=".9" stroke-linecap="round"><path d="M110 110 l18 -6 M110 110 l14 12 M110 110 l2 20 M110 110 l-14 14 M110 110 l-19 -2 M110 110 l-10 -16 M110 110 l8 -18 M110 110 l20 4 M110 110 l-6 19 M110 110 l-18 8"/></g>
+  <g fill="#fff3d2" stroke="#c9a95e" stroke-width=".4"><circle cx="128" cy="104" r="2"/><circle cx="124" cy="122" r="2"/><circle cx="112" cy="130" r="2"/><circle cx="96" cy="124" r="2"/><circle cx="91" cy="108" r="2"/><circle cx="100" cy="94" r="2"/><circle cx="118" cy="92" r="2"/><circle cx="130" cy="114" r="2"/><circle cx="104" cy="129" r="2"/><circle cx="92" cy="118" r="2"/></g>
+  <circle cx="110" cy="110" r="4" fill="#d9b86c"/>
+</symbol>
+<!-- ===== 猫 ===== -->
+<symbol id="cat" viewBox="0 0 150 210">
+  <path d="M112 186 C140 184 146 156 132 142" fill="none" stroke="#8e8a85" stroke-width="12" stroke-linecap="round"/>
+  <path d="M122 180 l6 8 M134 168 l9 4 M136 154 l9 -2" stroke="#6f6b67" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <g stroke="#a89888" stroke-width=".9" stroke-linejoin="round">
+    <path d="M50 92 C36 116 28 156 32 200 L114 200 C120 156 110 116 98 92 C86 100 62 100 50 92Z" fill="url(#gCat)"/>
+    <path d="M103 128 C114 146 117 176 114 200 L98 200 C102 176 104 150 103 128Z" fill="#8e8a85" stroke="none"/>
+    <path d="M62 150 C60 170 60 186 60 198 M86 150 C88 170 88 186 88 198" fill="none" opacity=".55"/>
+    <ellipse cx="56" cy="198" rx="13" ry="7" fill="#fffaf2"/><ellipse cx="92" cy="198" rx="13" ry="7" fill="#fffaf2"/>
+    <path d="M52 196 v5 M58 196 v5 M88 196 v5 M94 196 v5" fill="none" opacity=".5"/>
+    <path d="M40 40 L34 6 L62 26Z" fill="#8e8a85"/><path d="M110 40 L116 6 L88 26Z" fill="#8e8a85"/>
+    <path d="M42 32 L39 14 L54 26Z" fill="#e9b9b4" stroke="none"/><path d="M108 32 L111 14 L96 26Z" fill="#e9b9b4" stroke="none"/>
+    <path d="M36 62 C34 38 52 24 75 24 C98 24 116 38 114 62 C113 84 96 98 75 98 C54 98 37 84 36 62Z" fill="#fffaf2"/>
+  </g>
+  <path d="M37 54 C38 40 48 29 62 25 C58 34 56 44 57 54 C50 52 42 52 37 54Z" fill="#8e8a85"/>
+  <path d="M113 54 C112 40 102 29 88 25 C92 34 94 44 93 54 C100 52 108 52 113 54Z" fill="#8e8a85"/>
+  <path d="M44 40 l8 4 M42 47 l9 2 M106 40 l-8 4 M108 47 l-9 2" stroke="#6f6b67" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M50 66 q7 -8 14 0 M86 66 q7 -8 14 0" stroke="#4a3a33" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <ellipse cx="48" cy="77" rx="7" ry="4" fill="#efb7b2" opacity=".55"/><ellipse cx="102" cy="77" rx="7" ry="4" fill="#efb7b2" opacity=".55"/>
+  <path d="M72 74 h6 l-3 4z" fill="#d98f8c"/>
+  <path d="M75 78 q-5 7 -11 2 M75 78 q5 7 11 2" stroke="#4a3a33" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M44 79 l-16 -3 M44 83 l-16 3 M106 79 l16 -3 M106 83 l16 3" stroke="#b9a898" stroke-width=".7"/>
+  <path d="M64 108 q5 6 11 0 q6 6 11 0" stroke="#d9cdbf" fill="none"/>
+  <path d="M75 26 C74 18 76 12 80 8" stroke="#6f8669" stroke-width="1.4" fill="none"/>
+  <path d="M78 15 C68 6 60 8 57 14 C64 21 72 21 78 15Z" fill="#8fa884" stroke="#6f8669" stroke-width=".6"/>
+  <path d="M80 9 C86 0 96 0 100 6 C96 14 86 14 80 9Z" fill="#a9be9c" stroke="#6f8669" stroke-width=".6"/>
+</symbol>
+<!-- ===== 粉彩瓷瓶 ===== -->
+<symbol id="jar" viewBox="0 0 170 320">
+  <clipPath id="cj1"><path d="M85 22 C140 22 164 56 164 88 C164 124 132 150 85 150 C38 150 6 124 6 88 C6 56 30 22 85 22Z"/></clipPath>
+  <clipPath id="cj2"><path d="M85 190 C134 190 156 216 156 246 C156 282 124 308 85 308 C46 308 14 282 14 246 C14 216 36 190 85 190Z"/></clipPath>
+  <rect x="72" y="150" width="26" height="42" fill="#c3cfc4" stroke="#a8937c" stroke-width=".8"/>
+  <path d="M68 164 h34 M68 176 h34" stroke="#a8937c" stroke-width="2.5"/>
+  <path d="M85 22 C140 22 164 56 164 88 C164 124 132 150 85 150 C38 150 6 124 6 88 C6 56 30 22 85 22Z" fill="url(#gJar)"/>
+  <g clip-path="url(#cj1)" filter="url(#wash)"><ellipse cx="46" cy="66" rx="32" ry="26" fill="#e9b3b3" opacity=".7"/><ellipse cx="124" cy="56" rx="30" ry="22" fill="#c2d6bf" opacity=".75"/><ellipse cx="98" cy="122" rx="36" ry="20" fill="#f0dca6" opacity=".7"/><ellipse cx="36" cy="120" rx="24" ry="18" fill="#d3d1e8" opacity=".65"/></g>
+  <path d="M85 22 C140 22 164 56 164 88 C164 124 132 150 85 150 C38 150 6 124 6 88 C6 56 30 22 85 22Z" fill="none" stroke="#a8937c" stroke-width=".9"/>
+  <g clip-path="url(#cj1)">
+    <path d="M30 108 C54 96 80 96 112 78 M70 98 C74 84 86 74 100 70" fill="none" stroke="#8a7462" stroke-width="1.3"/>
+    <g fill="#d98a9a" stroke="#b96a7c" stroke-width=".5"><circle cx="112" cy="68" r="8"/><circle cx="124" cy="78" r="8"/><circle cx="118" cy="92" r="8"/><circle cx="104" cy="90" r="8"/><circle cx="100" cy="76" r="8"/></g>
+    <circle cx="112" cy="80" r="5" fill="#f1d58a"/>
+    <g fill="#e7a6b0" stroke="#b96a7c" stroke-width=".5"><circle cx="58" cy="94" r="6"/><circle cx="66" cy="102" r="6"/><circle cx="54" cy="104" r="6"/></g><circle cx="59" cy="100" r="3" fill="#f1d58a"/>
+    <g fill="#8fa884" stroke="#667d62" stroke-width=".5"><path d="M82 96 q10 -12 22 -6 q-8 12 -22 6z"/><path d="M40 112 q-12 -2 -16 8 q12 6 16 -8z"/><path d="M128 100 q12 2 14 12 q-12 2 -14 -12z"/><path d="M84 110 q8 8 4 18 q-10 -6 -4 -18z"/></g>
+    <circle cx="140" cy="62" r="4" fill="#e7a6b0"/><circle cx="34" cy="80" r="3.5" fill="#e7a6b0"/>
+  </g>
+  <path d="M54 12 h62 v13 h-62z" fill="#d9c9b0" stroke="#a8937c" stroke-width=".8"/><path d="M60 15 v7 M68 15 v7 M76 15 v7 M84 15 v7 M92 15 v7 M100 15 v7 M108 15 v7" stroke="#b9a58c" stroke-width="1"/>
+  <ellipse cx="85" cy="12" rx="31" ry="5" fill="#e9dcc6" stroke="#a8937c" stroke-width=".8"/>
+  <path d="M44 143 h82 l-5 12 h-72z" fill="#cdb9a0" stroke="#a8937c" stroke-width=".8"/>
+  <g fill="#f3e9d6"><circle cx="56" cy="149" r="2"/><circle cx="66" cy="149" r="2"/><circle cx="76" cy="149" r="2"/><circle cx="86" cy="149" r="2"/><circle cx="96" cy="149" r="2"/><circle cx="106" cy="149" r="2"/><circle cx="116" cy="149" r="2"/></g>
+  <path d="M85 190 C134 190 156 216 156 246 C156 282 124 308 85 308 C46 308 14 282 14 246 C14 216 36 190 85 190Z" fill="url(#gJar)"/>
+  <g clip-path="url(#cj2)" filter="url(#wash)"><ellipse cx="120" cy="230" rx="30" ry="24" fill="#e9b3b3" opacity=".65"/><ellipse cx="48" cy="232" rx="30" ry="24" fill="#f0dca6" opacity=".7"/><ellipse cx="86" cy="286" rx="40" ry="18" fill="#c2d6bf" opacity=".7"/></g>
+  <path d="M85 190 C134 190 156 216 156 246 C156 282 124 308 85 308 C46 308 14 282 14 246 C14 216 36 190 85 190Z" fill="none" stroke="#a8937c" stroke-width=".9"/>
+  <g clip-path="url(#cj2)">
+    <path d="M40 262 C60 250 84 252 104 240" fill="none" stroke="#8a7462" stroke-width="1.2"/>
+    <g fill="#d98a9a" stroke="#b96a7c" stroke-width=".5"><circle cx="104" cy="232" r="6"/><circle cx="113" cy="240" r="6"/><circle cx="106" cy="249" r="6"/><circle cx="96" cy="243" r="6"/></g><circle cx="105" cy="241" r="3.5" fill="#f1d58a"/>
+    <g fill="#8fa884" stroke="#667d62" stroke-width=".5"><path d="M70 252 q8 -10 18 -4 q-8 8 -18 4z"/><path d="M50 258 q-10 0 -12 8 q10 4 12 -8z"/></g>
+    <path d="M60 232 q6 -6 12 0 q-2 6 -10 5 l-6 3z" fill="#b9a183" stroke="#8a7462" stroke-width=".5"/>
+  </g>
+  <path d="M52 184 h66 v10 h-66z" fill="#d9c9b0" stroke="#a8937c" stroke-width=".8"/>
+</symbol>
+<!-- ===== 食物（更细的版本） ===== -->
+<symbol id="milk" viewBox="0 0 96 136">
+  <ellipse cx="50" cy="129" rx="36" ry="5" fill="#2e2a27" opacity=".07"/>
+  <g stroke="#b9a999" stroke-width=".8" stroke-linejoin="round">
+    <path d="M60 42 L82 33 V116 L60 126Z" fill="#e4dcd1"/><path d="M14 42 H60 V126 H14Z" fill="#fdfbf7"/>
+    <path d="M14 42 L20 20 H56 L60 42Z" fill="#f3eee6"/><path d="M60 42 L56 20 L76 13 L82 33Z" fill="#d7cec1"/>
+    <path d="M20 20 V9 H56 V20Z" fill="#ebe4da"/><path d="M56 20 V9 L76 3 V13Z" fill="#d0c6b8"/>
+    <path d="M14 62 H60 V100 H14Z" fill="#EFD9D5"/><path d="M60 62 L82 53 V91 L60 100Z" fill="#dbc0bc"/>
+  </g>
+  <path d="M24 11 v7 M30 11 v7 M36 11 v7 M42 11 v7 M48 11 v7" stroke="#cfc5b8" stroke-width=".7"/>
+  <ellipse cx="38" cy="32.5" rx="7" ry="4.5" fill="#b77f7c"/><ellipse cx="38" cy="30.5" rx="7" ry="4.5" fill="#d9a5a2" stroke="#a5706d" stroke-width=".6"/>
+  <path d="M18 46 q6 -3 9 2 q-2 6 -9 4z M45 45 q8 -2 10 4 q-4 5 -10 2z M30 53 q4 -2 6 1 q-2 3 -6 2z M17 107 q8 -4 12 2 q-3 8 -12 5z M41 111 q9 -3 12 3 q-5 6 -12 3z M64 104 q7 -5 12 -2 q-2 7 -12 8z M66 42 q6 -4 10 -2 q-2 5 -10 6z" fill="#4a3a33" opacity=".82"/>
+  <text x="37" y="84" text-anchor="middle" font-family="Gaegu" font-weight="700" font-size="18" fill="#8B6A5B">milk</text>
+  <text x="37" y="93" text-anchor="middle" font-family="DM Mono" font-size="4.4" letter-spacing=".8" fill="#8B6A5B">WHOLE · 1 L</text>
+  <path d="M37 66 q-4 -4 -2 -6 q2 -1 2 1 q0 -2 2 -1 q2 2 -2 6z" fill="#C98F8C"/>
+  <path d="M18.5 46 V122" stroke="#fff" stroke-width="3" opacity=".75"/>
+</symbol>
+<symbol id="eggs" viewBox="0 0 140 104">
+  <ellipse cx="70" cy="98" rx="62" ry="5" fill="#2e2a27" opacity=".07"/>
+  <path d="M12 54 L20 16 H120 L128 54Z" fill="#e7dccb" stroke="#b9a58c" stroke-width=".8"/>
+  <g fill="#dccfba"><ellipse cx="34" cy="28" rx="8" ry="4"/><ellipse cx="106" cy="28" rx="8" ry="4"/></g>
+  <rect x="46" y="24" width="48" height="21" rx="2" fill="#fffaf2" stroke="#c9b8a0" stroke-width=".6"/>
+  <text x="70" y="35" text-anchor="middle" font-family="Gaegu" font-weight="700" font-size="10" fill="#8B6A5B">six eggs</text>
+  <text x="70" y="41.5" text-anchor="middle" font-family="DM Mono" font-size="3.6" letter-spacing=".6" fill="#8B6A5B">FREE RANGE</text>
+  <g stroke="#c2ab8f" stroke-width=".7"><ellipse cx="40" cy="54" rx="12" ry="15" fill="url(#gEgg)"/><ellipse cx="70" cy="53" rx="12" ry="15" fill="url(#gEggB)"/><ellipse cx="100" cy="54" rx="12" ry="15" fill="url(#gEgg)"/>
+  <ellipse cx="32" cy="67" rx="13.5" ry="17" fill="url(#gEggB)"/><ellipse cx="70" cy="68" rx="13.5" ry="17" fill="url(#gEgg)"/><ellipse cx="108" cy="67" rx="13.5" ry="17" fill="url(#gEgg)"/></g>
+  <g fill="#fff" opacity=".7"><ellipse cx="27" cy="58" rx="3" ry="5" transform="rotate(-20 27 58)"/><ellipse cx="65" cy="59" rx="3" ry="5" transform="rotate(-20 65 59)"/><ellipse cx="103" cy="58" rx="3" ry="5" transform="rotate(-20 103 58)"/><ellipse cx="36" cy="46" rx="2.4" ry="4" transform="rotate(-20 36 46)"/><ellipse cx="96" cy="46" rx="2.4" ry="4" transform="rotate(-20 96 46)"/></g>
+  <g fill="#b98f66" opacity=".6"><circle cx="36" cy="70" r=".9"/><circle cx="30" cy="76" r=".8"/><circle cx="38" cy="62" r=".7"/><circle cx="74" cy="50" r=".8"/><circle cx="67" cy="55" r=".7"/></g>
+  <path d="M6 66 C12 66 14 84 32 84 C50 84 50 70 51 68 C52 70 52 84 70 84 C88 84 88 70 89 68 C90 70 90 84 108 84 C126 84 128 66 134 66 L126 98 H14Z" fill="#d8c7ad" stroke="#b39f85" stroke-width=".8"/>
+  <path d="M12 88 H128" stroke="#c4b095" stroke-width=".7"/>
+  <g fill="#c4b095" opacity=".7"><circle cx="24" cy="92" r=".8"/><circle cx="52" cy="78" r=".8"/><circle cx="90" cy="80" r=".8"/><circle cx="112" cy="92" r=".8"/><circle cx="70" cy="92" r=".8"/></g>
+</symbol>
+<symbol id="sb" viewBox="0 0 44 48">
+  <path d="M22 46 C8 38 2 26 5 16 C8 9 16 9 22 12 C28 9 36 9 39 16 C42 26 36 38 22 46Z" fill="url(#gSb)" stroke="#b34a4c" stroke-width=".7"/>
+  <ellipse cx="13" cy="21" rx="3.5" ry="6" fill="#fff" opacity=".28" transform="rotate(-20 13 21)"/>
+  <g fill="#f8e3a6"><ellipse cx="13" cy="26" rx=".9" ry="1.5"/><ellipse cx="22" cy="24" rx=".9" ry="1.5"/><ellipse cx="31" cy="26" rx=".9" ry="1.5"/><ellipse cx="17" cy="33" rx=".9" ry="1.5"/><ellipse cx="27" cy="33" rx=".9" ry="1.5"/><ellipse cx="22" cy="40" rx=".9" ry="1.5"/><ellipse cx="34" cy="19" rx=".9" ry="1.5"/><ellipse cx="9" cy="19" rx=".9" ry="1.5"/></g>
+  <path d="M22 13 L12 9 L17 14 L10 17 L19 16 L22 21 L25 16 L34 17 L27 14 L32 9Z" fill="#7f9a68" stroke="#5f7a4e" stroke-width=".6" stroke-linejoin="round"/>
+  <path d="M22 13 q0 -6 4 -9" stroke="#5f7a4e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="punnet" viewBox="0 0 140 108">
+  <ellipse cx="70" cy="101" rx="60" ry="5" fill="#2e2a27" opacity=".07"/>
+  <path d="M10 30 H130 L122 96 H18Z" fill="#fff" fill-opacity=".6" stroke="#b6c0c2" stroke-width=".8"/>
+  <use href="#sb" x="12" y="28" width="34" height="37"/><use href="#sb" x="94" y="28" width="34" height="37"/>
+  <use href="#sb" x="18" y="56" width="34" height="37" transform="rotate(-10 35 74)"/><use href="#sb" x="90" y="56" width="34" height="37" transform="rotate(12 107 74)"/>
+  <use href="#sb" x="36" y="40" width="30" height="33" transform="rotate(14 51 56)"/><use href="#sb" x="76" y="42" width="30" height="33" transform="rotate(-16 91 58)"/>
+  <path d="M10 30 H130 L122 96 H18Z" fill="#dfe8ea" fill-opacity=".22"/>
+  <path d="M52 24 H88 V99 H52Z" fill="#7F8F6E" stroke="#63735a" stroke-width=".7"/>
+  <circle cx="70" cy="44" r="8" fill="none" stroke="#fff" stroke-width=".8"/><path d="M66 46 q4 -7 8 0" stroke="#fff" stroke-width=".8" fill="none"/>
+  <text x="70" y="66" text-anchor="middle" font-family="Gaegu" font-weight="700" font-size="12" fill="#fff">fresh</text>
+  <text x="70" y="75" text-anchor="middle" font-family="DM Mono" font-size="3.8" letter-spacing=".6" fill="#fff">STRAWBERRY</text>
+  <text x="70" y="90" text-anchor="middle" font-family="DM Mono" font-size="4" fill="#dfe6d6">250 g</text>
+  <rect x="5" y="25" width="130" height="6" rx="2" fill="#fff" fill-opacity=".85" stroke="#b6c0c2" stroke-width=".7"/>
+  <path d="M22 40 L27 86 M114 38 l-4 30" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+</symbol>
+<symbol id="onion" viewBox="0 0 96 164">
+  <g stroke="#b9a586" stroke-width=".6" fill="none"><path d="M34 154 l-4 8 M36 156 l0 8 M38 154 l4 8 M44 156 l-3 8 M46 156 l2 8 M52 156 l-2 8 M54 156 l3 8 M60 154 l-2 9 M62 154 l4 8"/></g>
+  <g stroke="#5f7a4e" stroke-width=".6" stroke-opacity=".7" stroke-linejoin="round">
+    <path d="M34 70 C30 50 24 30 20 14 L26 13 C31 30 36 50 39 70Z" fill="#7f9d66"/><path d="M58 76 C64 52 74 36 86 22 L90 26 C80 42 70 56 64 78Z" fill="#7f9d66"/>
+    <path d="M30 142 C26 100 22 60 8 14 L17 11 C30 56 36 100 39 142Z" fill="url(#gStalk)"/>
+    <path d="M39 146 C39 100 39 56 35 6 L45 5 C50 56 50 100 49 146Z" fill="url(#gStalk)"/>
+    <path d="M49 146 C52 100 58 60 64 14 L73 17 C69 62 63 100 59 146Z" fill="url(#gStalk)"/>
+    <path d="M58 142 C63 104 73 70 82 34 L89 38 C81 76 73 106 67 142Z" fill="url(#gStalk)"/>
+  </g>
+  <g stroke="#cfc8b4" stroke-width=".6"><path d="M30 140 C27 152 31 158 34.5 158 C38 158 41 152 39 140Z" fill="#fffdf6"/><path d="M39 144 C37 154 40 160 44 160 C48 160 51 154 49 144Z" fill="#fffdf6"/><path d="M49 144 C48 154 50 160 54 160 C58 160 60 154 59 144Z" fill="#fffdf6"/><path d="M58 140 C57 152 59 157 62.5 157 C66 157 68 152 67 140Z" fill="#fffdf6"/></g>
+  <g stroke="#fff" stroke-width=".8" opacity=".4" fill="none"><path d="M33 138 C30 100 26 64 15 22 M43 142 C43 100 43 60 40 14 M53 142 C56 100 61 64 67 22 M62 138 C67 104 76 74 84 42"/></g>
+  <path d="M22 106 L72 101 L73 118 L24 123Z" fill="#C98F8C" stroke="#a5706d" stroke-width=".7"/>
+  <text x="48" y="116" text-anchor="middle" font-family="Gaegu" font-weight="700" font-size="10" fill="#fff" transform="rotate(-6 48 116)">organic</text>
+</symbol>
+<!-- ===== 半透明马蹄莲（古典） ===== -->
+<symbol id="calla" viewBox="0 0 160 230">
+  <g fill="none" stroke="#7f8f6e" stroke-width="1.6" stroke-linecap="round" opacity=".8"><path d="M78 228 C76 170 66 120 56 86"/><path d="M82 228 C88 172 102 130 114 104"/><path d="M80 228 C80 190 84 160 90 140"/></g>
+  <path d="M80 228 C52 186 28 168 10 152 C40 160 66 186 86 226Z" fill="#BFC9B3" fill-opacity=".6" stroke="#7f8f6e" stroke-width=".6"/>
+  <path d="M10 152 C40 168 62 196 80 228" fill="none" stroke="#7f8f6e" stroke-width=".5" opacity=".7"/>
+  <path d="M80 228 C102 188 130 166 152 154 C126 176 104 198 88 226Z" fill="#BFC9B3" fill-opacity=".5" stroke="#7f8f6e" stroke-width=".6"/>
+  <path d="M56 88 C30 66 32 26 66 10 C60 28 76 44 82 58 C72 64 62 74 56 88Z" fill="url(#gCalla)" stroke="#a5706d" stroke-width=".6"/>
+  <path d="M56 88 C48 60 52 34 66 10 M56 88 C60 66 68 52 78 44" fill="none" stroke="#a5706d" stroke-width=".4" opacity=".6"/>
+  <path d="M114 106 C94 84 98 50 128 38 C122 54 136 68 140 80 C130 86 122 94 114 106Z" fill="url(#gCalla)" stroke="#a5706d" stroke-width=".6"/>
+  <path d="M114 106 C108 82 112 60 128 38" fill="none" stroke="#a5706d" stroke-width=".4" opacity=".6"/>
+  <path d="M90 142 C78 126 82 106 100 98 C96 108 104 118 106 126 C100 130 94 134 90 142Z" fill="url(#gCalla)" stroke="#a5706d" stroke-width=".5"/>
+  <path d="M59 80 l6 -26 M116 98 l6 -24" stroke="#d9b77a" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="doodle" viewBox="0 0 90 60">
+  <path d="M18 34 C6 20 18 6 30 18 C40 6 54 18 42 34 L30 46 Z" fill="none" stroke="#8B6A5B" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M4 52 L84 12 M84 12 l-12 1 M84 12 l-5 10 M8 50 l-2 -6 M8 50 l-6 1" fill="none" stroke="#8B6A5B" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+</svg>
+<template id="banner">
+  <svg class="c-flower col" viewBox="0 0 220 220"><g filter="url(#paint)" transform="rotate(-18 110 110)"><use href="#mag"/></g></svg>
+  <svg class="c-left col" viewBox="0 0 300 330">
+    <g filter="url(#paint)">
+      <ellipse cx="120" cy="306" rx="130" ry="16" fill="#b7c8c6" opacity=".5"/>
+      <path d="M66 184 C70 220 78 250 84 300" fill="none" stroke="#7d8f72" stroke-width="3"/>
+      <path d="M26 232 C30 260 40 280 50 304" fill="none" stroke="#7d8f72" stroke-width="2.4"/>
+      <use href="#leaf" x="-16" y="210" width="196" height="107"/>
+      <use href="#lotus" x="0" y="74" width="140" height="108"/>
+      <use href="#budg" transform="translate(26 234) rotate(-10) scale(.9)"/>
+      <use href="#cat" x="128" y="94" width="146" height="204"/>
+      <use href="#leaf" x="40" y="262" width="180" height="98"/>
+      <use href="#leaf" x="196" y="284" width="104" height="57" opacity=".92"/>
+    </g>
+  </svg>
+  <svg class="c-right col" viewBox="0 0 340 400">
+    <g filter="url(#paint)">
+      <path d="M104 236 C108 290 116 330 120 380 M182 310 C180 340 178 360 176 384 M52 256 C56 300 64 340 70 380" fill="none" stroke="#7d8f72" stroke-width="3"/>
+      <use href="#leaf" x="36" y="286" width="126" height="69" opacity=".9"/>
+      <use href="#jar" x="186" y="8" width="170" height="320"/>
+      <use href="#lotus" x="8" y="104" width="194" height="150"/>
+      <use href="#lotus" x="98" y="198" width="168" height="130"/>
+      <use href="#budg" transform="translate(52 260) rotate(-6)"/>
+      <use href="#leaf" x="0" y="304" width="220" height="120"/>
+      <use href="#leaf" x="136" y="322" width="200" height="109"/>
+    </g>
+  </svg>
+</template>
+<div class="bar"><select id="pg"></select><button id="board">Figma 平铺 / 逐页</button></div>
+<section class="frame" data-page="home" data-title="首页 Home">
+<div class="app"><aside class="side"></aside><main>
+    <div class="top">
+      <div class="tabs"><span class="on">Today</span><span>Week<sup>7</sup></span><span>Month</span><span>Review</span></div>
+      <div class="find">⌕ &nbsp;我想记…</div>
+    </div>
+
+    <section class="ban" data-banner>
+      <div class="ban-t">
+        <span class="up">Wednesday</span>
+        <h1>Nov <i>18</i></h1>
+        
+        <p class="meta">3 件待办 · 牛奶 <b>明天过期</b> · 本周已花 $214.50</p>
+      </div>
+    </section>
+
+    <div class="bento">
+      <section class="c s4 r2 pad">
+        <div class="hd"><h3>今日待办</h3><span class="cap">to do</span></div>
+        <ul class="todo">
+          <li><span class="ck"></span><span class="t">DATA 101 作业 4</span><span class="cap r">23:59</span></li>
+          <li><span class="ck"></span><span class="t">买鸡蛋和牛奶</span><span class="cap">errands</span></li>
+          <li class="done"><span class="ck"></span><span class="t">背 20 个单词</span><span class="cap">english</span></li>
+          <li><span class="ck"></span><span class="t">投 2 份实习</span><span class="cap">career</span></li>
+          <li><span class="ck"></span><span class="t">整理本周账单</span><span class="cap">money</span></li>
+        </ul>
+      </section>
+      <div class="c s2 st lift"><span class="cap">Tasks left</span><b>3</b></div>
+      <div class="c s2 st lift"><span class="cap">Day streak</span><b>23</b></div>
+      <div class="c s2 st lift"><span class="cap">In the fridge</span><b>5</b></div>
+      <div class="s2 round"><button class="go">记一笔</button></div>
+
+      <section class="c s5 pad">
+        <div class="bud">
+          <div><span class="cap">Spent this week</span><br><b>$214<small>.50</small></b></div>
+          <svg viewBox="0 0 300 64" preserveAspectRatio="none"><path d="M4 50 C30 46 40 30 62 34 C86 38 92 52 116 44 C140 36 144 14 168 18 C190 22 196 40 220 36 C246 32 252 46 296 40" fill="none" stroke="#7F8F6E" stroke-width="1.6" stroke-linecap="round" filter="url(#paint)"/><circle cx="168" cy="18" r="3.5" fill="#C98F8C"/></svg>
+          <span class="cap">预算 $350</span><span class="note-h hand" style="right:22px;top:-14px;color:var(--sage)">还剩 $135.50 ✓</span>
+          <div class="days cap"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+      </section>
+      <section class="c s3 word lift">
+        <div class="tint"><span class="cap">Word of the day</span><b>procrastinate</b><span style="font-size:12px;color:#6f6a64">v. 拖延</span></div>
+        <div class="ft"><span>12 / 20</span><span class="pr"><i class="pearl" style="background-color:var(--euc)"></i></span><span>多邻国 →</span></div>
+      </section>
+
+      <div class="dayt">
+        <div class="c dy"><span class="cap">Mon</span><b>16</b><p>INF 1340 · 10:00</p></div>
+        <div class="c dy"><span class="cap">Tue</span><b>17</b><p>健身</p></div>
+        <div class="c dy td"><span class="note-h hand" style="right:-6px;top:-16px">today!</span><span class="cap">Today</span><b>18</b><p class="r">作业 4 截止</p><p>小组会议 14:00</p></div>
+        <div class="c dy"><span class="cap">Thu</span><b>19</b><p>INF 1340</p></div>
+        <div class="c dy"><span class="cap">Fri</span><b>20</b><p class="r">面试 15:00</p></div>
+        <div class="c dy"><span class="cap">Sat</span><b>21</b><p>超市采购</p></div>
+        <div class="c dy"><span class="cap">Sun</span><b>22</b><p>周复盘</p></div>
+      </div>
+
+      <div class="sec"><div class="tabs"><span class="on">Fridge<sup>5</sup></span><span>Pantry<sup>12</sup></span><span>Shopping list</span></div><span class="hand">快过期的排前面</span></div>
+      <div class="c s2 pd u lift"><b>牛奶</b><small>Milk · 1 L</small><span class="dd"><span class="ck"></span>明天过期</span><svg class="stk" viewBox="0 0 96 136"><use href="#milk"/></svg></div>
+      <div class="c s2 pd lift"><b>鸡蛋</b><small>Eggs · 6</small><span class="dd"><span class="ck"></span>3 天</span><svg class="stk" viewBox="0 0 140 104" style="height:84px"><use href="#eggs"/></svg></div>
+      <div class="c s2 pd lift"><b>草莓</b><small>Strawberry · 250 g</small><span class="dd"><span class="ck"></span>4 天</span><svg class="stk" viewBox="0 0 140 108" style="height:86px"><use href="#punnet"/></svg></div>
+      <div class="c s2 pd lift"><b>小葱</b><small>Spring onion</small><span class="dd"><span class="ck"></span>5 天</span><svg class="stk" viewBox="0 0 96 164" style="height:126px"><use href="#onion"/></svg></div>
+      <section class="c s4 nt">
+        <div class="nh"><span>Note · 每日小知识</span><span class="cap">from 知识库</span></div>
+        <p>番茄钟：专注 25 分钟，休息 5 分钟；做满 4 轮，再好好休息一下。</p>
+        <svg width="84" height="56"><use href="#doodle"/></svg>
+      </section>
+
+      <section class="c s8 pad" style="margin-top:12px">
+        <div class="hd"><h3>习惯打卡</h3><span class="cap">last 14 days</span></div>
+        <div class="heat" id="heat"></div>
+      </section>
+      <section class="c s4 nt g" style="margin-top:12px;min-height:190px">
+        <div class="nh"><span>Journal · 胡思乱想</span><span class="cap">昨晚 22:40</span></div>
+        <p>下午在图书馆窗边坐了很久，<br>外面好像要下雪了。</p>
+        <svg width="96" height="138" class="col"><use href="#calla"/></svg>
+      </section>
+    </div>
+  </main></div></section>
+<!-- ==================== 收件箱 ==================== -->
+<section class="frame" data-page="inbox" data-title="收件箱 Inbox">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">Inbox<sup>4</sup></span><span>Archived</span></div><div class="find">⌕ &nbsp;搜索收件箱…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">00 · Inbox</span><h1>收件箱</h1><p class="meta"><b>4 条待整理</b> · 来自快捷指令、Apple Pay 和分享</p></div>
+    <div class="acts"><button class="btn">交给 Claude 整理全部</button><button class="btn g">＋ 手动记一条</button></div>
+    <svg class="pa col" viewBox="0 0 330 250"><g filter="url(#paint)"><use href="#leaf" x="0" y="150" width="200" height="110"/><use href="#lotus" x="20" y="40" width="170" height="132"/><use href="#leaf" x="150" y="170" width="180" height="98"/><use href="#budg" transform="translate(230 190) rotate(10)"/></g></svg>
+  </section>
+  <div class="bento">
+    <section class="c s8 pad">
+      <div class="hd"><h3>待整理</h3><span class="cap">最新在上</span></div>
+      <div class="rows">
+        <div class="row"><span class="ico" style="background:var(--rose)">$</span><div class="tx"><b>奶茶 $6.50</b><span class="sub">Apple Pay · 今天 14:02</span></div><span class="to">→ <b>财务部</b> / 餐饮</span><button class="btn s">确认</button><button class="btn s g">改</button></div>
+        <div class="row"><span class="ico" style="background:var(--sage)">链</span><div class="tx"><b>小红书：一周备餐清单，30 分钟搞定 5 天午饭</b><span class="sub">分享链接 · 昨天 21:17 · 备注：周末试试</span></div><span class="to">→ <b>知识库</b> / 生活</span><button class="btn s">确认</button><button class="btn s g">改</button></div>
+        <div class="row"><span class="ico" style="background:#c9b08f">食</span><div class="tx"><b>买了草莓 250 g，保质期到 11.22</b><span class="sub">快捷指令「放进冰箱」· 昨天 18:40</span></div><span class="to">→ <b>食物墙</b> / 冷藏</span><button class="btn s">确认</button><button class="btn s g">改</button></div>
+        <div class="row"><span class="ico" style="background:#a99bb3">想</span><div class="tx"><b>做一个读书笔记模板：书名、金句、我的想法</b><span class="sub">语音转文字 · 11.16 23:05</span></div><span class="to">→ <b>胡思乱想</b></span><button class="btn s">确认</button><button class="btn s g">改</button></div>
+      </div>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>本周进来的</h3><span class="cap">11.16 – 11.18</span></div>
+      <div class="leg">
+        <div><i style="background:var(--rose)"></i>记账<span>9</span></div>
+        <div><i style="background:var(--sage)"></i>链接 / 知识<span>5</span></div>
+        <div><i style="background:#c9b08f"></i>食物<span>3</span></div>
+        <div><i style="background:#a99bb3"></i>想法<span>2</span></div>
+      </div>
+      <div class="bar2" style="margin-top:20px"><i style="width:79%"></i></div>
+      <span class="sub">已整理 15 / 19 条</span>
+    </section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 每周复盘 ==================== -->
+<section class="frame" data-page="review" data-title="每周复盘 Weekly review">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span>Week 46</span><span class="on">Week 47</span><span>Month</span></div><div class="find">⌕ &nbsp;搜索复盘…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">Week 47 · 11.16 – 11.22</span><h1>每周复盘</h1><p class="meta">周日晚上填 · 上周完成度 <b>78%</b></p></div>
+    <div class="acts"><button class="btn">开始本周复盘</button><button class="btn g">看上周</button></div>
+    <svg class="pa col" viewBox="0 0 300 250"><g filter="url(#paint)"><use href="#leaf" x="0" y="170" width="190" height="104"/><use href="#cat" x="80" y="30" width="150" height="210"/><use href="#leaf" x="150" y="184" width="150" height="82"/></g></svg>
+  </section>
+  <div class="bento">
+    <div class="c s3 st"><span class="cap">完成待办</span><b>18<small>/23</small></b></div>
+    <div class="c s3 st"><span class="cap">本周花费</span><b>$214</b></div>
+    <div class="c s3 st"><span class="cap">学英语</span><b>6<small>天</small></b></div>
+    <div class="c s3 st"><span class="cap">新知识卡</span><b>9</b></div>
+    <section class="c s7 pad">
+      <div class="hd"><h3>三个问题</h3><span class="cap">写几句就行</span></div>
+      <div class="qa">
+        <div><div class="q">这周做得好的一件事</div><div class="a">INF 1340 的作业提前两天交了，周三没熬夜。</div></div>
+        <div><div class="q">可以做得更好的地方</div><div class="a">外卖点了 4 次，冰箱里的菠菜放坏了。</div></div>
+        <div><div class="q">下周最重要的三件事</div><div class="a">① 周五面试准备 ② DATA 101 期中复习 ③ 每天背 20 个词</div></div>
+      </div>
+    </section>
+    <section class="c s5 pad">
+      <div class="hd"><h3>习惯</h3><span class="cap">本周 7 天</span></div>
+      <div class="heat" data-days="7"></div>
+      <div class="hd" style="margin:22px 0 10px"><h3>钱花在哪</h3></div>
+      <div class="stack"><i style="width:40%;background:var(--coffee)"></i><i style="width:24%;background:var(--rose)"></i><i style="width:15%;background:var(--euc)"></i><i style="width:13%;background:var(--ivory)"></i><i style="flex:1;background:#eef0e6"></i></div>
+      <span class="sub">餐饮 $86 · 购物 $52 · 交通 $31 · 日用 $27 · 预算还剩 $135.50</span>
+    </section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 财务部 ==================== -->
+<section class="frame" data-page="finance" data-title="财务部 Finance">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span>Week</span><span class="on">November</span><span>Year</span></div><div class="find">⌕ &nbsp;搜索账单…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">20 · Finance · CAD</span><h1>财务部</h1><p class="meta">十一月已花 <b>$812.40</b> / 预算 $1,400 · 2 笔待分类</p></div>
+    <div class="acts"><button class="btn">＋ 记一笔</button><button class="btn g">整理账本</button><button class="btn g">导出本月</button></div>
+    <svg class="pa col" viewBox="0 0 300 300" style="height:232px;bottom:-30px"><g filter="url(#paint)"><use href="#jar" x="150" y="0" width="140" height="264"/><use href="#lotus" x="0" y="140" width="190" height="147"/><use href="#leaf" x="0" y="226" width="200" height="110"/><use href="#leaf" x="150" y="240" width="150" height="82"/></g></svg>
+  </section>
+  <div class="bento">
+    <section class="c s4 pad">
+      <div class="hd"><h3>本月</h3><span class="cap">11.01 – 11.18</span></div>
+      <div class="big">$812<small>.40</small></div>
+      <div class="bar2"><i style="width:58%"></i></div>
+      <span class="sub">预算 $1,400 · 还剩 $587.60 · 本月过去 60%</span>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>分类</h3><span class="cap">本月</span></div>
+      <div class="stack"><i style="width:34%;background:var(--coffee)"></i><i style="width:22%;background:var(--rose)"></i><i style="width:14%;background:var(--euc)"></i><i style="width:12%;background:var(--ivory)"></i><i style="width:10%;background:var(--blush)"></i><i style="flex:1;background:#d6dbc9"></i></div>
+      <div class="leg">
+        <div><i style="background:var(--coffee)"></i>餐饮<span>$276.20</span></div>
+        <div><i style="background:var(--rose)"></i>购物<span>$178.70</span></div>
+        <div><i style="background:var(--euc)"></i>交通<span>$113.70</span></div>
+      </div>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>近 8 周</h3><span class="cap">每周花费</span></div>
+      <svg viewBox="0 0 300 120" style="width:100%;height:120px"><g filter="url(#paint)"><path d="M10 80 C40 70 50 40 80 50 C110 60 120 90 150 70 C180 50 190 30 220 44 C250 58 260 66 290 52" fill="none" stroke="#7F8F6E" stroke-width="2" stroke-linecap="round"/><path d="M10 100 H290" stroke="#d9ddcf" stroke-dasharray="3 5"/></g><circle cx="290" cy="52" r="4" fill="#C98F8C"/></svg>
+      <div class="wkdots" style="margin-top:4px"><span>10/5</span><span>10/12</span><span>10/19</span><span>10/26</span><span>11/2</span><span>11/9</span><span>11/16</span></div>
+    </section>
+    <section class="c s8 pad">
+      <div class="hd"><h3>账单流水</h3><span class="cap">Apple Pay 自动记 + 手动</span></div>
+      <table class="tbl">
+        <tr><th>日期</th><th>项目</th><th>分类</th><th>方式</th><th style="text-align:right">金额</th></tr>
+        <tr><td>11.18</td><td>奶茶</td><td><span class="chip p">餐饮</span></td><td>Apple Pay</td><td class="num">$6.50</td></tr>
+        <tr class="flag"><td>11.18</td><td>SQ *KOBO STORE</td><td><span class="chip o">待分类</span></td><td>Apple Pay</td><td class="num">$14.99</td></tr>
+        <tr><td>11.17</td><td>TTC 月票</td><td><span class="chip">交通</span></td><td>Apple Pay</td><td class="num">$128.15</td></tr>
+        <tr><td>11.17</td><td>No Frills 超市</td><td><span class="chip p">餐饮</span></td><td>Apple Pay</td><td class="num">$42.86</td></tr>
+        <tr class="flag"><td>11.16</td><td>AMZN Mktp CA</td><td><span class="chip o">待分类</span></td><td>信用卡</td><td class="num">$23.40</td></tr>
+        <tr><td>11.16</td><td>Uniqlo 毛衣</td><td><span class="chip k">服饰</span></td><td>Apple Pay</td><td class="num">$49.90</td></tr>
+        <tr><td>11.15</td><td>Shoppers 洗面奶</td><td><span class="chip y">美妆</span></td><td>Apple Pay</td><td class="num">$17.99</td></tr>
+      </table>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>待分类</h3><span class="cap">2 笔</span></div>
+      <div class="rows">
+        <div class="row"><div class="tx"><b>SQ *KOBO STORE</b><span class="sub">$14.99 · 猜是：学习</span></div><button class="btn s">学习</button></div>
+        <div class="row"><div class="tx"><b>AMZN Mktp CA</b><span class="sub">$23.40 · 猜是：日用</span></div><button class="btn s">日用</button></div>
+      </div>
+      <div class="hd" style="margin:20px 0 8px"><h3>订阅</h3><span class="cap">每月</span></div>
+      <div class="leg"><div><i style="background:var(--sage)"></i>Spotify 学生<span>$6.49</span></div><div><i style="background:var(--rose)"></i>iCloud 50 GB<span>$1.29</span></div><div><i style="background:var(--ivory)"></i>Obsidian Sync<span>$5.00</span></div></div>
+    </section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 食物墙 ==================== -->
+<section class="frame" data-page="food" data-title="后勤部 · 食物墙 Fridge">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">冷藏<sup>6</sup></span><span>冷冻<sup>3</sup></span><span>常温<sup>12</sup></span><span>购物清单</span></div><div class="find">⌕ &nbsp;冰箱里有…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">30 · Kitchen</span><h1>食物墙</h1><p class="meta">冷藏 6 样 · 牛奶 <b>明天过期</b> · 快过期的排前面</p></div>
+    <div class="acts"><button class="btn">＋ 放进冰箱</button><button class="btn g">今天吃什么</button></div>
+    <svg class="pa col" viewBox="0 0 330 230"><g><use href="#milk" x="10" y="40" width="110" height="156" filter="url(#stk)"/><use href="#punnet" x="110" y="104" width="130" height="100" filter="url(#stk)"/><use href="#onion" x="236" y="20" width="90" height="190" filter="url(#stk)"/></g></svg>
+  </section>
+  <div class="bento">
+    <div class="c s2 pd u lift"><b>牛奶</b><small>Milk · 1 L · 冷藏</small><span class="dd"><span class="ck"></span>明天过期</span><svg class="stk" viewBox="0 0 96 136"><use href="#milk"/></svg></div>
+    <div class="c s2 pd lift"><b>鸡蛋</b><small>Eggs · 6</small><span class="dd"><span class="ck"></span>3 天</span><svg class="stk" viewBox="0 0 140 104" style="height:84px"><use href="#eggs"/></svg></div>
+    <div class="c s2 pd lift"><b>草莓</b><small>250 g</small><span class="dd"><span class="ck"></span>4 天</span><svg class="stk" viewBox="0 0 140 108" style="height:86px"><use href="#punnet"/></svg></div>
+    <div class="c s2 pd lift"><b>小葱</b><small>Spring onion</small><span class="dd"><span class="ck"></span>5 天</span><svg class="stk" viewBox="0 0 96 164" style="height:126px"><use href="#onion"/></svg></div>
+    <div class="c s2 pd plain lift"><b>酸奶</b><small>× 2</small><span class="dd"><span class="ck"></span>6 天</span><span class="bigd">6</span></div>
+    <div class="c s2 pd plain lift"><b>嫩豆腐</b><small>350 g</small><span class="dd"><span class="ck"></span>8 天</span><span class="bigd">8</span></div>
+    <section class="c s8 pad">
+      <div class="hd"><h3>用冰箱里的东西做</h3><span class="cap">先用快过期的 · Claude 推荐</span></div>
+      <div class="recipe">
+        <div class="r"><b>牛奶燕麦杯</b><p>牛奶 200 ml + 燕麦 + 草莓切丁，前一晚放冷藏。</p><span class="chip p">用掉：牛奶 · 草莓</span></div>
+        <div class="r"><b>葱花炒蛋</b><p>3 个鸡蛋打散加盐，小葱切花，中火 2 分钟。</p><span class="chip">用掉：鸡蛋 · 小葱</span></div>
+        <div class="r"><b>葱油拌豆腐</b><p>豆腐切块，淋热油葱花和生抽，5 分钟。</p><span class="chip">用掉：豆腐 · 小葱</span></div>
+      </div>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>购物清单</h3><span class="cap">周六去超市</span></div>
+      <ul class="check">
+        <li><span class="ck"></span>鸡蛋 12 个</li><li><span class="ck"></span>菠菜</li><li class="done"><span class="ck"></span><span class="t">牛奶 2 L</span></li><li><span class="ck"></span>鸡腿肉</li><li><span class="ck"></span>燕麦</li>
+      </ul>
+    </section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 物品墙 ==================== -->
+<section class="frame" data-page="items" data-title="后勤部 · 物品墙 Things">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">全部<sup>42</sup></span><span>电子</span><span>衣物</span><span>厨房</span><span>书</span></div><div class="find">⌕ &nbsp;东西放哪了…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">31 · Things</span><h1>物品墙</h1><p class="meta">42 件 · 最近添加：降噪耳机 · 2 件保修快到期</p></div>
+    <div class="acts"><button class="btn">＋ 添加物品</button><button class="btn g">按位置看</button></div>
+    <svg class="pa col" viewBox="0 0 220 300" style="height:250px"><g filter="url(#paint)"><use href="#jar" x="40" y="0" width="150" height="282"/></g></svg>
+  </section>
+  <div class="bento">
+    <div class="c s3 pad item lift"><div class="photo" style="background:#e6eadf"><span class="chip tagp">电子</span><span class="hand">headphones</span></div><b>降噪耳机</b><div class="kv"><span>位置</span><span>书桌抽屉</span><span>购入</span><span>2026.11.02 · $249</span><span>保修</span><span>到 2027.11</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:var(--blush)"><span class="chip p tagp">衣物</span><span class="hand">coat</span></div><b>驼色大衣</b><div class="kv"><span>位置</span><span>衣柜左边</span><span>购入</span><span>2025.10.20 · $189</span><span>尺码</span><span>S</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:#F2E8D3"><span class="chip y tagp">厨房</span><span class="hand">rice cooker</span></div><b>电饭煲</b><div class="kv"><span>位置</span><span>厨房台面</span><span>购入</span><span>2025.09.03 · $69</span><span>保修</span><span class="sub" style="color:#a5615d">12 月到期</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:#ECE6EF"><span class="chip k tagp">书</span><span class="hand">books</span></div><b>《Python 数据分析》</b><div class="kv"><span>位置</span><span>书架第二层</span><span>购入</span><span>2025.09.10 · $58</span><span>状态</span><span>读到第 6 章</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:#e6eadf"><span class="chip tagp">电子</span><span class="hand">kindle</span></div><b>Kindle</b><div class="kv"><span>位置</span><span>床头</span><span>购入</span><span>2024.12.25 · $139</span><span>保修</span><span class="sub" style="color:#a5615d">已过期</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:var(--blush)"><span class="chip p tagp">衣物</span><span class="hand">boots</span></div><b>雪地靴</b><div class="kv"><span>位置</span><span>门口鞋柜</span><span>购入</span><span>2025.11.30 · $120</span><span>尺码</span><span>37</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:#F2E8D3"><span class="chip y tagp">厨房</span><span class="hand">kettle</span></div><b>手冲壶</b><div class="kv"><span>位置</span><span>厨房上柜</span><span>购入</span><span>2026.03.14 · $45</span><span>备注</span><span>滤纸在旁边</span></div></div>
+    <div class="c s3 pad item lift"><div class="photo" style="background:#ECE6EF"><span class="chip k tagp">证件</span><span class="hand">documents</span></div><b>证件文件袋</b><div class="kv"><span>位置</span><span>衣柜顶层盒子</span><span>内容</span><span>护照、学签、租约</span><span>备注</span><span>详情在个人档案</span></div></div>
+  </div>
+</main></div></section>
+
+<!-- ==================== 知识库 ==================== -->
+<section class="frame" data-page="knowledge" data-title="研发部 · 知识库 Notes">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">知识卡<sup>38</sup></span><span>灵感<sup>11</sup></span><span>胡思乱想<sup>24</sup></span></div><div class="find">⌕ &nbsp;搜索知识…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">40 · Notes</span><h1>知识库</h1><p class="meta">38 张知识卡 · 今天要复习 <b>6 张</b> · 本周新增 9 张</p></div>
+    <div class="acts"><button class="btn">开始复习</button><button class="btn g">＋ 存一条</button></div>
+    <svg class="pa col" viewBox="0 0 260 260" style="height:250px"><use href="#calla" x="40" y="0" width="180" height="258"/></svg>
+  </section>
+  <div class="bento">
+    <section class="c s4 pad">
+      <div class="hd"><h3>今日复习</h3><span class="cap">2 / 6</span></div>
+      <div class="flash"><span class="cap">学习方法</span><b>番茄钟一轮是多久？做满几轮之后长休息？</b><button class="btn s" style="margin-top:20px">显示答案</button></div>
+      <div style="display:flex;gap:8px;margin-top:12px"><button class="btn s g" style="flex:1">忘了</button><button class="btn s g" style="flex:1">模糊</button><button class="btn s" style="flex:1">记得</button></div>
+    </section>
+    <section class="c s8 pad">
+      <div class="hd"><h3>最近的知识卡</h3><span class="cap">按收藏时间</span></div>
+      <div class="kc">
+        <div class="kcard"><b>一周备餐：5 天午饭</b><p>周日做两种主菜 + 一种蔬菜，分 5 盒冷藏，第 4、5 天的放冷冻。</p><div class="ft"><span class="chip p">小红书</span><span class="chip o">生活</span><span class="sub">昨天</span></div></div>
+        <div class="kcard"><b>pandas 的 groupby</b><p>df.groupby('类别')['金额'].sum() —— 按类别求和，用在账本分析上正合适。</p><div class="ft"><span class="chip y">课堂</span><span class="chip o">编程</span><span class="sub">11.16</span></div></div>
+        <div class="kcard"><b>面试 STAR 法则</b><p>情境 Situation、任务 Task、行动 Action、结果 Result，每个故事控制在 2 分钟。</p><div class="ft"><span class="chip">网页</span><span class="chip o">求职</span><span class="sub">11.15</span></div></div>
+        <div class="kcard"><b>番茄钟</b><p>专注 25 分钟，休息 5 分钟；做满 4 轮之后休息 15 – 30 分钟。</p><div class="ft"><span class="chip k">抖音</span><span class="chip o">学习方法</span><span class="sub">11.14</span></div></div>
+        <div class="kcard"><b>加拿大报税 T2202</b><p>学费抵税表在 ACORN 下载，二月底前出，报税时填进去。</p><div class="ft"><span class="chip">网页</span><span class="chip o">财务</span><span class="sub">11.12</span></div></div>
+        <div class="kcard"><b>冬天护手</b><p>洗手后 1 分钟内涂护手霜，晚上厚涂 + 戴棉手套。</p><div class="ft"><span class="chip p">小红书</span><span class="chip o">生活</span><span class="sub">11.10</span></div></div>
+      </div>
+    </section>
+    <section class="c s4 nt g"><div class="nh"><span>胡思乱想</span><span class="cap">昨晚 22:40</span></div><p>下午在图书馆窗边坐了很久，外面好像要下雪了。</p></section>
+    <section class="c s4 nt"><div class="nh"><span>灵感</span><span class="cap">11.16</span></div><p>做一个读书笔记模板：书名、金句、我的想法。</p></section>
+    <section class="c s4 nt g"><div class="nh"><span>胡思乱想</span><span class="cap">11.14</span></div><p>第一次自己包饺子，形状很丑但是很好吃。</p></section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 多邻国 · 英语 ==================== -->
+<section class="frame" data-page="english" data-title="研发部 · 多邻国 English">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">Today</span><span>Words<sup>186</sup></span><span>Mistakes<sup>12</sup></span></div><div class="find">⌕ &nbsp;查单词…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">41 · English</span><h1>多邻国</h1><p class="meta">连续 <b>23 天</b> · 今天 12 / 20 个 · 单词本 186 个</p></div>
+    <div class="acts"><button class="btn">开始学习</button><button class="btn g">＋ 收一个词</button></div>
+    <svg class="pa col" viewBox="0 0 300 250"><g filter="url(#paint)"><use href="#leaf" x="0" y="170" width="190" height="104"/><use href="#cat" x="70" y="30" width="150" height="210"/><use href="#lotus" x="170" y="120" width="130" height="100"/><use href="#leaf" x="150" y="190" width="150" height="82"/></g></svg>
+  </section>
+  <div class="bento">
+    <section class="c s4 pad">
+      <div class="hd"><h3>连续学习</h3><span class="cap">本周</span></div>
+      <div class="big">23<small> 天</small></div>
+      <div class="wkdots"><span><i class="on"></i>一</span><span><i class="on"></i>二</span><span><i class="on"></i>三</span><span><i></i>四</span><span><i></i>五</span><span><i></i>六</span><span><i></i>日</span></div>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>今日单词</h3><span class="cap">12 / 20</span></div>
+      <div class="flash" style="height:150px;background:#E6EADF;box-shadow:inset 0 0 0 1px rgba(127,143,110,.25)"><b style="font:700 32px Gaegu">procrastinate</b><span class="sub">v. 拖延 · I tend to procrastinate on Mondays.</span></div>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>错词本</h3><span class="cap">最近答错</span></div>
+      <div class="leg"><div><i style="background:var(--rose)"></i>meticulous<span>一丝不苟的</span></div><div><i style="background:var(--rose)"></i>tentative<span>暂定的</span></div><div><i style="background:var(--rose)"></i>alleviate<span>减轻</span></div><div><i style="background:var(--rose)"></i>scrutinize<span>仔细检查</span></div></div>
+    </section>
+    <section class="c s8 pad">
+      <div class="hd"><h3>单词本</h3><span class="cap">186 个 · 从文章、课堂、求职里收的</span></div>
+      <table class="tbl">
+        <tr><th>单词</th><th>释义</th><th>来源</th><th>掌握</th></tr>
+        <tr><td><b>procrastinate</b></td><td>拖延</td><td><span class="chip">多邻国</span></td><td><span class="dots5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td></tr>
+        <tr><td><b>stakeholder</b></td><td>利益相关方</td><td><span class="chip o">求职</span></td><td><span class="dots5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+        <tr><td><b>regression</b></td><td>回归（统计）</td><td><span class="chip y">课堂</span></td><td><span class="dots5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td></tr>
+        <tr><td><b>meticulous</b></td><td>一丝不苟的</td><td><span class="chip p">小红书</span></td><td><span class="dots5"><i class="on"></i><i></i><i></i><i></i><i></i></span></td></tr>
+        <tr><td><b>leverage</b></td><td>利用、借助</td><td><span class="chip o">求职</span></td><td><span class="dots5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+      </table>
+    </section>
+    <section class="c s4 pad">
+      <div class="hd"><h3>最近 14 天</h3><span class="cap">每天学了多少</span></div>
+      <div class="heat" data-only="背词"></div>
+      <p class="sub" style="margin-top:16px">平均每天 17 个 · 最长连续 31 天</p>
+    </section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 教务处 ==================== -->
+<section class="frame" data-page="school" data-title="教务处 School">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">Fall 2026</span><span>Deadlines<sup>3</sup></span><span>Files</span></div><div class="find">⌕ &nbsp;搜索课程、课件…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">45 · School · Quercus</span><h1>教务处</h1><p class="meta">4 门课 · 本周 <b>3 个截止</b> · 上次同步 Quercus 今天 08:00</p></div>
+    <div class="acts"><button class="btn">立即同步</button><button class="btn g">打开课件文件夹</button></div>
+    <svg class="pa col" viewBox="0 0 320 240"><g filter="url(#paint)"><use href="#leaf" x="0" y="160" width="200" height="110"/><use href="#lotus" x="10" y="50" width="180" height="140"/><use href="#lotus" x="140" y="100" width="150" height="116"/><use href="#leaf" x="140" y="180" width="180" height="98"/></g></svg>
+  </section>
+  <div class="bento">
+    <div class="c s3 course lift"><div class="band" style="background:var(--blush)"><span class="code">INF 1340</span></div><div class="bd"><b>Programming for Data Science</b><div class="kv"><span>下次课</span><span>周四 10:00</span><span>截止</span><span>A3 · 11.25</span><span>课件</span><span>18 个</span></div></div></div>
+    <div class="c s3 course lift"><div class="band" style="background:#E6EADF"><span class="code">DATA 101</span></div><div class="bd"><b>Intro to Data Analytics</b><div class="kv"><span>下次课</span><span>周一 14:00</span><span>截止</span><span style="color:#a5615d">作业 4 · 今晚</span><span>课件</span><span>12 个</span></div></div></div>
+    <div class="c s3 course lift"><div class="band" style="background:#F2E8D3"><span class="code">INF 1343</span></div><div class="bd"><b>Data Modeling &amp; Database</b><div class="kv"><span>下次课</span><span>周二 18:00</span><span>截止</span><span>项目提案 · 11.27</span><span>课件</span><span>9 个</span></div></div></div>
+    <div class="c s3 course lift"><div class="band" style="background:#ECE6EF"><span class="code">INF 2178</span></div><div class="bd"><b>Experimental Design</b><div class="kv"><span>下次课</span><span>周三 13:00</span><span>截止</span><span>期中 · 11.30</span><span>课件</span><span>14 个</span></div></div></div>
+    <section class="c s7 pad tl">
+      <div class="hd"><h3>截止时间线</h3><span class="cap">从 Quercus 同步</span></div>
+      <div class="ev2"><div class="dte">11.18<small>今天 23:59</small></div><div><b>DATA 101 · 作业 4</b><span class="sub">Assignment · 10 分</span></div><span class="chip p">还剩 9 小时</span></div>
+      <div class="ev2"><div class="dte">11.25<small>周二 23:59</small></div><div><b>INF 1340 · Assignment 3</b><span class="sub">Assignment · 15 分</span></div><span class="chip y">7 天</span></div>
+      <div class="ev2"><div class="dte">11.27<small>周四 18:00</small></div><div><b>INF 1343 · 项目提案</b><span class="sub">Group project · 小组 4 人</span></div><span class="chip">9 天</span></div>
+      <div class="ev2"><div class="dte">11.30<small>周日</small></div><div><b>INF 2178 · 期中考试</b><span class="sub">Quiz · 线上 90 分钟</span></div><span class="chip">12 天</span></div>
+    </section>
+    <section class="c s5 pad">
+      <div class="hd"><h3>最近下载的课件</h3><span class="cap">存在电脑 · 不同步</span></div>
+      <div class="file"><span class="ft pdf">PDF</span><div><b style="font-weight:500">Week 10 – Regression.pdf</b><div class="sub">INF 2178</div></div><span class="sub">今天</span></div>
+      <div class="file"><span class="ft ppt">PPT</span><div><b style="font-weight:500">Lecture 9 – Pandas II.pptx</b><div class="sub">INF 1340</div></div><span class="sub">昨天</span></div>
+      <div class="file"><span class="ft pdf">PDF</span><div><b style="font-weight:500">A4 instructions.pdf</b><div class="sub">DATA 101</div></div><span class="sub">11.14</span></div>
+      <div class="file"><span class="ft pdf">PDF</span><div><b style="font-weight:500">ER Diagram examples.pdf</b><div class="sub">INF 1343</div></div><span class="sub">11.12</span></div>
+    </section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 人事部 · 求职 ==================== -->
+<section class="frame" data-page="career" data-title="人事部 · 求职 Career">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">Pipeline</span><span>Interviews<sup>2</sup></span><span>Notes</span></div><div class="find">⌕ &nbsp;搜索公司…</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">50 · Career</span><h1>人事部</h1><p class="meta">投递 14 · 面试中 2 · 周五 <b>15:00 面试</b></p></div>
+    <div class="acts"><button class="btn">打开 JobSync</button><button class="btn g">＋ 记一次投递</button></div>
+    <svg class="pa col" viewBox="0 0 300 240"><g filter="url(#paint)"><use href="#mag" x="120" y="0" width="170" height="170"/><use href="#leaf" x="0" y="160" width="200" height="110"/><use href="#lotus" x="10" y="80" width="150" height="116"/></g></svg>
+  </section>
+  <div class="bento">
+    <div class="s12 kan">
+      <div class="col4"><h4>想投<span class="sub">5</span></h4>
+        <div class="job"><b>Shopify</b><span class="sub">Data Analyst Intern · Toronto</span><span class="chip o">截止 11.30</span></div>
+        <div class="job"><b>RBC</b><span class="sub">Business Insights Co-op</span><span class="chip o">截止 12.05</span></div></div>
+      <div class="col4"><h4>已投递<span class="sub">7</span></h4>
+        <div class="job"><b>TD Bank</b><span class="sub">Data Science Intern</span><span class="chip">11.10 投递</span></div>
+        <div class="job"><b>Wealthsimple</b><span class="sub">Analytics Intern</span><span class="chip">11.06 投递</span></div>
+        <div class="job"><b>Loblaw Digital</b><span class="sub">Product Analyst Co-op</span><span class="chip">11.02 投递</span></div></div>
+      <div class="col4" style="background:#f8efed"><h4>面试中<span class="sub">2</span></h4>
+        <div class="job"><b>Manulife</b><span class="sub">Data Analyst Intern</span><span class="chip p">周五 15:00 二面</span></div>
+        <div class="job"><b>CIBC</b><span class="sub">Risk Analytics Co-op</span><span class="chip y">等结果</span></div></div>
+      <div class="col4"><h4>Offer<span class="sub">0</span></h4><p class="sub" style="margin:8px 2px">还没有，继续投。</p></div>
+    </div>
+    <section class="c s6 pad">
+      <div class="hd"><h3>周五面试准备</h3><span class="cap">Manulife · 二面 · 视频</span></div>
+      <ul class="check">
+        <li class="done"><span class="ck"></span><span class="t">复习简历上的 3 个项目</span></li>
+        <li><span class="ck"></span>准备 2 个 STAR 故事（团队冲突、赶截止）</li>
+        <li><span class="ck"></span>SQL 窗口函数再练 5 题</li>
+        <li><span class="ck"></span>想好 3 个反问问题</li>
+      </ul>
+    </section>
+    <section class="c s6 nt"><div class="nh"><span>求职小知识</span><span class="cap">from 知识库</span></div><p>面试结束 24 小时内发感谢邮件，提一句面试里聊到的具体内容。</p></section>
+  </div>
+</main></div></section>
+
+<!-- ==================== 个人档案 ==================== -->
+<section class="frame" data-page="profile" data-title="个人档案（加密）Private">
+<div class="app"><aside class="side"></aside><main>
+  <div class="top"><div class="tabs"><span class="on">Private</span></div><div class="find">⌕ &nbsp;解锁后可搜索</div></div>
+  <section class="ban pbn">
+    <div class="pt"><span class="up">60 · Private · 不同步</span><h1>个人档案 🔒</h1><p class="meta">只存在这台电脑 · 不上传云端 · AI 不读取 · 账号密码单独加密</p></div>
+    <div class="acts"><button class="btn">输入密码解锁</button></div>
+    <svg class="pa col" viewBox="0 0 260 250"><g filter="url(#paint)"><use href="#leaf" x="0" y="170" width="190" height="104"/><use href="#lotus" x="20" y="70" width="190" height="147"/><use href="#leaf" x="110" y="190" width="150" height="82"/></g></svg>
+  </section>
+  <div class="bento">
+    <section class="c s4 pad lock"><div class="hd"><h3>身体数据</h3><span class="cap">体重 · 体检 · 生理期</span></div><div class="ln2" style="width:80%"></div><div class="ln2" style="width:60%"></div><div class="ln2" style="width:70%"></div><div class="lk"><span class="pad-lock">🔒</span><span class="sub">已锁定</span></div></section>
+    <section class="c s4 pad lock"><div class="hd"><h3>尺码</h3><span class="cap">衣服 · 鞋 · 戒指</span></div><div class="ln2" style="width:70%"></div><div class="ln2" style="width:50%"></div><div class="ln2" style="width:65%"></div><div class="lk"><span class="pad-lock">🔒</span><span class="sub">已锁定</span></div></section>
+    <section class="c s4 pad lock"><div class="hd"><h3>账号密码</h3><span class="cap">Meld Encrypt 单独加密</span></div><div class="ln2" style="width:75%"></div><div class="ln2" style="width:55%"></div><div class="ln2" style="width:68%"></div><div class="lk"><span class="pad-lock">🔑</span><span class="sub">需要第二个密码</span></div></section>
+    <section class="c s12 pad">
+      <div class="hd"><h3>这里的规则</h3></div>
+      <div class="kv" style="font-size:14px;gap:12px 24px"><span>同步</span><span>这个文件夹被排除在 Obsidian Sync 之外，手机上看不到</span><span>AI</span><span>Claude Code 被设置为不能读取这个文件夹</span><span>密码</span><span>账号密码.md 用 Meld Encrypt 加密，密码只在你脑子里</span><span>备份</span><span>私密文件另存在加密磁盘映像里，不放在 OS 里</span></div>
+    </section>
+  </div>
+</main></div></section>
+<section class="frame phframe" data-page="phones" data-title="手机版 Mobile">
+<div class="phrow">
+<div class="phone ph">
+    <div class="island"></div>
+    <div class="scr">
+      <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+      <div class="mnav"><div><b>Today</b>Week<br>Review</div><div>Profile</div></div>
+      <section class="ban" data-banner>
+        <div class="ban-t"><span class="up">Wednesday</span><h1>Nov <i>18</i></h1><p class="meta">3 件待办 · 牛奶 <b>明天过期</b></p></div>
+      </section>
+      <div class="tabs"><span class="on">今日<sup>3</sup></span><span>冰箱<sup>5</sup></span><span>账本</span><span>知识<sup>38</sup></span></div>
+      <div class="bento">
+        <section class="c s6 pad">
+          <ul class="todo" style="margin-top:-12px">
+            <li style="border:0"><span class="ck"></span><span class="t">DATA 101 作业 4</span><span class="cap r">23:59</span></li>
+            <li><span class="ck"></span><span class="t">买鸡蛋和牛奶</span><span class="cap">errands</span></li>
+            <li class="done"><span class="ck"></span><span class="t">背 20 个单词</span><span class="cap">english</span></li>
+          </ul>
+        </section>
+        <div class="c s2 st"><span class="cap">Tasks</span><b>3</b></div>
+        <div class="c s2 st"><span class="cap">Streak</span><b>23</b></div>
+        <div class="c s2 st"><span class="cap">Fridge</span><b>5</b></div>
+        <section class="c s4 pad" style="display:flex;flex-direction:column;justify-content:space-between;height:124px">
+          <span class="cap" style="text-align:center">Spent this week</span>
+          <b style="font:700 44px/1 Gaegu;color:var(--coffee);text-align:center">$214<small style="font-size:18px;color:var(--mute)">.50</small></b>
+          <svg viewBox="0 0 300 30" preserveAspectRatio="none" style="width:100%;height:22px"><path d="M4 22 C40 18 60 8 100 12 C150 16 170 4 210 8 C250 12 270 18 296 14" fill="none" stroke="#7F8F6E" stroke-width="1.6"/></svg>
+        </section>
+        <div class="s2 round"><button class="go">记一笔</button></div>
+        <div class="sec"><div class="tabs" style="margin:0"><span class="on">Fridge<sup>5</sup></span><span>Pantry</span></div></div>
+        <div class="c s3 pd u"><b>牛奶</b><small>Milk · 1 L</small><span class="dd"><span class="ck"></span>明天</span><svg class="stk" viewBox="0 0 96 136"><use href="#milk"/></svg></div>
+        <section class="c s3 nt"><div class="nh"><span>Note</span><span class="cap">知识库</span></div><p style="font-size:13px;max-width:100%">专注 25 分钟，休息 5 分钟。</p><svg width="60" height="40"><use href="#doodle"/></svg></section>
+        <div class="c s3 pd"><b>鸡蛋</b><small>Eggs · 6</small><span class="dd"><span class="ck"></span>3 天</span><svg class="stk" viewBox="0 0 140 104" style="height:70px"><use href="#eggs"/></svg></div>
+        <div class="c s3 pd"><b>草莓</b><small>250 g</small><span class="dd"><span class="ck"></span>4 天</span><svg class="stk" viewBox="0 0 140 108" style="height:72px"><use href="#punnet"/></svg></div>
+      </div>
+    </div>
+    <div class="dock"><div class="q">⌕ &nbsp;我想记…</div><div class="b">⇅</div><div class="b k">+</div></div>
+  </div>
+
+  <!-- 记账 -->
+  <div class="phone ph">
+    <div class="island"></div>
+    <div class="scr">
+      <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+      <div class="mt">记一笔</div><p class="ms">本周已花 $214.50 · 预算还剩 $135.50</p>
+      <div class="c pad"><div class="amt"><span class="sub">金额 CAD</span><br><b>$18.50</b></div>
+        <div class="cats"><span class="on">餐饮</span><span>交通</span><span>购物</span><span>日用</span><span>学习</span></div>
+        <div class="kv" style="font-size:13px"><span>备注</span><span>和同学吃拉面</span><span>方式</span><span>Apple Pay</span><span>日期</span><span>今天 12:40</span></div>
+      </div>
+      <div class="keys" style="margin-top:14px"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>.</span><span>0</span><span class="ok">记好了</span></div>
+      <div class="hd" style="margin:22px 4px 8px"><h3>今天</h3><span class="cap">2 笔</span></div>
+      <div class="c pad" style="padding:6px 16px"><table class="tbl"><tr><td>奶茶</td><td><span class="chip p">餐饮</span></td><td class="num">$6.50</td></tr><tr><td>TTC</td><td><span class="chip">交通</span></td><td class="num">$3.35</td></tr></table></div>
+    </div>
+  </div>
+  <!-- 冰箱 -->
+  <div class="phone ph">
+    <div class="island"></div>
+    <div class="scr">
+      <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+      <div class="mt">冰箱</div><p class="ms">冷藏 6 样 · 快过期的排前面</p>
+      <div class="tabs" style="font-size:24px;margin:0 4px 14px"><span class="on">冷藏</span><span>冷冻</span><span>常温</span><span>清单</span></div>
+      <div class="flist">
+        <div class="c u"><svg class="stk" viewBox="0 0 96 136"><use href="#milk"/></svg><div><b>牛奶</b><span class="sub">1 L · 明天过期</span></div><span class="d">1天</span></div>
+        <div class="c"><svg class="stk" viewBox="0 0 140 104"><use href="#eggs"/></svg><div><b>鸡蛋</b><span class="sub">6 个</span></div><span class="d">3天</span></div>
+        <div class="c"><svg class="stk" viewBox="0 0 140 108"><use href="#punnet"/></svg><div><b>草莓</b><span class="sub">250 g</span></div><span class="d">4天</span></div>
+        <div class="c"><svg class="stk" viewBox="0 0 96 164"><use href="#onion"/></svg><div><b>小葱</b><span class="sub">一把</span></div><span class="d">5天</span></div>
+        <div class="c"><svg viewBox="0 0 10 10"></svg><div><b>酸奶</b><span class="sub">× 2</span></div><span class="d">6天</span></div>
+      </div>
+      <div class="c nt" style="margin-top:6px"><div class="nh"><span>今天可以做</span><span class="cap">先用牛奶</span></div><p style="font-size:15px;max-width:100%">牛奶燕麦杯 · 葱花炒蛋</p></div>
+    </div>
+    <div class="dock"><div class="q">⌕ &nbsp;冰箱里有…</div><div class="b k">+</div></div>
+  </div>
+  <!-- 更多 -->
+  <div class="phone ph">
+    <div class="island"></div>
+    <div class="scr">
+      <div class="sb"><span>9:41</span><span>●●● 84</span></div>
+      <div class="mt">更多</div><p class="ms">各部门入口</p>
+      <div class="mgrid">
+        <div class="c"><b>知识库</b><span class="sub">38 张 · 今天复习 6</span></div>
+        <div class="c"><b>学校</b><span class="sub" style="color:#a5615d">今晚 23:59 截止</span></div>
+        <div class="c"><b>多邻国</b><span class="sub">连续 23 天</span></div>
+        <div class="c"><b>物品</b><span class="sub">42 件</span></div>
+        <div class="c"><b>求职</b><span class="sub">周五 15:00 面试</span></div>
+        <div class="c"><b>收件箱</b><span class="sub">4 条待整理</span></div>
+        <div class="c"><b>胡思乱想</b><span class="sub">24 篇</span></div>
+        <div class="c"><b>每周复盘</b><span class="sub">周日填</span></div>
+        <div class="c lockd" style="grid-column:span 2;height:76px"><b>个人档案 🔒</b><span class="sub">只在电脑上，手机上不显示</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+<script>
+// 侧边栏（每页一份，方便在 Figma 里每个画板都完整）
+const NAV=[
+  ['Overview',[['home','首页'],['inbox','收件箱',4],['review','每周复盘']]],
+  ['Departments',[['finance','财务部'],['food','后勤部'],['food','食物墙',6,1],['items','物品墙',0,1],['knowledge','研发部'],['knowledge','知识库',38,1],['english','多邻国 · 英语',0,1],['school','教务处',3],['career','人事部 · 求职']]],
+  ['Private',[['profile','个人档案 🔒']]]
+];
+function sideHTML(active){
+  let h='<div class="logo">my little <i>os.</i></div>';
+  for(const [g,items] of NAV){
+    h+=`<div class="up">${g}</div><nav class="nav">`;
+    for(const [id,label,n,sub] of items){
+      const on=id===active?' on':'';
+      h+=`<a class="${sub?'sub':''}${on}" data-go="${id}">${label}${n?` <sup>${n}</sup>`:''}</a>`;
+    }
+    h+='</nav>';
+  }
+  return h+'<div class="phl" data-go="phones">📱 手机版 →</div>';
+}
+document.querySelectorAll('.frame').forEach(f=>{
+  const s=f.querySelector('.side'); if(s) s.innerHTML=sideHTML(f.dataset.page);
+});
+// 只给每页一个高亮：子项优先
+document.querySelectorAll('.frame .side').forEach(s=>{
+  const on=[...s.querySelectorAll('a.on')];
+  if(on.length>1){const keep=on.find(a=>a.classList.contains('sub'))||on[0];on.forEach(a=>a!==keep&&a.classList.remove('on'));}
+});
+// 首页横幅拼贴
+document.querySelectorAll('[data-banner]').forEach(b=>b.prepend(document.getElementById('banner').content.cloneNode(true)));
+// 习惯热力图
+const H={早起:'11011101011101',喝水:'11111111111111',运动:'01001010010100',背词:'11111101111111',早睡:'00101001010010'};
+document.querySelectorAll('.heat').forEach(el=>{
+  const days=+el.dataset.days||14, only=el.dataset.only;
+  if(days!==14) el.style.gridTemplateColumns=`48px repeat(${days},minmax(0,24px))`;
+  el.innerHTML=Object.entries(H).filter(([k])=>!only||k===only).map(([k,v])=>`<span>${k}</span>`+[...v.slice(-days)].map(x=>x==='1'?'<i class="on"></i>':'<i></i>').join('')).join('');
+});
+document.querySelectorAll('.todo li,.check li').forEach(li=>li.onclick=()=>li.classList.toggle('done'));
+// 翻页 / 平铺
+const sel=document.getElementById('pg');
+function go(id){
+  document.body.classList.remove('board');
+  document.querySelectorAll('.frame').forEach(f=>f.classList.toggle('on',f.dataset.page===id));
+  sel.value=id; scrollTo(0,0);
+  try{localStorage.setItem('os-page',id)}catch(e){}
+}
+document.querySelectorAll('.frame').forEach(f=>sel.add(new Option(f.dataset.title,f.dataset.page)));
+sel.onchange=()=>go(sel.value);
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+document.getElementById('board').onclick=()=>{document.body.classList.toggle('board');scrollTo(0,0)};
+let start='home';try{start=localStorage.getItem('os-page')||'home'}catch(e){}
+if(location.hash==='#figma'){document.body.classList.add('board');start='home'}
+go(document.querySelector(`.frame[data-page="${start}"]`)?start:'home');
+if(location.hash==='#figma')document.body.classList.add('board');
+</script>
+</body>
+</html>

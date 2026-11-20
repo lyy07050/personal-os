@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 冰箱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mobile.css?v=6">
+<style>
+.hero{background:var(--pink);min-height:176px;display:flex;flex-direction:column;justify-content:flex-end;margin-bottom:var(--gap);padding:18px}
+.hero img{position:absolute;right:18px;top:16px;height:144px;width:auto;transform:rotate(6deg);filter:drop-shadow(0 4px 6px rgba(46,42,39,.16))}
+.hero .chip{position:absolute;left:18px;top:18px;background:rgba(255,255,255,.8)}
+.hero h2{font-size:24px;line-height:1.15}
+.hero p{font-size:13px;color:var(--ink-2);margin-top:4px;max-width:62%}
+
+.foods{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:var(--gap)}
+.food{border-radius:24px;background:#fff;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;min-height:150px;animation:in .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.food .pic{height:64px;display:flex;align-items:center}
+.food .pic img{max-height:64px;max-width:86px}
+.food .pic .food-emoji{border-radius:20px}
+.food .init{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:22px;font-weight:600;color:var(--ink-2)}
+.food .row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto}
+.food b{display:block;font-size:15px;font-weight:600;letter-spacing:-.02em}
+.food small{font-size:12px;color:var(--muted)}
+
+.cook{background:var(--m-yellow)}
+.cook ul{list-style:none}
+.cook li{padding:8px 0;border-bottom:1px solid rgba(37,45,41,.06)}
+.cook li:last-child{border-bottom:0}
+.cook b{font-weight:600;font-size:15px;letter-spacing:-.02em}
+.cook p{font-size:12.5px;color:var(--ink-2);margin:3px 0 6px}
+
+.shop{background:#fff}
+.shop ul{list-style:none}
+.shop li{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:15px;border-bottom:1px solid rgba(37,45,41,.06)}
+.shop li:last-child{border-bottom:0}
+.shop li .ic{width:44px;display:flex;justify-content:center}
+.food{position:relative}
+.food .eat{position:absolute;right:10px;top:10px;height:28px;padding:0 11px;border-radius:14px;background:var(--tint);border:1px solid rgba(37,45,41,.1);font-size:12.5px;color:var(--ink-2)}
+.food .eat:active{background:var(--green);color:#fff}
+.food.gone{opacity:.35}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}
+.sec .h{font-size:20px}
+.foods{margin-bottom:0}
+.hero{margin-bottom:0}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll">
+        <div class="status"><span>9:41</span><svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/></g></svg></div>
+
+        <header class="navbar">
+          <a class="round" href="mobile-home.html" aria-label="返回首页"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3 5 9l6 6" fill="none" stroke="#252d29" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="title"><h1 class="h">冰箱</h1><p id="summary">冷藏 6 样 · 牛奶明天过期</p></div>
+        </header>
+
+        <div id="panel"></div>
+      </div>
+
+      <div class="dock">
+        <label class="search"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6.2" fill="none" stroke="#252d29" stroke-width="1.7"/><path d="m13.6 13.6 4 4" stroke="#252d29" stroke-width="1.7" stroke-linecap="round"/></svg><span>冰箱里有…</span></label>
+        <button class="fab" aria-label="新建"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+<script src="food.js?v=6"></script>
+<script>
+const CK='<svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const data={
+  cold:{sum:'冷藏 6 样 · 牛奶明天过期',hero:{name:'牛奶',when:'明天过期',note:'1 L · 今天可以做牛奶燕麦杯'},
+    items:[['鸡蛋','6 个','3 天'],['草莓','250 g','4 天'],['小葱','1 把','5 天'],['菠菜','1 把','5 天'],['酸奶','2 杯','6 天'],['嫩豆腐','1 盒','8 天']]},
+  frozen:{sum:'冷冻 3 样 · 都还早',items:[['饺子','半袋','2 周'],['冻虾','300 g','3 周'],['汤圆','1 袋','1 个月']]},
+  pantry:{sum:'常温 12 样 · 挑 6 样常用的',items:[['意面','2 包','—'],['大米','3 kg','—'],['生抽','半瓶','—'],['燕麦','1 袋','3 周'],['蜂蜜','1 罐','—'],['泡面','4 包','—']]},
+};
+const shop=[['鸡蛋 12 个',0],['菠菜',0],['牛奶 2 L',1],['鸡腿肉',0],['燕麦',0]];
+const panel=document.getElementById('panel'),summary=document.getElementById('summary');
+function food(f,i){const [name,qty,days]=f;const warn=days.includes('明天')||days==='3 天';
+  const pic=foodIcon(name,60);
+  return `<div class="food" style="animation-delay:${i*40}ms"><button class="eat" data-n="${name}">吃完</button><div class="pic">${pic}</div><div class="row"><div><b>${name}</b><small>${qty}</small></div><span class="chip ${days==='—'?'soft':warn?'warn':''}">${days==='—'?'常备':'还剩 '+days}</span></div></div>`;}
+function section(title,items){return `<div class="sec"><span class="h">${title}</span></div><div class="foods">${items.map(food).join('')}</div>`;}
+function render(){const c=data.cold;let h='';
+  h+=`<section class="card hero"><span class="chip warn">${c.hero.when}</span><img src="assets/food/${c.hero.name}.png" alt=""><h2 class="h">${c.hero.name}<br>先吃掉</h2><p>${c.hero.note}</p></section>`;
+  h+=section('冷藏',c.items);
+  h+=`<section class="card cook"><div class="label"><span>今天可以做</span></div><ul>
+    <li><b>牛奶燕麦杯</b><p>牛奶 200 ml + 燕麦 + 草莓切丁，前一晚放冷藏。</p><span class="chip warn">牛奶</span> <span class="chip">草莓</span></li>
+    <li><b>葱花炒蛋</b><p>3 个鸡蛋打散加盐，小葱切花，中火 2 分钟。</p><span class="chip">鸡蛋</span> <span class="chip">小葱</span></li></ul></section>`;
+  h+=section('冷冻',data.frozen.items);
+  h+=section('常温',data.pantry.items);
+  h+=`<div class="sec"><span class="h">购物清单</span><span class="sub">周六</span></div><section class="card shop" id="shop"></section>`;
+  panel.innerHTML=h;renderShop();}
+function renderShop(){const el=document.getElementById('shop');
+  el.innerHTML=`<ul>${shop.map(([t,d])=>`<li class="${d?'done':''}"><button class="ck" aria-label="买到了">${CK}</button><span class="ic">${foodIcon(t.split(' ')[0],30)}</span><span class="t">${t}</span></li>`).join('')}</ul>`;
+  el.querySelectorAll('.ck').forEach((b,k)=>b.onclick=()=>{shop[k][1]=shop[k][1]?0:1;b.closest('li').classList.toggle('done');});}
+render();
+panel.addEventListener('click',e=>{const b=e.target.closest('.eat');if(!b)return;const card=b.closest('.food');card.classList.add('gone');b.hidden=true;if(!shop.some(x=>x[0].split(' ')[0]===b.dataset.n))shop.push([b.dataset.n,0]);renderShop();osToast(b.dataset.n+' → 购物清单');});
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>

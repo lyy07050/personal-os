@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 手机首页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ebf2ed; --page:#f0f5f2; --card:#ffffff; --tint:#f8fbf9;
+  --green:#3e5b4b; --green-deep:#2f4639; --ink:#252d29; --ink-2:#4f5c52; --muted:#677168; --brown:#a66b53; --warn:#a15c46;
+  --pink:#fdefee; --blue:#ecf8fe; --yellow:#fef7e0; --purple:#f3f0f4; --apricot:#e9e7e6; --sage:#dfe8db; --beige:#f2e8d3;
+  --m-yellow:#fef7de; --m-blue:#f4f8fe; --done:#8fa98a; --outline:#a9b4a4;
+  /* 手机小字在浅色卡片上要过 4.5:1：棕、警示、次文字各加深一档 */
+  --brown:#7f4f3c; --warn:#8e4a35; --muted:#5b645c;
+  --r-card:28px; --gap:12px;
+  --shadow:0 1px 2px rgba(52,72,59,.04),0 8px 24px rgba(52,72,59,.07);
+  --head:"Noto Sans SC",sans-serif; --num:"Noto Sans SC",sans-serif; --head-track:-.02em;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--page);color:var(--ink);font-family:"Noto Sans SC",sans-serif;-webkit-font-smoothing:antialiased;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+::selection{background:var(--sage);color:var(--ink)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.h{font-family:var(--head);font-weight:600;letter-spacing:var(--head-track)}
+.num{font-family:var(--num);font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+/* ---------- stage ---------- */
+.stage{min-height:100%;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:48px;align-items:center;padding:40px 32px}
+.notes{max-width:300px;justify-self:end;color:var(--ink-2);font-size:14px;line-height:1.75}
+.notes .brand{font-family:"Gaegu",cursive;font-weight:700;font-size:30px;color:var(--ink);line-height:1}
+.notes .brand b{color:var(--brown);font-weight:700}
+.notes h2{font-weight:600;letter-spacing:-.02em;font-size:22px;color:var(--ink);margin:20px 0 8px}
+.notes li{list-style:none;padding-left:14px;position:relative;margin:4px 0}
+.notes li::before{content:"";position:absolute;left:0;top:.75em;width:5px;height:5px;border-radius:50%;background:var(--done)}
+.legend{justify-self:start;max-width:260px;color:var(--muted);font-size:13px;line-height:1.7}
+.legend b{color:var(--ink);font-weight:500}
+
+/* ---------- phone ---------- */
+.phone{width:390px;height:844px;border-radius:56px;background:#111;padding:11px;box-shadow:0 30px 80px rgba(37,45,41,.22),0 0 0 1.5px #2a2a2a inset;position:relative}
+.screen{width:100%;height:100%;border-radius:46px;overflow:hidden;position:relative;background:var(--paper);
+  background-image:inherit}
+.scroll{height:100%;overflow-y:auto;padding:0 16px 150px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.status{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 26px;font-weight:600;font-size:16px;position:sticky;top:0;z-index:5;
+  background:linear-gradient(var(--paper) 70%,rgba(235,242,237,0))}
+.island{position:absolute;left:50%;top:11px;transform:translateX(-50%);width:120px;height:35px;border-radius:20px;background:#000;z-index:6}
+.status svg{display:block}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 14px}
+.brand{font-family:"Gaegu",cursive;font-weight:700;font-size:26px;line-height:1;color:var(--ink)}
+.brand b{color:#a66b53;font-weight:700}
+.hello{position:relative;background:#fff;border-radius:var(--r-card);box-shadow:var(--shadow);padding:122px 20px 22px;margin-bottom:var(--gap);min-height:232px}
+.hello .blossom{position:absolute;left:-8px;top:-6px;width:84px;transform:rotate(180deg);pointer-events:none;filter:drop-shadow(0 3px 5px rgba(46,42,39,.12))}
+.hello .catplant{position:absolute;right:-6px;bottom:-4px;width:124px;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(46,42,39,.12))}
+.hello h1{font-size:26px;line-height:1.15;color:var(--ink);position:relative;max-width:calc(100% - 118px)}
+.hello .cal{display:flex;align-items:center;gap:10px;margin-top:10px}
+.hello .cal .d{font-size:46px;font-weight:600;line-height:.9;letter-spacing:-.04em;color:var(--green);font-variant-numeric:tabular-nums}
+.hello .cal .m{display:flex;flex-direction:column;gap:2px;font-size:13px;line-height:1.15;color:var(--ink-2)}
+.hello .cal .m b{font-weight:600;color:var(--ink);font-size:14px}
+.hello .day{max-width:calc(100% - 118px)}
+.hello .day{margin-top:4px;font-size:15px;color:var(--ink-2)}
+.hello .day .num{color:var(--green);font-size:15px}
+.hello .facts{margin-top:14px;font-size:13.5px;color:var(--ink-2);line-height:1.6;max-width:58%}
+.hello .facts em{font-style:normal;color:var(--warn)}
+.round{width:52px;height:52px;border-radius:50%;color:inherit;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow);flex:none}
+
+/* bento */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.card{border-radius:var(--r-card);background:var(--card);padding:16px;position:relative;overflow:hidden;box-shadow:var(--shadow);min-height:170px;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.card:active{transform:scale(.98)}
+.wide{grid-column:1/-1;min-height:0}
+.label{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500;color:var(--ink-2);padding-bottom:10px;border-bottom:1px solid rgba(37,45,41,.08);margin-bottom:10px}
+.label .more{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;color:var(--brown)}
+.label .count{color:var(--brown)}
+.sub{font-size:12.5px;color:var(--muted)}
+
+/* todo */
+.todo{background:var(--sage)}
+.todo ul{list-style:none}
+.todo li{display:flex;align-items:center;gap:9px;font-size:14px;padding:5px 0;line-height:1.35}
+.todo li .t{flex:1;min-width:0}
+.todo li small{display:block;font-size:12px;color:var(--muted)}
+.todo li small.warn{color:var(--warn)}
+.ck{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--outline);background:rgba(255,255,255,.6);display:grid;place-items:center;flex:none;transition:background .2s,border-color .2s}
+.ck svg{opacity:0;transform:scale(.6);transition:all .2s}
+.done .ck{background:var(--green);border-color:var(--green)}
+.done .ck svg{opacity:1;transform:none}
+.done .t>span{text-decoration:line-through;color:var(--muted)}
+
+/* fridge hero */
+.fridge{background:var(--pink);display:flex;flex-direction:column;justify-content:flex-end;min-height:236px}
+.fridge img{position:absolute;right:-6px;top:6px;width:96px;transform:rotate(6deg);filter:drop-shadow(0 4px 6px rgba(46,42,39,.16))}
+.fridge .kicker{position:absolute;left:16px;top:16px;font-size:12.5px;color:var(--warn);background:rgba(255,255,255,.75);padding:4px 10px;border-radius:999px;font-weight:500}
+.fridge .big{font-size:27px;line-height:1.15}
+.badge{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--green);display:grid;place-items:center;box-shadow:0 2px 6px rgba(47,70,57,.25)}
+
+/* shopping list */
+.shop{background:var(--pink)}
+.shop ul{list-style:none;position:relative;z-index:1}
+.shop li{display:flex;align-items:center;gap:9px;font-size:14px;padding:4px 0}
+.shop li .ck{width:18px;height:18px}
+.shop li .ck svg{width:9px}
+.shop-pic{position:absolute;right:-14px;bottom:-12px;width:84px;transform:rotate(-8deg);opacity:.95;pointer-events:none}
+
+/* 事情进度 */
+.prog ul{list-style:none}
+.prog li{display:grid;grid-template-columns:8.6em 1fr 3.2em;align-items:center;gap:12px;padding:7px 0;font-size:14px}
+.prog .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog .track{height:6px;border-radius:3px;background:var(--sage);overflow:hidden}
+.prog .track span{display:block;height:100%;border-radius:3px;background:var(--done)}
+.prog .pct{text-align:right;font-size:12.5px;font-weight:500;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.prog .idle .pct{color:var(--muted);font-weight:400}
+
+/* deadline row */
+.due{display:flex;flex-direction:column;gap:12px;background:var(--card)}
+.due .who{display:flex;align-items:center;gap:12px}
+.due .avatar{width:46px;height:46px;border-radius:50%;background:var(--sage);display:grid;place-items:center;font-family:"DM Mono";font-size:11px;font-weight:500;color:var(--green);line-height:1.1;text-align:center;flex:none}
+.due .who b{display:block;font-weight:500;font-size:16px}
+.due .ghost{margin-left:auto;width:26px;height:26px;border-radius:50%;background:var(--tint);border:1px solid rgba(37,45,41,.08);display:grid;place-items:center}
+.hours{display:flex;align-items:center;gap:10px}
+.hours .play{width:30px;height:30px;border-radius:50%;background:var(--green);display:grid;place-items:center;flex:none}
+.ticks{flex:1;display:flex;align-items:center;justify-content:space-between;height:26px}
+.ticks i{display:block;width:2.5px;border-radius:2px;background:var(--green)}
+.ticks i.left{background:var(--outline);opacity:.55}
+.hours .t{font-size:13px;font-weight:500;color:var(--warn);white-space:nowrap}
+
+/* reminder */
+.rem{background:var(--m-blue);min-height:236px}
+.rem .rt{display:flex;justify-content:space-between;align-items:baseline}
+.rem .h{font-size:20px;line-height:1.2}
+.bar{height:6px;border-radius:3px;background:rgba(169,180,164,.3);margin:10px 0 8px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--done);border-radius:3px}
+.rem ul{list-style:none;font-size:13px}
+.rem li{display:flex;align-items:center;gap:7px;padding:3px 0}
+.rem li .ck{width:16px;height:16px;border-width:1.3px}
+.rem li .ck svg{width:9px}
+.rem .fold{position:absolute;right:-30px;bottom:-26px;width:150px;transform:rotate(-8deg);opacity:.95;pointer-events:none}
+
+/* events */
+.events{background:var(--m-yellow)}
+.evs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ev{display:flex;flex-direction:column;gap:8px}
+.date{min-width:56px;width:max-content;text-align:center;background:rgba(255,255,255,.75);border-radius:14px;padding:6px 8px 5px}
+.date .num{font-size:16px;color:var(--brown);line-height:1}
+.date small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.ev b{display:block;font-weight:500;font-size:13.5px;line-height:1.3}
+.ev span{font-size:12px;color:var(--muted)}
+
+/* word */
+.word{background:var(--tint);min-height:168px;display:flex;flex-direction:column;justify-content:flex-end}
+.word img{position:absolute;right:-18px;top:-30px;width:150px;transform:rotate(10deg);opacity:.95;pointer-events:none}
+.word .copy,.word .foot{max-width:62%}
+.word .w{font-weight:600;font-size:24px;color:var(--ink);line-height:1.1;letter-spacing:-.02em}
+.word .mean{font-size:13px;color:var(--ink-2);margin-top:6px}
+.word .foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--muted)}
+
+/* spend */
+.spend{background:var(--card);min-height:200px;display:flex;flex-direction:column}
+.spend .amt{font-size:40px;color:var(--green);line-height:1;margin-top:4px}
+.spend .amt small{font-size:22px}
+.spend svg{margin-top:auto}
+
+/* fridge strip */
+.strip{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:2px 16px 4px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.food{flex:none;width:112px;border-radius:22px;background:var(--card);padding:12px;box-shadow:var(--shadow)}
+.food .pic{height:70px;display:grid;place-items:center}
+.food .pic img{max-height:66px;max-width:84px}
+.food b{display:block;font-weight:600;font-size:15px;margin-top:6px;letter-spacing:var(--head-track)}
+.food .days{display:inline-block;margin-top:4px;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--sage);color:var(--green)}
+.food .days.warn{background:var(--pink);color:var(--warn)}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}
+.sec .h{font-size:20px}
+.sec a{font-size:13px;color:var(--muted);text-decoration:none}
+
+/* dock */
+.dock{position:absolute;left:0;right:0;bottom:0;padding:30px 16px 30px;display:flex;gap:10px;align-items:center;z-index:8;
+  background:linear-gradient(rgba(235,242,237,0),rgba(235,242,237,.92) 45%);backdrop-filter:blur(6px);-webkit-mask:linear-gradient(transparent,#000 30%)}
+.dock .search{flex:1;height:56px;border-radius:999px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 20px;color:var(--muted);font-size:15.5px;box-shadow:0 10px 30px rgba(52,72,59,.14)}
+.fab{width:56px;height:56px;border-radius:50%;background:var(--green-deep);display:grid;place-items:center;box-shadow:0 10px 24px rgba(47,70,57,.35);flex:none;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.fab.open{transform:rotate(45deg)}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--ink);z-index:9}
+
+/* sheet */
+.sheet{position:absolute;left:12px;right:12px;bottom:104px;z-index:7;background:#fff;border-radius:26px;padding:8px;box-shadow:0 20px 50px rgba(37,45,41,.18);
+  opacity:0;transform:translateY(16px) scale(.98);pointer-events:none;transition:all .3s cubic-bezier(.2,.8,.2,1)}
+.sheet.open{opacity:1;transform:none;pointer-events:auto}
+.sheet button,.sheet a{display:flex;color:inherit;text-decoration:none;width:100%;align-items:center;gap:12px;padding:12px;border-radius:18px;text-align:left}
+.sheet button:hover,.sheet a:hover{background:var(--tint)}
+.sheet .ic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
+.sheet b{display:block;font-weight:500;font-size:15px}
+.sheet span{font-size:12px;color:var(--muted)}
+
+@media (max-width:1100px){.stage{grid-template-columns:1fr;justify-items:center}.notes,.legend{justify-self:center;max-width:390px}}
+@media (max-width:440px){.stage{padding:0}.notes,.legend{display:none}.phone{width:100vw;height:100vh;border-radius:0;padding:0;box-shadow:none}.screen{border-radius:0}.island{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+h1,h2,.h{text-wrap:balance}
+p{text-wrap:pretty}
+.ev .date{rotate:none!important}
+.acts{display:flex;gap:6px}
+.mini{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.75);display:grid;place-items:center;color:var(--ink-2);box-shadow:0 1px 2px rgba(52,72,59,.06)}
+.mini:active{background:#fff}
+.events .label{padding-bottom:8px}
+</style>
+</head>
+<body>
+<div class="stage">
+  <aside class="notes">
+    <div class="brand">my little <b>os.</b></div>
+    <h2>手机首页 · 草稿</h2>
+    <p>手机只做「记和查」。首页就是一面卡片墙，从各部门自动抓今天要关心的事，不在这里整理。</p>
+    <ul>
+      <li>右上角圆按钮：所有部门</li>
+      <li>底部「我想记…」：进随手记</li>
+      <li>「+」：记一笔 / 放进冰箱</li>
+    </ul>
+  </aside>
+
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll" id="scroll">
+        <div class="status">
+          <span>9:41</span>
+          <svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/><rect x="72" y="5" width="1.6" height="4" rx=".8" fill-opacity=".4"/></g></svg>
+        </div>
+
+        <header class="top">
+          <span class="brand">my little <b>os.</b></span>
+          <a class="round" href="mobile-more.html" aria-label="所有部门">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><g fill="#252d29"><circle cx="5" cy="5" r="3.2"/><circle cx="15" cy="5" r="3.2"/><circle cx="5" cy="15" r="3.2"/><circle cx="15" cy="15" r="3.2"/></g></svg>
+          </a>
+        </header>
+
+        <section class="hello" aria-label="今天">
+          <img class="blossom" src="assets/blossom.png" alt="">
+          <img class="catplant" src="assets/cat-plant.png" alt="">
+          <h1 class="h">Hi Charlotte 👋</h1>
+          <p class="cal" aria-label="11 月 18 日 星期三"><span class="d">18</span><span class="m"><b>Nov</b>Wednesday</span></p>
+        </section>
+
+        <main class="grid">
+          <!-- 今日待办 -->
+          <section class="card todo" aria-label="今日待办">
+            <div class="label"><span>今日待办 <span class="count">4</span></span><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16"><g fill="currentColor"><circle cx="2" cy="2" r="1.8"/><circle cx="2" cy="8" r="1.8"/><circle cx="2" cy="14" r="1.8"/></g></svg></span></div>
+            <ul>
+              <li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>DATA 101 作业 4</span><small class="warn">23:59</small></div></li>
+              <li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>买鸡蛋和牛奶</span><small>errands</small></div></li>
+              <li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>投 2 份实习</span><small>career</small></div></li>
+              <li><button class="ck" aria-label="完成"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>整理本周账单</span><small>money</small></div></li>
+            </ul>
+          </section>
+
+          <!-- 购物清单 -->
+          <section class="card shop" aria-label="购物清单">
+            <div class="label"><span>购物清单 <span class="count">4</span></span><span class="sub">周六</span></div>
+            <ul>
+              <li><button class="ck" aria-label="买到了"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>鸡蛋 12 个</span></div></li>
+              <li><button class="ck" aria-label="买到了"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>菠菜</span></div></li>
+              <li class="done"><button class="ck" aria-label="买到了"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>牛奶 2 L</span></div></li>
+              <li><button class="ck" aria-label="买到了"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>鸡腿肉</span></div></li>
+              <li><button class="ck" aria-label="买到了"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="t"><span>燕麦</span></div></li>
+            </ul>
+            <img class="shop-pic" src="assets/eggs.png" alt="">
+          </section>
+
+          <!-- 事情进度 -->
+          <section class="card wide prog" aria-label="事情进度">
+            <div class="label"><span>事情进度</span></div>
+            <ul>
+              <li><span class="name">DATA 101 作业 4</span><span class="track"><span style="width:60%"></span></span><span class="pct">60%</span></li>
+              <li><span class="name">投 2 份实习</span><span class="track"><span style="width:50%"></span></span><span class="pct">50%</span></li>
+              <li><span class="name">背 20 个单词</span><span class="track"><span style="width:60%"></span></span><span class="pct">60%</span></li>
+              <li><span class="name">整理本周账单</span><span class="track"><span style="width:25%"></span></span><span class="pct">25%</span></li>
+              <li class="idle"><span class="name">买鸡蛋和牛奶</span><span class="track"><span style="width:0"></span></span><span class="pct">未开始</span></li>
+            </ul>
+          </section>
+
+          <!-- Reminder -->
+          <section class="card rem" aria-label="Reminder">
+            <div class="label"><span>Reminder</span></div>
+            <div class="rt"><span class="h">回🇨🇳准备</span><span class="count">3 / 7</span></div>
+            <div class="bar"><span style="width:43%"></span></div>
+            <ul>
+              <li class="done"><span class="ck"><svg width="9" height="8" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="t"><span>枫糖浆</span></span></li>
+              <li><span class="ck"><svg width="9" height="8" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>冰酒</li>
+              <li><span class="ck"><svg width="9" height="8" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>爸爸要的鱼油</li>
+            </ul>
+            <p class="sub" style="margin-top:4px">还有 4 项</p>
+            <img class="fold" src="assets/home-sticker.png" alt="">
+          </section>
+
+          <!-- 本周花费 -->
+          <section class="card spend" aria-label="本周花费">
+            <div class="label"><span>本周花费</span><span class="count">还剩 $135.50</span></div>
+            <div class="amt num">$214<small>.50</small></div>
+            <svg viewBox="0 0 150 46" width="100%" height="46" aria-hidden="true"><path d="M2 34 C 18 30, 26 40, 42 36 S 66 22, 82 28 S 104 40, 118 20 S 140 14, 148 18" fill="none" stroke="#8fa98a" stroke-width="2" stroke-linecap="round"/><circle cx="118" cy="20" r="3.5" fill="#a15c46"/></svg>
+          </section>
+
+          <!-- 最近的活动 -->
+          <section class="card wide events" aria-label="最近的活动">
+            <div class="label"><span>最近的活动</span><span class="acts"><a class="mini" href="mobile-inbox.html#new" aria-label="加一个活动"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.5v9M1.5 6h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></a><a class="mini" href="mobile-inbox.html#活动" aria-label="看全部活动"><svg width="14" height="4" viewBox="0 0 14 4" aria-hidden="true"><g fill="currentColor"><circle cx="2" cy="2" r="1.6"/><circle cx="7" cy="2" r="1.6"/><circle cx="12" cy="2" r="1.6"/></g></svg></a></span></div>
+            <div class="evs">
+              <div class="ev"><div class="date"><div class="num">11.21</div><small>周五</small></div><div><b>Networking event</b><span>邮件 · Bahen 1F</span></div></div>
+              <div class="ev"><div class="date"><div class="num">11.29</div><small>周六</small></div><div><b>圣诞老人游行</b><span>小红书 · 市中心</span></div></div>
+              <div class="ev"><div class="date"><div class="num">12.06</div><small>周六</small></div><div><b>crafting activity</b><span>小红书 · 需报名</span></div></div>
+            </div>
+          </section>
+
+          <!-- 今日单词 -->
+          <section class="card wide word" aria-label="今日单词">
+            <img src="assets/notepaper.png" alt="">
+            <div class="copy">
+              <div class="sub">今日单词</div>
+              <div class="w">procrastinate</div>
+              <div class="mean">v. 拖延 · I tend to procrastinate on Mondays.</div>
+            </div>
+            <div class="foot"><span>12 / 20</span><span>多邻国 →</span></div>
+          </section>
+        </main>
+
+        <div class="sec"><span class="h">冰箱里</span><a href="mobile-fridge.html">全部 6 样 →</a></div>
+        <div class="strip">
+          <div class="food"><div class="pic"><img src="assets/food/牛奶.png" alt=""></div><b>牛奶</b><span class="days warn">明天过期</span></div>
+          <div class="food"><div class="pic"><img src="assets/eggs.png" alt=""></div><b>鸡蛋</b><span class="days">3 天</span></div>
+          <div class="food"><div class="pic"><img src="assets/food/草莓.png" alt=""></div><b>草莓</b><span class="days">4 天</span></div>
+          <div class="food"><div class="pic"><img src="assets/food/小葱.png" alt=""></div><b>小葱</b><span class="days">5 天</span></div>
+        </div>
+      </div>
+
+      <div class="dock">
+        <form class="capture"><input placeholder="我想记…" aria-label="记进随手记" enterkeyhint="done"></form>
+        <button class="fab" aria-label="新建"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+
+  <aside class="legend">
+    <p><b>数据从哪来</b></p>
+    <p>待办、截止 ← 教务处 / 今日待办<br>冰箱 ← 后勤部 · 食物墙<br>Reminder、活动 ← 随手记<br>本周花费 ← 财务部账本<br>今日单词 ← 多邻国</p>
+  </aside>
+</div>
+
+<script>
+// 勾选
+document.querySelectorAll('.todo .ck, .shop .ck').forEach(b=>b.addEventListener('click',()=>b.closest('li').classList.toggle('done')));
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>

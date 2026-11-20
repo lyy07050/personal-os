@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 教务处</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@700&family=DM+Mono:wght@500&family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=Playfair+Display:wght@600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.courses{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px}
+.course{height:320px;border-radius:22px;overflow:hidden;padding:0}
+.course .code{height:92px;display:flex;align-items:center;padding:0 24px;font-family:"Crimson Text",serif;font-weight:700;font-size:39px;color:rgba(37,45,41,.72)}
+.course .body{padding:22px 24px}
+.course h3{font-family:"Playfair Display",serif;font-weight:600;font-size:26px;margin-bottom:14px}
+.course dl{display:grid;grid-template-columns:62px 1fr;row-gap:10px;font-size:16px}
+.course dt{color:var(--muted)}
+.tl li{display:grid;grid-template-columns:120px 1fr auto;align-items:center;padding:18px 0;border-bottom:1px solid rgba(37,45,41,.07)}
+.tl li:last-child{border:0}
+.tl .g{font-size:28px;color:var(--ink);line-height:1}
+.tl small{display:block;font-size:14px;color:var(--muted);margin-top:4px}
+.tl b{font-weight:500;font-size:18px}
+.left{height:30px;padding:0 14px;border-radius:15px;font-size:14px;display:inline-grid;place-items:center}
+.files li{display:grid;grid-template-columns:52px 1fr auto;align-items:center;padding:14px 0;border-bottom:1px solid rgba(37,45,41,.07)}
+.files li:last-child{border:0}
+.ft{width:38px;height:42px;border-radius:6px;background:#fff;box-shadow:var(--sh-lift);font-family:var(--mono);font-size:12px;display:grid;align-items:end;justify-items:center;padding-bottom:5px;font-weight:500}
+.files b{font-weight:500;font-size:18px}
+.files small{display:block;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body data-page="school">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs"><button class="lat on">Fall 2026</button><button class="lat">Deadlines</button><button class="lat">Files</button><button class="cjk">笔记</button></div>
+    <div class="find">⌕ 搜索课程、课件…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">45 · SCHOOL · QUERCUS</p>
+    <h1>教务处</h1>
+    <p class="facts">4 门课 · 本周<b>3 个截止</b> · 上次同步 Quercus 今天 08:00</p>
+    <div class="btns"><button class="btn pri" id="sync">立即同步</button><button class="btn sec">打开课件文件夹</button></div>
+    <img class="art" src="assets/school-desk.png" alt="" style="left:770px;top:-266px;width:446px">
+  </section>
+
+  <div class="stack">
+    <section class="group courses" aria-label="课程"><h2 class="sr">课程</h2>
+      <div class="tile course"><div class="code" style="background:#e9e7e6">INF 1340</div><div class="body"><h3>Programming for Data Science</h3><dl><dt>下次课</dt><dd>周四 10:00</dd><dt>截止</dt><dd>A3 · 11.25</dd><dt>课件</dt><dd>18 个</dd></dl></div></div>
+      <div class="tile course"><div class="code" style="background:var(--sage)">DATA 101</div><div class="body"><h3>Intro to Data Analytics</h3><dl><dt>下次课</dt><dd>周一 14:00</dd><dt>截止</dt><dd class="warn">作业 4 · 今晚</dd><dt>课件</dt><dd>12 个</dd></dl></div></div>
+      <div class="tile course"><div class="code" style="background:var(--beige)">INF 1343</div><div class="body"><h3>Data Modeling &amp; Database</h3><dl><dt>下次课</dt><dd>周二 18:00</dd><dt>截止</dt><dd>项目提案 · 11.27</dd><dt>课件</dt><dd>9 个</dd></dl></div></div>
+      <div class="tile course"><div class="code" style="background:var(--purple)">INF 2178</div><div class="body"><h3>Experimental Design</h3><dl><dt>下次课</dt><dd>周三 13:00</dd><dt>截止</dt><dd>期中 · 11.30</dd><dt>课件</dt><dd>14 个</dd></dl></div></div>
+    </section>
+
+    <section class="card tl"><div class="head"><h2>截止时间线</h2></div>
+      <ul class="list">
+        <li><div><span class="g">11.18</span><small>今天 23:59</small></div><div><b>DATA 101 · 作业 4</b><small>Assignment · 10 分</small></div><span class="left" style="background:#f8dcd8;color:#8e4a35">还剩 9 小时</span></li>
+        <li><div><span class="g">11.25</span><small>周二 23:59</small></div><div><b>INF 1340 · Assignment 3</b><small>Assignment · 15 分</small></div><span class="left" style="background:var(--yellow);color:#6f5420">7 天</span></li>
+        <li><div><span class="g">11.27</span><small>周四 18:00</small></div><div><b>INF 1343 · 项目提案</b><small>Group project · 小组 4 人</small></div><span class="left" style="background:var(--sage);color:var(--green)">9 天</span></li>
+        <li><div><span class="g">11.30</span><small>周日</small></div><div><b>INF 2178 · 期中考试</b><small>Quiz · 线上 90 分钟</small></div><span class="left" style="background:var(--sage);color:var(--green)">12 天</span></li>
+      </ul>
+    </section>
+
+    <section class="card files"><div class="head"><h2>最近下载的课件</h2></div>
+      <ul class="list">
+        <li><span class="ft" style="color:#b0473b">PDF</span><div><b>Week 10 – Regression.pdf</b><small>INF 2178</small></div><span class="muted">今天</span></li>
+        <li><span class="ft" style="color:#3e5b4b">PPT</span><div><b>Lecture 9 – Pandas II.pptx</b><small>INF 1340</small></div><span class="muted">昨天</span></li>
+        <li><span class="ft" style="color:#b0473b">PDF</span><div><b>A4 instructions.pdf</b><small>DATA 101</small></div><span class="muted">11.14</span></li>
+        <li><span class="ft" style="color:#b0473b">PDF</span><div><b>ER Diagram examples.pdf</b><small>INF 1343</small></div><span class="muted">11.12</span></li>
+      </ul>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>document.getElementById('sync').onclick=e=>{const b=e.currentTarget;b.textContent='同步中…';setTimeout(()=>{b.textContent='已同步 · 刚刚'},900)};</script>
+</body>
+</html>

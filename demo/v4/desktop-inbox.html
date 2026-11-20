@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 随手记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.crumb{font-size:14px;color:var(--ink-2)}
+.title{font-family:var(--zcool);font-size:44px;font-weight:400;margin:20px 0 22px}
+.quick{background:#fff;border-radius:18px;border:1px solid rgba(37,45,41,.06);box-shadow:var(--sh-card);padding:22px 22px 20px;margin-bottom:20px}
+.quick h2{font-size:22px;font-weight:500}
+.quick textarea{display:block;width:100%;border:0;resize:none;font:inherit;font-size:16px;color:var(--ink);margin:12px 0 16px;outline:none;height:26px}
+.quick textarea::placeholder{color:var(--muted)}
+.quick .row2{display:flex;align-items:center;gap:8px}
+.quick .mode{height:38px;padding:0 18px;border-radius:12px;font-size:15px;color:var(--ink-2)}
+.quick .mode.on{background:var(--sage);color:var(--ink)}
+.quick .save{margin-left:auto}
+.filters{display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.filters button{height:42px;padding:0 20px;border-radius:999px;font-size:15px;color:var(--ink-2)}
+.filters button.on{background:var(--green);color:#fff}
+.filters .sort{margin-left:auto;font-size:14px;color:var(--ink-2);display:flex;gap:22px}
+.filters .sort small{font-size:12.5px;color:var(--muted)}
+.wall{columns:3;column-gap:18px}
+.note{break-inside:avoid;border-radius:20px;padding:20px 20px 18px;margin-bottom:18px;box-shadow:var(--sh-card);border:1px solid rgba(37,45,41,.04)}
+.note .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:14px}
+.note h3{font-family:var(--zcool);font-weight:400;font-size:26px;margin-bottom:14px}
+.note p{font-size:15px;color:var(--ink-2);line-height:1.65}
+.note .foot{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-top:14px}
+.note ul{list-style:none}
+.note li{display:flex;align-items:center;gap:10px;font-size:15px;padding:5px 0}
+.note li .ck{width:20px;height:20px}
+.note li.new input{flex:1;border:0;border-bottom:1px dashed rgba(37,45,41,.2);background:none;font:inherit;font-size:15px;outline:none;padding:2px 0}
+.note li.new .ck{border-style:dashed}
+.pin{display:block}
+.note.big h3{font-size:24px}
+.note.big .say{font-family:var(--zcool);font-size:27px;line-height:1.55;color:#5c3f33}
+.note[hidden]{display:none}
+.footline{margin-top:22px;text-align:center;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body data-page="inbox">
+<div class="app">
+<main style="padding-top:28px">
+  <div class="topbar" style="margin-left:0;height:52px;margin-bottom:0">
+    <span></span>
+    <div class="find">⌕ 搜索随手记…</div>
+  </div>
+  <h1 class="title">随手记</h1>
+
+  <section class="quick" aria-label="快速记录">
+    <h2>现在想记点什么？</h2>
+    <textarea placeholder="我想记…" aria-label="内容"></textarea>
+    <div class="row2">
+      <button class="mode on">文字</button><button class="mode">清单</button><button class="mode">链接</button><button class="mode">＋ 添加标签</button>
+      <button class="btn pri save">存一下 →</button>
+    </div>
+  </section>
+
+  <div class="filters" id="filters">
+    <button class="on" data-f="all">全部 11</button><button data-f="活动">活动 3</button><button data-f="备忘">备忘 2</button><button data-f="灵感">灵感 3</button><button data-f="链接">链接 1</button><button data-f="清单">清单 2</button>
+    <span class="sort"><span>按最近更新 ↓</span></span>
+  </div>
+
+  <div class="wall" id="wall">
+    <article class="note" data-k="备忘" style="background:var(--m-blue)"><div class="meta"><span>备忘</span><svg class="pin" width="14" height="14" viewBox="0 0 16 16" aria-label="置顶"><path d="M9.8 1.5 14.5 6.2l-2 .6-2.6 2.6.3 3.4-1.3 1.3L6.3 11.5 2.5 15.3l-.8-.8 3.8-3.8L2.9 8.1l1.3-1.3 3.4.3L10.2 4.5z" fill="#94604b"/></svg></div><h3>回🇨🇳准备</h3><ul><li class="done"><button class="ck" aria-label="完成"></button><span class="t">爸爸要的鱼油 ×2</span></li><li class="done"><button class="ck" aria-label="完成"></button><span class="t">枫糖浆</span></li><li><button class="ck" aria-label="完成"></button><span class="t">冰酒</span></li><li class="new"><button class="ck" aria-label="新的一项"></button><input placeholder="" aria-label="加一项"></li></ul><div class="foot"><span></span><span>3 / 7</span></div></article>
+    <article class="note" data-k="清单" style="background:#fff"><div class="meta"><span>清单</span><span></span></div><h3>周末，慢一点</h3><ul><li><button class="ck" aria-label="完成"></button><span class="t">整理一下桌面</span></li><li><button class="ck" aria-label="完成"></button><span class="t">把照片备份一下</span></li><li class="done"><button class="ck" aria-label="完成"></button><span class="t">给绿植浇水</span></li></ul><div class="foot"><span>#生活杂事</span><span>1 / 3 已完成</span></div></article>
+    <article class="note" data-k="灵感" style="background:#e6ede2"><div class="meta"><span>灵感</span><span></span></div><h3>把日子过成一张地图</h3><p>收集喜欢的咖啡馆、散步路线，<br>还有那些安静的小角落。</p><div class="foot"><span>#想去的地方</span><span></span></div></article>
+    <article class="note" data-k="活动" style="background:var(--m-yellow)"><div class="meta"><span>活动 · 11.21 周五</span><span>邮件</span></div><h3>Networking event</h3><p>Bahen 1F · 18:00<br>带两份简历。</p></article>
+    <article class="note" data-k="备忘" style="background:var(--m-blue)"><div class="meta"><span>备忘</span><svg class="pin" width="14" height="14" viewBox="0 0 16 16" aria-label="置顶"><path d="M9.8 1.5 14.5 6.2l-2 .6-2.6 2.6.3 3.4-1.3 1.3L6.3 11.5 2.5 15.3l-.8-.8 3.8-3.8L2.9 8.1l1.3-1.3 3.4.3L10.2 4.5z" fill="#94604b"/></svg></div><h3>回🇨🇦准备</h3><ul><li><button class="ck" aria-label="完成"></button><span class="t">续签学签材料</span></li><li><button class="ck" aria-label="完成"></button><span class="t">带一包火锅底料</span></li><li class="new"><button class="ck" aria-label="新的一项"></button><input placeholder="" aria-label="加一项"></li></ul><div class="foot"><span></span><span>0 / 4</span></div></article>
+    <article class="note" data-k="链接" style="background:#fff"><div class="meta"><span>链接</span><span></span></div><h3>资料和链接，先收好</h3><p style="font-size:16px;color:var(--ink)">notion.so</p><p style="font-size:13px">周复盘模板 · 看到第 3 节</p><div class="foot"><span>#待阅读</span><span>打开链接 ↗</span></div></article>
+    <article class="note" data-k="灵感" style="background:#faf0dc"><div class="meta"><span>灵感</span><span></span></div><h3>想试试的一件小事</h3><p>给每周留一个不赶时间的晚上。<br>做顿饭、散散步，<br>或者什么都不做。</p><div class="foot"><span>#生活灵感</span><span></span></div></article>
+    <article class="note" data-k="活动" style="background:var(--m-yellow)"><div class="meta"><span>活动 · 11.29 周六</span><span>小红书</span></div><h3>圣诞老人游行</h3><p>市中心 · 下午开始，早点去占位置。</p></article>
+    <article class="note big" data-k="灵感" style="background:#f6e3df"><div class="meta"><span>灵感</span><span></span></div><h3>读书笔记模板</h3><p class="say">书名、金句、<br>我的想法。</p></article>
+    <article class="note" data-k="清单" style="background:#fff"><div class="meta"><span>清单</span><span></span></div><h3>下次逛超市</h3><p style="margin-bottom:8px">路过的时候，顺手看看。</p><ul><li><button class="ck" aria-label="完成"></button><span class="t">燕麦</span></li><li><button class="ck" aria-label="完成"></button><span class="t">酸奶</span></li><li><button class="ck" aria-label="完成"></button><span class="t">香蕉</span></li><li><button class="ck" aria-label="完成"></button><span class="t">鸡蛋</span></li><li><button class="ck" aria-label="完成"></button><span class="t">厨房纸</span></li></ul><div class="foot"><span>#日常补货</span><span>0 / 5 已完成</span></div></article>
+    <article class="note" data-k="活动" style="background:var(--m-yellow)"><div class="meta"><span>活动 · 12.06 周六</span><span>小红书</span></div><h3>crafting activity</h3><p>需要报名 · 名额有限。</p></article>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>
+document.querySelectorAll('.quick .mode').forEach(b=>b.onclick=()=>{if(b.textContent.includes('标签'))return;document.querySelectorAll('.quick .mode').forEach(x=>x.classList.toggle('on',x===b))});
+document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#filters button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('#wall .note').forEach(n=>n.hidden=!(b.dataset.f==='all'||n.dataset.k===b.dataset.f));});
+</script>
+</body>
+</html>

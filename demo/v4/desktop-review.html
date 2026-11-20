@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 每周复盘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px}
+.st{height:198px;text-align:center;padding-top:24px}
+.st h3{font-size:18px;font-weight:500;color:var(--ink-2)}
+.st .g{display:block;font-size:88px;line-height:1.1;color:var(--green)}
+.st .g small{font-size:40px}
+.habit{display:grid;grid-template-columns:100px repeat(7,60px) 90px;align-items:center;row-gap:6px}
+.habit .hd{font-size:17px;color:var(--ink-2);text-align:center}
+.habit .nm{font-size:20px;color:var(--ink)}
+.habit .n{font-size:20px;color:var(--ink-2);text-align:center}
+.dot{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--outline);background:#f6f8f4;display:grid;place-items:center;margin:0 auto;transition:background .2s}
+.dot.on{background:var(--green);border-color:var(--green)}
+.dot svg{opacity:0}.dot.on svg{opacity:1}
+.legend{font-size:15px;color:var(--ink-2);margin-left:40px}
+.money .strip{display:flex;height:44px;border-radius:10px;overflow:hidden;gap:3px}
+.money .strip span{display:flex;align-items:center;padding:0 12px;font-size:15px;color:var(--table);white-space:nowrap;overflow:hidden;min-width:0}
+.three{list-style:none;display:flex;flex-direction:column;gap:10px}
+.three li{display:flex;align-items:center;gap:16px;background:var(--tile);border:1px solid rgba(37,45,41,.06);border-radius:16px;padding:10px 18px}
+.three .n{font-size:28px;color:var(--green);width:22px;text-align:center}
+.three input{flex:1;border:0;background:none;font:inherit;font-size:20px;color:var(--ink);outline:none;caret-color:var(--green);min-height:36px}
+.three li:focus-within{border-color:var(--green)}
+.kn{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.kn a{padding:18px 20px;font-family:var(--zcool);font-size:20px;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.kn a:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body data-page="review">
+<div class="app">
+<main>
+  <div class="topbar">
+    <div class="tabs"><button class="lat">Week 46</button><button class="lat on">Week 47</button><button class="lat">Month</button></div>
+    <div class="find">⌕ 搜索复盘…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">WEEK 47 · 11.16 – 11.22</p>
+    <h1>每周复盘</h1>
+    <p class="facts">上周完成度 71%</p>
+    <div class="btns"><button class="btn pri">开始本周复盘</button></div>
+    <img class="art" src="assets/review-fan.png" alt="" style="left:798px;top:30px;width:376px">
+  </section>
+
+  <div class="stack">
+    <section class="card plan" aria-label="下周三件要事">
+      <div class="head"><h2>下周三件要事</h2><button class="btn pri" id="toHome">放进首页待办</button></div>
+      <ol class="three">
+        <li><span class="n g">1</span><input value="交 INF 1340 Assignment 3" aria-label="第 1 件"></li>
+        <li><span class="n g">2</span><input value="投 3 份实习" aria-label="第 2 件"></li>
+        <li><span class="n g">3</span><input value="" aria-label="第 3 件"></li>
+      </ol>
+    </section>
+
+    <section class="card" aria-label="本周新知识">
+      <div class="head"><h2>本周新知识</h2><a class="note" href="desktop-notes.html">知识库 9 张 →</a></div>
+      <div class="kn">
+        <a href="desktop-notes.html" class="tile">一周备餐：5 天午饭</a>
+        <a href="desktop-notes.html" class="tile">pandas 的 groupby</a>
+        <a href="desktop-notes.html" class="tile">面试 STAR 法则</a>
+      </div>
+    </section>
+
+    <section class="group stats" aria-label="数据概览"><h2 class="sr">数据概览</h2>
+      <div class="tile st"><h3>完成待办</h3><span class="g">18<small>/23</small></span></div>
+      <div class="tile st"><h3>本周花费</h3><span class="g">$214</span></div>
+      <div class="tile st"><h3>学英语</h3><span class="g">6<small>天</small></span></div>
+      <div class="tile st"><h3>新知识卡</h3><span class="g">9</span></div>
+    </section>
+
+    <section class="card" style="min-height:356px;position:relative" aria-label="习惯打卡">
+      <img src="assets/butterfly.png" alt="" style="position:absolute;right:-18px;top:-120px;width:225px;pointer-events:none;filter:var(--sh-sticker)">
+      <div class="head" style="justify-content:flex-start"><h2>习惯打卡</h2></div>
+      <div class="habit" id="habit"></div>
+      <img src="assets/peony.png" alt="" style="position:absolute;left:850px;top:60px;width:204px;pointer-events:none;filter:var(--sh-sticker)">
+    </section>
+
+    <section class="card money" aria-label="钱花在哪">
+      <div class="head" style="margin-bottom:12px"><h2>钱花在哪</h2><span class="note">预算还剩 $135.50</span></div>
+      <div class="strip"><span style="flex:86;background:#f8dcd8">餐饮 $86</span><span style="flex:52;background:var(--blue)">购物 $52</span><span style="flex:31;background:#fff0be">交通 $31</span><span style="flex:27;background:#ece6ef">日用 $27</span><span style="flex:18;background:#f2e8d3">其他 $18</span></div>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script>
+const rows=[['早起',[1,0,1,1,1,0,1]],['喝水',[1,1,1,1,1,1,1]],['运动',[0,0,1,0,1,0,0]],['背词',[1,1,1,1,1,1,1]],['早睡',[1,0,1,0,0,1,0]]];
+const H=document.getElementById('habit');let h='<span></span>'+'一二三四五六日'.split('').map(d=>`<span class="hd">${d}</span>`).join('')+'<span class="hd">已完成</span>';
+rows.forEach(([n,a],r)=>{h+=`<span class="nm">${n}</span>`+a.map((v,i)=>`<button class="dot ${v?'on':''}" aria-label="${n} 周${'一二三四五六日'[i]}" data-r="${r}">${CK}</button>`).join('')+`<span class="n" id="n${r}">${a.reduce((x,y)=>x+y)} / 7</span>`});
+H.innerHTML=h;
+H.addEventListener('click',e=>{const d=e.target.closest('.dot');if(!d)return;d.classList.toggle('on');const r=d.dataset.r;document.getElementById('n'+r).textContent=H.querySelectorAll(`.dot.on[data-r="${r}"]`).length+' / 7';});
+</script>
+<script>document.getElementById('toHome').onclick=e=>{const b=e.currentTarget;b.textContent='已放进首页待办';b.disabled=true;document.querySelector('.three').classList.add('pinned');}</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 多邻国</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mobile.css?v=6">
+<style>
+.wod{background:var(--sage);margin-bottom:12px;padding:20px 18px}
+.label2{font-size:13px;color:var(--ink-2)}
+.wod b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em;margin:6px 0 4px}
+.wod p{font-size:13.5px;color:var(--ink-2)}
+.go{margin-top:16px;height:44px;padding:0 22px;border-radius:999px;background:var(--green);color:#fff;font-size:15px;font-weight:600}
+.streak{margin-bottom:12px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.days i{height:30px;border-radius:9px;background:var(--sage)}
+.days i.on{background:var(--blue);border:1px solid #cfe3ee}
+.dl{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
+.words{list-style:none}
+.words li{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(37,45,41,.06);font-size:14px}
+.words li:last-child{border-bottom:0}
+.words b{font-weight:600}
+.words span{color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll">
+        <div class="status"><span>9:41</span><svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/></g></svg></div>
+        <header class="navbar"><a class="round" href="mobile-more.html" aria-label="返回所有部门"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3 5 9l6 6" fill="none" stroke="#252d29" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="title"><h1 class="h">多邻国</h1><p>连续 23 天 · 今天 12 / 20</p></div></header>
+
+        <section class="card wod" aria-label="今日单词"><span class="label2">今日单词</span><b>procrastinate</b><p>v. 拖延 · I tend to procrastinate on Mondays.</p><button class="go">开始学习</button></section>
+        <section class="card streak" aria-label="连续学习"><div class="label"><span>连续学习</span><span class="count num">23 天</span></div>
+          <div class="days"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="dl"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div></section>
+        <section class="card" aria-label="错词本"><div class="label"><span>错词本</span></div><ul class="words">
+          <li><b>meticulous</b><span>一丝不苟的</span></li><li><b>tentative</b><span>暂定的</span></li><li><b>alleviate</b><span>减轻</span></li><li><b>scrutinize</b><span>仔细检查</span></li></ul></section>
+        <section class="card" aria-label="单词本" style="margin-top:12px"><div class="label"><span>单词本</span><span class="count">186</span></div><ul class="words">
+          <li><b>stakeholder</b><span>利益相关方</span></li><li><b>regression</b><span>回归（统计）</span></li><li><b>leverage</b><span>利用、借助</span></li></ul></section>
+      </div>
+      <div class="dock"><label class="search"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6.2" fill="none" stroke="#252d29" stroke-width="1.7"/><path d="m13.6 13.6 4 4" stroke="#252d29" stroke-width="1.7" stroke-linecap="round"/></svg><span>查单词…</span></label><button class="fab" aria-label="新建"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CK='<svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>

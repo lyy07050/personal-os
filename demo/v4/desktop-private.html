@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 个人档案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.lock{height:375px;display:flex;flex-direction:column}
+.lock small{font-size:15px;color:var(--muted)}
+.sk{flex:1;position:relative;margin-top:18px}
+.sk i{display:block;height:14px;border-radius:7px;background:#eef1ee;margin-bottom:16px}
+.sk .cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--ink-2);font-size:15px;background:linear-gradient(rgba(255,255,255,.2),rgba(255,255,255,.85) 40%)}
+.rules li{display:grid;grid-template-columns:90px 1fr;font-size:18px;padding:14px 0}
+.rules b{font-weight:500}
+</style>
+</head>
+<body data-page="private">
+<div class="app">
+<main>
+  <div class="topbar">
+    <span></span>
+    <div class="find">⌕ 解锁后才能搜索</div>
+  </div>
+  <section class="ban">
+    <p class="eye">60 · PRIVATE</p>
+    <h1>个人档案 🔒</h1>
+    <p class="facts">只存在这台电脑 · 不上传云端 · AI 不读取 · 账号密码单独加密</p>
+    <div class="btns"><button class="btn pri">输入密码解锁</button></div>
+  </section>
+
+  <div class="stack">
+    <div class="row c2">
+      <section class="card lock"><div class="head" style="margin-bottom:0"><h2>身体数据</h2></div><small>体重 · 体检 · 生理期</small>
+        <div class="sk"><i style="width:80%"></i><i style="width:62%"></i><i style="width:74%"></i><i style="width:48%"></i><div class="cover"><svg width="26" height="28" viewBox="0 0 20 22" aria-hidden="true"><rect x="2.5" y="9" width="15" height="11" rx="3" fill="none" stroke="#4f5c52" stroke-width="1.6"/><path d="M6 9V6.5a4 4 0 0 1 8 0V9" fill="none" stroke="#4f5c52" stroke-width="1.6"/></svg></div></div></section>
+      <section class="card lock"><div class="head" style="margin-bottom:0"><h2>尺码</h2></div><small>衣服 · 鞋 · 戒指</small>
+        <div class="sk"><i style="width:70%"></i><i style="width:55%"></i><i style="width:66%"></i><i style="width:40%"></i><div class="cover"><svg width="26" height="28" viewBox="0 0 20 22" aria-hidden="true"><rect x="2.5" y="9" width="15" height="11" rx="3" fill="none" stroke="#4f5c52" stroke-width="1.6"/><path d="M6 9V6.5a4 4 0 0 1 8 0V9" fill="none" stroke="#4f5c52" stroke-width="1.6"/></svg></div></div></section>
+    </div>
+    <section class="card lock"><div class="head" style="margin-bottom:0"><h2>账号密码</h2></div>
+      <div class="sk"><i style="width:44%"></i><i style="width:58%"></i><i style="width:36%"></i><i style="width:50%"></i><div class="cover"><svg width="26" height="28" viewBox="0 0 20 22" aria-hidden="true"><rect x="2.5" y="9" width="15" height="11" rx="3" fill="none" stroke="#4f5c52" stroke-width="1.6"/><path d="M6 9V6.5a4 4 0 0 1 8 0V9" fill="none" stroke="#4f5c52" stroke-width="1.6"/></svg></div></div></section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+</body>
+</html>

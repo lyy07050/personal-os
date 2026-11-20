@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人生 OS 页面预览</title>
+<style>
+:root{
+  --bg:#f6f4f0; --panel:#fff; --side:#efece6; --ink:#2b2a28; --muted:#8a857c; --line:#e4dfd6;
+  --accent:#c2683f; --accent-soft:#f4e3d9; --green:#5b8c6a; --green-soft:#e3eee5;
+  --g1:#dfeadf; --g2:#b4d1b9; --g3:#7fae89; --g4:#4f8a5e;
+  --bar:#ece7df; --warn:#c9483b; --warn-soft:#f7e0dd; --blue:#4a7bb0; --blue-soft:#e1ebf5; --purple:#8a63b0;
+  --frame:#1d1c1a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1e1d1b; --panel:#272523; --side:#22201e; --ink:#ece8e1; --muted:#9a948a; --line:#3a3733;
+    --accent:#e08a5f; --accent-soft:#3d2d24; --green:#86b892; --green-soft:#2a3a2e;
+    --g1:#2c3a2f; --g2:#3f5c46; --g3:#5e8a68; --g4:#86b892;
+    --bar:#34312d; --warn:#e26b5e; --warn-soft:#432a27; --blue:#7fa8d6; --blue-soft:#25313d; --purple:#b393d6;
+    --frame:#000;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1e1d1b; --panel:#272523; --side:#22201e; --ink:#ece8e1; --muted:#9a948a; --line:#3a3733;
+  --accent:#e08a5f; --accent-soft:#3d2d24; --green:#86b892; --green-soft:#2a3a2e;
+  --g1:#2c3a2f; --g2:#3f5c46; --g3:#5e8a68; --g4:#86b892;
+  --bar:#34312d; --warn:#e26b5e; --warn-soft:#432a27; --blue:#7fa8d6; --blue-soft:#25313d; --purple:#b393d6;
+  --frame:#000;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",sans-serif}
+button{font:inherit;color:inherit}
+/* top switcher */
+.topbar{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;justify-content:center;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--bar);border-radius:999px;padding:3px}
+.seg button{border:none;background:transparent;padding:6px 16px;border-radius:999px;cursor:pointer;font-size:14px}
+.seg button.on{background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.ghost{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px}
+.hint{font-size:12px;color:var(--muted);width:100%;text-align:center}
+
+/* ===== desktop ===== */
+.desk{display:flex;min-height:calc(100vh - 58px)}
+.side{width:220px;background:var(--side);border-right:1px solid var(--line);padding:14px 10px;font-size:14px;flex-shrink:0}
+.side h4{margin:6px 10px 6px;font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.06em}
+.side a{display:flex;gap:8px;align-items:center;padding:6px 10px;border-radius:7px;color:var(--ink);text-decoration:none;cursor:pointer;margin:1px 0}
+.side a:hover{background:var(--bar)}
+.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.side a .cnt{margin-left:auto;font-size:11px;background:var(--accent);color:#fff;border-radius:99px;padding:0 6px}
+.side a.lock{color:var(--muted)}
+.dmain{flex:1;min-width:0;padding:28px 32px 60px;max-width:1120px}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.ph h1{margin:0;font-size:25px}
+.ph .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.wide{grid-column:1/-1}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;min-width:0}
+.card h3{margin:0 0 12px;font-size:15px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h3 small{color:var(--muted);font-weight:400;font-size:12.5px}
+.stat .k{font-size:12.5px;color:var(--muted)}
+.stat .v{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.stat .d{font-size:12.5px;color:var(--green);font-weight:600}
+.stat .d.bad{color:var(--warn)}
+.pill{display:inline-block;background:var(--accent-soft);color:var(--accent);padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600;border:none;cursor:pointer}
+.pill.green{background:var(--green-soft);color:var(--green)}
+.pill.blue{background:var(--blue-soft);color:var(--blue)}
+.tag{font-size:11.5px;color:var(--muted);background:var(--bar);padding:1px 8px;border-radius:999px;white-space:nowrap}
+.tag.warn{background:var(--warn-soft);color:var(--warn);font-weight:600}
+.tag.acc{background:var(--accent-soft);color:var(--accent)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}
+.tag.green{background:var(--green-soft);color:var(--green)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.todo{list-style:none;margin:0;padding:0}
+.todo li{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none}
+.todo li:last-child{border-bottom:none}
+.box{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:5px;flex-shrink:0;display:grid;place-items:center;font-size:12px;color:#fff}
+.todo li.done .box{background:var(--green);border-color:var(--green)}
+.todo li.done .t{text-decoration:line-through;color:var(--muted)}
+.todo .tag{margin-left:auto}
+.row{display:grid;grid-template-columns:56px 1fr 62px;gap:10px;align-items:center;font-size:13.5px;margin:8px 0}
+.track{height:8px;background:var(--bar);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:99px}
+.fill.g{background:var(--green)}
+.v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.bars{display:flex;gap:6px;align-items:flex-end;height:90px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted);justify-content:flex-end;height:100%}
+.bars i{display:block;width:100%;background:var(--accent);opacity:.7;border-radius:4px 4px 2px 2px}
+.bars .cur i{opacity:1}
+.proj{margin:12px 0}
+.proj .top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:3px;overflow-x:auto;padding-bottom:2px}
+.heat i{width:13px;height:13px;border-radius:3px;background:var(--bar)}
+.heat i.l1{background:var(--g1)}.heat i.l2{background:var(--g2)}.heat i.l3{background:var(--g3)}.heat i.l4{background:var(--g4)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chips button{border:1px solid var(--line);background:transparent;padding:4px 12px;border-radius:999px;font-size:13px;cursor:pointer}
+.chips button.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;color:var(--muted);font-weight:500;font-size:12.5px;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.donut{width:150px;height:150px;border-radius:50%;position:relative;flex-shrink:0}
+.donut::after{content:"";position:absolute;inset:26px;background:var(--panel);border-radius:50%}
+.donut span{position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-weight:700;font-size:18px;text-align:center;line-height:1.2}
+.donut span small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.item .img{height:96px;display:grid;place-items:center;font-size:42px;background:var(--bar)}
+.item .b{padding:9px 11px}
+.item .n{font-weight:600;font-size:14px}
+.item .m{font-size:12px;color:var(--muted)}
+.foodrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.foodrow:last-child{border-bottom:none}
+.ai{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:13.5px}
+.ai b{color:var(--accent)}
+.kcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;border-left:3px solid var(--accent)}
+.kcard .t{font-weight:600;margin:4px 0}
+.kcard .n{font-size:13px;color:var(--muted)}
+.search{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 12px;font:inherit;color:var(--ink);margin-bottom:12px}
+.flash{border:1px solid var(--line);border-radius:16px;background:var(--panel);min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;cursor:pointer;user-select:none}
+.flash .p{font-size:26px;font-weight:700}
+.flash .c{font-size:15px;margin-top:8px}
+.flash .e{font-size:13px;color:var(--muted);margin-top:8px;font-style:italic}
+.rate{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.rate button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 16px;cursor:pointer;font-size:13.5px}
+.inbox-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.inbox-item:last-child{border-bottom:none}
+.inbox-item .body{flex:1;min-width:0}
+.inbox-item .when{font-size:12px;color:var(--muted)}
+.lockbox{border:1px dashed var(--line);border-radius:14px;padding:26px;text-align:center}
+.lockbox input{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;font:inherit;color:var(--ink);margin:10px 0;width:200px;max-width:100%}
+.pipe{display:flex;gap:6px;align-items:stretch}
+.pipe div{flex:1;background:var(--bar);border-radius:10px;padding:10px;text-align:center}
+.pipe b{display:block;font-size:22px}
+.pipe span{font-size:12px;color:var(--muted)}
+.banner{background:var(--blue-soft);color:var(--blue);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:14px}
+.q{font-size:14px;margin:10px 0 4px;font-weight:600}
+.qa{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;color:var(--muted);min-height:44px}
+.spark{width:100%;height:80px}
+
+/* ===== mobile ===== */
+.mwrap{display:flex;justify-content:center;padding:24px 16px 40px}
+.phone{width:390px;max-width:100%;height:800px;max-height:calc(100vh - 110px);min-height:560px;border:10px solid var(--frame);border-radius:46px;background:var(--bg);position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+.status{height:40px;display:flex;justify-content:space-between;align-items:center;padding:0 26px;font-size:13px;font-weight:600;flex-shrink:0}
+.mscroll{flex:1;overflow-y:auto;padding:4px 16px 90px}
+.mh{font-size:24px;font-weight:700;margin:6px 0 2px}
+.msub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.mcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.mcard h4{margin:0 0 8px;font-size:14px;display:flex;justify-content:space-between}
+.mcard h4 small{color:var(--muted);font-weight:400}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:78px;background:var(--panel);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px}
+.tabbar button{border:none;background:transparent;display:flex;flex-direction:column;align-items:center;font-size:10.5px;color:var(--muted);cursor:pointer;gap:2px;width:60px}
+.tabbar button .i{font-size:21px;line-height:1}
+.tabbar button.on{color:var(--accent);font-weight:600}
+.tabbar .plus .i{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:28px;margin-top:-18px;box-shadow:0 6px 16px rgba(194,104,63,.4)}
+.sheet{position:absolute;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;z-index:5}
+.sheet.show{display:flex}
+.sheet .in{background:var(--panel);width:100%;border-radius:22px 22px 0 0;padding:18px 16px 30px}
+.sheet .grab{width:40px;height:5px;background:var(--line);border-radius:9px;margin:0 auto 14px}
+.qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.qgrid button{border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px}
+.qgrid button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.qgrid .i{font-size:22px}
+.minput{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 12px;font:inherit;color:var(--ink)}
+.mbtn{width:100%;margin-top:10px;border:none;background:var(--accent);color:#fff;border-radius:12px;padding:11px;font-weight:600;cursor:pointer}
+.toast{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:13px;z-index:9;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.mlist{list-style:none;margin:0;padding:0}
+.mlist li{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;gap:8px}
+.mlist li:last-child{border-bottom:none}
+.menu a{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer;font-size:15px}
+.menu a:last-child{border-bottom:none}
+.menu a::after{content:"›";margin-left:auto;color:var(--muted);font-size:20px}
+.back{border:none;background:none;color:var(--accent);cursor:pointer;padding:4px 0;font-size:14px}
+
+/* week calendar */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .day{border-radius:9px;padding:6px 4px;min-height:150px;background:var(--bg)}
+.cal .day.today{background:var(--accent-soft);outline:1.5px solid var(--accent)}
+.cal .dh{text-align:center;font-size:11.5px;color:var(--muted);margin-bottom:5px;line-height:1.3}
+.cal .dh b{display:block;font-size:14px;color:var(--ink)}
+.cal .today .dh b{color:var(--accent)}
+.ev{font-size:11px;line-height:1.3;border-radius:5px;padding:3px 4px;margin-bottom:3px;background:var(--panel);border-left:3px solid var(--muted);overflow:hidden}
+.ev span{display:block;color:var(--muted);font-size:10px}
+.ev.class{border-left-color:var(--blue)}.ev.ddl{border-left-color:var(--warn)}.ev.job{border-left-color:var(--purple)}.ev.life{border-left-color:var(--green)}
+.calkey{display:flex;gap:10px;font-size:11.5px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.calkey i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
+/* sidebar sub-items */
+.side a.parent{font-weight:600}
+.side a.parent::after{content:"▾";margin-left:auto;color:var(--muted);font-size:11px}
+.side a.sub{padding-left:30px;font-size:13.5px}
+/* journal */
+.jentry{padding:10px 0;border-bottom:1px dashed var(--line)}
+.jentry:last-child{border-bottom:none}
+.jentry .when{font-size:11.5px;color:var(--muted)}
+.jentry .txt{font-size:14px;margin-top:2px}
+.jinput{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;font:inherit;color:var(--ink);resize:none;min-height:60px}
+/* courses */
+.course{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;border-top:3px solid var(--blue);cursor:pointer}
+.course.on{outline:2px solid var(--blue)}
+.course .code{font-size:12px;color:var(--blue);font-weight:700}
+.course .n{font-weight:600;margin:2px 0 6px}
+@media (max-width:900px){
+  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:1100px){
+  .cal .day{min-height:120px}
+  .ev span{display:none}
+}
+@media (max-width:760px){
+  .side{display:none}
+  .dmain{padding:18px 16px 50px}
+  .grid,.g3{grid-template-columns:1fr}
+  .dnav{display:flex!important}
+}
+.dnav{display:none;gap:6px;overflow-x:auto;padding:10px 16px 0}
+.dnav button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer}
+.dnav button.on{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="seg" id="modeSeg">
+    <button data-m="desk" class="on">💻 电脑版</button>
+    <button data-m="mob">📱 手机版</button>
+  </div>
+  <button class="ghost" id="themeBtn">🌓 深浅色</button>
+  <div class="hint" id="hint"></div>
+</div>
+<div id="app"></div>
+
+<script>
+/* ---------------- sample data ---------------- */
+const today=new Date();
+const fmt=d=>`${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`;
+const S={
+  todos:[['投递 2 份简历','求职',false],['买洗衣液','后勤',false],['体态练习 15 分钟','习惯',true],['整理收件箱','总部',false],['刷英语卡 20 张','英语',false]],
+  projects:[['求职准备',80,'人事部','11/30'],['整理衣柜',30,'后勤部','11/20'],['学会做 5 道家常菜',40,'后勤部','12/15'],['英语 500 个职场表达',22,'研发部','2027/03']],
+  txns:[
+    ['11/10','星巴克',38,'餐饮','ApplePay'],['11/10','地铁',4,'交通','ApplePay'],['11/09','优衣库',199,'服饰','ApplePay'],
+    ['11/09','SQ*MAPLE TEA CO',18,'待分类','ApplePay'],['11/09','喜茶',19,'餐饮','ApplePay'],['11/08','Shoppers',45,'日用','ApplePay'],
+    ['11/08','外卖',62,'餐饮','手动'],['11/07','Uber',23,'交通','ApplePay'],['11/07','POPMART',69,'待分类','ApplePay'],
+  ],
+  cats:[['餐饮',221,'var(--accent)'],['服饰',199,'var(--purple)'],['购物',98,'var(--blue)'],['交通',62,'var(--green)'],['日用',45,'#c9a23b'],['待分类',87,'var(--muted)']],
+  weeks:[612,540,688,470,530,720,455,610,580,498,486,708],
+  items:[
+    ['👗','米色风衣','衣服','衣柜左 · 第2格',599],['👖','直筒牛仔裤','衣服','衣柜右',299],['🧥','黑色羽绒服','衣服','门口衣架',899],
+    ['👟','白色板鞋','鞋','鞋柜上层',459],['🥾','切尔西靴','鞋','鞋柜下层',780],['💍','细银戒指','首饰','首饰盒 · A格',129],
+    ['📿','珍珠项链','首饰','首饰盒 · B格',268],['💎','小方糖耳钉','首饰','首饰盒 · A格',89],['🧷','裤腿夹子 ×4','小工具','玄关抽屉',15],
+    ['🔦','迷你手电','小工具','书桌抽屉',35],['🧴','身体乳 ×2','日用','浴室柜',58],['🪥','电动牙刷头 ×3','日用','浴室柜',90],
+  ],
+  food:[['🥛','牛奶',1,'冷藏','1 盒'],['🥚','鸡蛋',3,'冷藏','4 个'],['🍅','番茄',5,'冷藏','3 个'],['🧀','芝士片',9,'冷藏','半包'],['🥟','速冻饺子',40,'冷冻','1 袋'],['🍚','大米',90,'柜子','2 kg']],
+  know:[
+    ['变美体态','3 个动作改善圆肩驼背','站姿时肋骨下沉，别挺胸','小红书'],
+    ['求职','面试结尾一定要问的 3 个问题','问团队现在最大的挑战是什么','抖音'],
+    ['生活常识','羽绒服千万别干洗','用中性洗衣液手洗，平铺晾干','小红书'],
+    ['人生','每周留一个"无安排的下午"','给大脑留白，灵感反而更多','小红书'],
+    ['变美体态','久坐后的 2 分钟拉伸','髋屈肌拉伸 + 胸椎旋转','抖音'],
+    ['求职','STAR 法回答行为面试题','结果一定要带数字','小红书'],
+  ],
+  eng:[
+    ['circle back','稍后再跟进、回头再讨论','Let\'s circle back on this after the meeting.','职场求职','正式'],
+    ['touch base','简单联系一下、碰个头','I just wanted to touch base about the offer.','职场求职','正式'],
+    ['I\'m swamped','我忙疯了','Sorry, I\'m swamped this week.','日常生活','随意'],
+    ['hit it off','一见如故、很合得来','We hit it off right away.','社交闲聊','随意'],
+    ['on the same page','达成共识、想法一致','Just to make sure we\'re on the same page…','职场求职','正式'],
+  ],
+  inbox:[
+    ['10:12','📝','周末去宜家看收纳盒','收件箱'],
+    ['昨天','🔗','3个动作改善圆肩驼背 · 💬 肋骨下沉别挺胸','知识收藏'],
+    ['昨天','🇬🇧','circle back（同事邮件）','英文'],
+    ['11/08','💡','做一个"衣服搭配"小工具？','收件箱'],
+    ['11/08','🇬🇧','low-hanging fruit（播客）','英文'],
+  ],
+  ideas:[['做一个"衣服搭配"小工具？','11/08'],['开一个记录体态变化的相册','11/05'],['周末尝试一个人去看展','11/02']],
+  journal:[
+    ['今天 13:20','地铁上突然想到：我好像总在周三效率最低，是不是因为周二晚上总熬夜？'],
+    ['昨天 23:05','面试的时候紧张不是坏事，说明我在乎。下次先深呼吸三次再开口。'],
+    ['11/08 21:40','逛街的时候发现自己第三次拿起同一款白衬衫……家里明明已经有两件了。'],
+  ],
+  // 本周日历：周一 11/09 – 周日 11/15
+  week:[
+    ['一','11/09',[['10:00','数据分析导论','class'],['20:00','刷英语卡','life']]],
+    ['二','11/10',[['14:00','用户研究','class'],['23:59','DATA 101 作业 4','ddl']]],
+    ['三','11/11',[['14:00','Shopify 二面','job'],['16:00','小组讨论','class']]],
+    ['四','11/12',[['10:00','数据库','class'],['19:00','健身','life']]],
+    ['五','11/13',[['23:59','UXD 访谈报告','ddl'],['18:00','和朋友吃饭','life']]],
+    ['六','11/14',[['10:00','RBC 一面','job']]],
+    ['日','11/15',[['20:00','周复盘','life']]],
+  ],
+  courses:[
+    ['DATA 101','数据分析导论','周一 10:00',9,12,14,1],
+    ['UXD 201','用户研究','周二 14:00',9,12,11,0],
+    ['DB 210','数据库','周四 10:00',8,12,9,1],
+    ['CAR 100','职业发展','隔周三 16:00',5,6,5,0],
+  ],
+  ddls:[['DATA 101','作业 4：数据清洗',0,'今天 23:59'],['UXD 201','用户访谈报告',3,'周五 23:59'],['DB 210','期中考试',9,'11/19 10:00'],['CAR 100','简历终稿',12,'11/22']],
+  lectures:[['Week 9','缺失值与异常值处理','done'],['Week 8','数据透视与分组','done'],['Week 7','可视化原则','done'],['Week 10','回归入门（下周）','next']],
+};
+let state={mode:'desk',page:'home',mpage:'home',filter:'全部',kfilter:'全部',fi:0,flip:false,heatH:0,unlocked:false,capType:0};
+try{const m=localStorage.getItem('los-mode');if(m)state.mode=m}catch(e){}
+
+/* ---------------- helpers ---------------- */
+function heat(seed,weeks){let s=seed,h='';const r=()=>{s=(s*9301+49297)%233280;return s/233280};for(let i=0;i<weeks*7;i++){const v=r()+i/(weeks*7)*.35;const l=v>1.05?4:v>.85?3:v>.6?2:v>.4?1:0;h+=`<i class="${l?'l'+l:''}"></i>`}return `<div class="heat">${h}</div>`}
+const total=S.txns.reduce((a,t)=>a+t[2],0);
+const weekTotal=S.cats.reduce((a,c)=>a+c[1],0);
+function donut(){let acc=0;const parts=S.cats.map(([n,v,c])=>{const a=acc/weekTotal*360;acc+=v;return `${c} ${a}deg ${acc/weekTotal*360}deg`});return `<div class="donut" style="background:conic-gradient(${parts.join(',')})"><span>¥${weekTotal}<small>本周</small></span></div>`}
+function todoList(){return `<ul class="todo">${S.todos.map((t,i)=>`<li class="${t[2]?'done':''}" data-todo="${i}"><span class="box">${t[2]?'✓':''}</span><span class="t">${t[0]}</span><span class="tag">${t[1]}</span></li>`).join('')}</ul>`}
+function projList(n){return S.projects.slice(0,n).map(([p,v,d,due])=>`<div class="proj"><div class="top"><span>${p}</span><span class="muted small">${v}% · 截止 ${due}</span></div><div class="track"><div class="fill g" style="width:${v}%"></div></div></div>`).join('')}
+function catRows(){return S.cats.map(([n,v,c])=>`<div class="row"><span>${n}</span><div class="track"><div class="fill" style="width:${v/weekTotal*100}%;background:${c}"></div></div><span class="v">¥${v}</span></div>`).join('')}
+function foodRows(){return S.food.map(([e,n,d,loc,q])=>`<div class="foodrow"><span style="font-size:20px">${e}</span><div style="flex:1"><b>${n}</b> <span class="muted small">${q} · ${loc}</span></div>${d<=3?`<span class="tag warn">${d===1?'明天过期':d+' 天后过期'}</span>`:`<span class="tag">${d>=30?'还早':d+' 天'}</span>`}</div>`).join('')}
+function weekCal(){const todayIdx=(today.getDay()+6)%7;return `<div class="cal">${S.week.map(([w,d,evs],i)=>`<div class="day ${i===todayIdx?'today':''}"><div class="dh">周${w}<b>${d.split('/')[1]}</b></div>${evs.map(([t,n,k])=>`<div class="ev ${k}">${n}<span>${t}</span></div>`).join('')}</div>`).join('')}</div><div class="calkey"><span><i style="background:var(--blue)"></i>上课</span><span><i style="background:var(--warn)"></i>截止</span><span><i style="background:var(--purple)"></i>求职</span><span><i style="background:var(--green)"></i>生活</span></div>`}
+function fridgeCard(){const f=[...S.food].sort((a,b)=>a[2]-b[2]);return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${f.map(([e,n,d,loc,q])=>`<span class="tag ${d<=3?'warn':''}" style="font-size:13px;padding:4px 10px">${e} ${n} ${q}${d<=3?' · '+(d===1?'明天过期':d+'天后过期'):''}</span>`).join('')}</div><div class="ai">💡 <b>AI 建议</b>：番茄炒蛋 + 热牛奶，正好用掉快过期的</div>`}
+function flashCard(){const c=S.eng[state.fi%S.eng.length];return `<div class="flash" data-flip="1">${state.flip?`<div class="p">${c[0]}</div><div class="c">${c[1]}</div><div class="e">${c[2]}</div><div style="margin-top:8px"><span class="tag">${c[3]}</span> <span class="tag">${c[4]}</span></div>`:`<div class="p">${c[0]}</div><div class="muted small" style="margin-top:10px">点一下看意思</div>`}</div>${state.flip?`<div class="rate"><button data-rate>😣 难</button><button data-rate>🙂 一般</button><button data-rate>😎 简单</button></div>`:''}<p class="muted small" style="text-align:center;margin:10px 0 0">今日待复习 ${12-state.fi} 张</p>`}
+
+/* ---------------- desktop pages ---------------- */
+// [分组标题, 页面id, 图标, 名称, 角标, 类型(parent/sub)]
+const NAV=[
+  ['', 'home','🏠','首页'],['', 'inbox','📥','收件箱',S.inbox.length],
+  ['部门','finance','💰','财务部'],
+  ['','food','📦','后勤部',0,'parent'],['','food','🥚','食物墙',0,'sub'],['','items','🧺','物品墙',0,'sub'],
+  ['','knowledge','📚','研发部',0,'parent'],['','knowledge','💡','知识库',0,'sub'],['','english','🦉','多邻国 · 英语',0,'sub'],
+  ['','school','🎓','教务处 · 学校'],['','career','💼','人事部'],['','profile','🔒','个人档案'],
+  ['流程','review','📊','周复盘'],
+];
+const D={
+home:()=>`
+<div class="ph"><div><h1>${today.getHours()<11?'早上好 ☀️':today.getHours()<18?'下午好 🌤':'晚上好 🌙'}</h1><div class="sub">${fmt(today)}</div></div><button class="pill" data-go="inbox">📥 收件箱 ${S.inbox.length} 条待处理</button></div>
+<div class="grid">
+ <section class="card"><h3>📋 今日待办 <small>${S.todos.filter(t=>t[2]).length}/${S.todos.length} 完成</small></h3>${todoList()}</section>
+ <section class="card"><h3>📅 本周日历 <small>11/09 – 11/15</small></h3>${weekCal()}</section>
+ <section class="card"><h3>💰 本周花费 <small>11/09 – 11/15</small></h3><div class="stat"><span class="v">¥${weekTotal}</span> <span class="d">比上周 ↓12%</span></div>${catRows()}</section>
+ <section class="card"><h3>🔥 习惯热力图 <small>最近 16 周</small></h3><div class="chips">${['全部','早睡','运动','体态','英语'].map((h,i)=>`<button class="${i===state.heatH?'on':''}" data-heat="${i}">${h}</button>`).join('')}</div>${heat(7+state.heatH*13,16)}</section>
+ <section class="card"><h3>🧊 我的冰箱 <small>共 ${S.food.length} 样 · 快过期的在前</small></h3>${fridgeCard()}<button class="pill" style="margin-top:10px" data-go="food">看食物墙 →</button></section>
+ <section class="card"><h3>🦉 多邻国 <small>🔥 连续 6 天</small></h3><div class="stat"><span class="v">12</span> <span class="k">张待复习</span></div><div class="kcard" style="margin-top:10px"><div class="t">${S.eng[1][0]}</div><div class="n">${S.eng[1][1]}</div></div><button class="pill green" style="margin-top:10px" data-go="english">开始学习 →</button></section>
+ <section class="card wide"><h3>💡 每日小知识 <small>随机 2 张知识卡</small></h3><div class="grid">${S.know.slice(0,2).map(k=>`<div class="kcard"><span class="tag acc">#${k[0]}</span><div class="t">${k[1]}</div><div class="n">💬 ${k[2]}</div></div>`).join('')}</div></section>
+</div>`,
+
+inbox:()=>`
+<div class="ph"><div><h1>📥 收件箱</h1><div class="sub">手机上随手记的东西都先到这里，再分拣到各部门</div></div><button class="pill" data-ai>✨ 让 AI 一键整理</button></div>
+<div class="g3" style="margin-bottom:16px">
+ <div class="card stat"><div class="k">📝 收件箱</div><div class="v">${S.inbox.filter(i=>i[3]==='收件箱').length}</div></div>
+ <div class="card stat"><div class="k">🔗 知识收藏</div><div class="v">${S.inbox.filter(i=>i[3]==='知识收藏').length}</div></div>
+ <div class="card stat"><div class="k">🇬🇧 英文</div><div class="v">${S.inbox.filter(i=>i[3]==='英文').length}</div></div>
+</div>
+<section class="card"><h3>待处理 <small>处理完就会从这里消失</small></h3>
+${S.inbox.map(([w,e,t,src])=>`<div class="inbox-item"><span style="font-size:20px">${e}</span><div class="body"><div>${t}</div><div class="when">${w} · 来自「${src}」</div></div><span class="tag">${src==='英文'?'→ 英语卡片':src==='知识收藏'?'→ 知识卡':'→ 待分拣'}</span></div>`).join('')}
+</section>
+<div class="ai" style="margin-top:16px">💬 在电脑上对 Claude 说 <b>"整理收件箱"</b>：待办进总部、收藏变成知识卡、英文变成复习卡片、idea 进灵感。</div>`,
+
+finance:()=>`
+<div class="ph"><div><h1>💰 财务部</h1><div class="sub">Apple Pay 刷卡自动记账 · 认不出的先标"待分类"</div></div><span class="tag warn" style="font-size:13px;padding:5px 12px">${S.txns.filter(t=>t[3]==='待分类').length} 笔待分类</span></div>
+<div class="g4" style="margin-bottom:16px">
+ <div class="card stat"><div class="k">本周</div><div class="v">¥${weekTotal}</div><div class="d">↓12% 比上周</div></div>
+ <div class="card stat"><div class="k">本月</div><div class="v">¥1,786</div><div class="d bad">↑5% 比上月同期</div></div>
+ <div class="card stat"><div class="k">日均</div><div class="v">¥178</div><div class="k">本月</div></div>
+ <div class="card stat"><div class="k">最大一笔</div><div class="v">¥199</div><div class="k">优衣库 · 11/09</div></div>
+</div>
+<div class="grid">
+ <section class="card"><h3>分类占比 <small>本周</small></h3><div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap">${donut()}<div class="legend">${S.cats.map(([n,v,c])=>`<div><b style="background:${c}"></b>${n} <span class="muted">¥${v} · ${Math.round(v/weekTotal*100)}%</span></div>`).join('')}</div></div></section>
+ <section class="card"><h3>最近 12 周 <small>每周总花费</small></h3><div class="bars">${S.weeks.map((v,i)=>`<div class="${i===11?'cur':''}"><i style="height:${v/720*70}px"></i>${i===11?'本周':i%3===0?'W'+(i+35):''}</div>`).join('')}</div></section>
+ <section class="card wide"><h3>最近记录 <small>本月账本 2026-11.md</small></h3>
+ <table><thead><tr><th>日期</th><th>名称</th><th>分类</th><th>方式</th><th style="text-align:right">金额</th></tr></thead><tbody>
+ ${S.txns.map(([d,n,a,c,w])=>`<tr><td class="muted">${d}</td><td>${n}</td><td><span class="tag ${c==='待分类'?'warn':''}">${c}</span></td><td class="muted small">${w}</td><td class="num">¥${a}</td></tr>`).join('')}
+ </tbody></table>
+ <div class="ai" style="margin-top:12px">💬 对 Claude 说 <b>"整理账本"</b>：自动把待分类的分好，并把新商户（如 MAPLE TEA → 餐饮）记进分类规则，下次就能自动认出。</div></section>
+</div>`,
+
+food:()=>`
+<div class="ph"><div><h1>🥚 后勤部 · 食物墙</h1><div class="sub">民以食为天：家里有什么吃的，什么快过期，今晚吃什么</div></div><button class="pill">＋ 添加食物</button></div>
+<div class="g4" style="margin-bottom:16px">${[['食物',S.food.length+' 样'],['3 天内过期',S.food.filter(f=>f[2]<=3).length+' 样'],['冷藏',S.food.filter(f=>f[3]==='冷藏').length+' 样'],['冷冻 / 常温',S.food.filter(f=>f[3]!=='冷藏').length+' 样']].map(([k,v],i)=>`<div class="card stat"><div class="k">${k}</div><div class="v" style="${i===1?'color:var(--warn)':''}">${v}</div></div>`).join('')}</div>
+<div class="grid">
+<section class="card"><h3>🧊 食物清单 <small>快过期的排前面</small></h3>${foodRows()}</section>
+<section class="card"><h3>👩‍🍳 AI 食谱建议 <small>根据现有食物</small></h3>
+<div class="kcard" style="border-left-color:var(--green)"><div class="t">番茄炒蛋 + 热牛奶</div><div class="n">用掉：牛奶（明天过期）、鸡蛋、番茄 · 15 分钟</div></div>
+<div class="kcard" style="border-left-color:var(--green);margin-top:10px"><div class="t">芝士煎饺</div><div class="n">用掉：速冻饺子、芝士片 · 10 分钟</div></div>
+<p class="muted small">💬 对 Claude 说"冰箱有什么，推荐晚饭"就会更新这里</p></section>
+<section class="card wide"><h3>🛒 购物清单 <small>吃完的会自动加进来</small></h3><div style="display:flex;gap:6px;flex-wrap:wrap">${['🥬 青菜','🍞 吐司','🥛 牛奶（快喝完了）','🧈 黄油'].map(x=>`<span class="tag" style="font-size:13px;padding:4px 10px">${x}</span>`).join('')}</div></section>
+</div>`,
+
+items:()=>{const cats=['全部','衣服','鞋','首饰','小工具','日用'];const list=S.items.filter(i=>state.filter==='全部'||i[2]===state.filter);return `
+<div class="ph"><div><h1>🧺 后勤部 · 物品墙</h1><div class="sub">我有什么、放在哪，逛街前先查一下</div></div><button class="pill">＋ 添加物品</button></div>
+<div class="g4" style="margin-bottom:16px">${[['物品总数',S.items.length+' 件'],['衣服 / 鞋',S.items.filter(i=>i[2]==='衣服'||i[2]==='鞋').length+' 件'],['首饰',S.items.filter(i=>i[2]==='首饰').length+' 件'],['小工具 / 日用',S.items.filter(i=>i[2]==='小工具'||i[2]==='日用').length+' 件']].map(([k,v])=>`<div class="card stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('')}</div>
+<section class="card"><h3>🧺 物品墙 <small>${list.length} 件</small></h3>
+<input class="search" placeholder="🔍 搜一搜：耳钉、白衬衫、裤腿夹子…">
+<div class="chips">${cats.map(c=>`<button class="${state.filter===c?'on':''}" data-filter="${c}">${c}</button>`).join('')}</div>
+<div class="items">${list.map(([e,n,c,loc])=>`<div class="item"><div class="img">${e}</div><div class="b"><div class="n">${n}</div><div class="m">📍 ${loc}</div><div class="m">${c}</div></div></div>`).join('')}</div></section>`},
+
+knowledge:()=>{const tags=['全部','变美体态','求职','生活常识','人生'];const list=S.know.filter(k=>state.kfilter==='全部'||k[0]===state.kfilter);return `
+<div class="ph"><div><h1>📚 研发部 · 知识库</h1><div class="sub">小红书、抖音收藏不再吃灰</div></div><span class="tag" style="font-size:13px;padding:5px 12px">共 ${S.know.length} 张知识卡</span></div>
+<input class="search" placeholder="🔍 搜索知识卡，比如：圆肩、面试、羽绒服…">
+<div class="chips">${tags.map(c=>`<button class="${state.kfilter===c?'on':''}" data-kfilter="${c}">${c==='全部'?c:'#'+c}</button>`).join('')}</div>
+<div class="g3">${list.map(([t,n,note,src])=>`<div class="kcard"><span class="tag acc">#${t}</span> <span class="tag">${src}</span><div class="t">${n}</div><div class="n">💬 ${note}</div></div>`).join('')}</div>
+<div class="grid" style="margin-top:16px">
+<section class="card"><h3>💡 灵感 <small>胡思乱想也值得记下</small></h3><ul class="mlist">${S.ideas.map(([t,d])=>`<li><span>${t}</span><span class="muted small">${d}</span></li>`).join('')}</ul></section>
+<section class="card"><h3>✍️ 胡思乱想 <small>像日记一样，随手写下此刻的想法</small></h3>
+<textarea class="jinput" placeholder="此刻在想什么…（手机上点 ＋ → 灵感 也能记）"></textarea>
+${S.journal.map(([w,t])=>`<div class="jentry"><div class="when">${w}</div><div class="txt">${t}</div></div>`).join('')}</section>
+</div>`},
+
+english:()=>`
+<div class="ph"><div><h1>🦉 多邻国 · 英语</h1><div class="sub">自己遇到的表达 → AI 整理成卡片 → 间隔复习 → 用出来</div></div><span class="pill green">🔥 连续 6 天</span></div>
+<div class="g4" style="margin-bottom:16px">${[['卡片总数','112'],['今日待复习',12-state.fi],['本周新增','9'],['已掌握','47']].map(([k,v])=>`<div class="card stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('')}</div>
+<div class="grid">
+<section class="card"><h3>📇 今日复习</h3>${flashCard()}</section>
+<section class="card"><h3>✍️ 本周造句 <small>周复盘时做</small></h3>
+<div class="q">1. touch base</div><div class="qa">I want to touch base with you about next week's interview.</div>
+<div class="ai" style="margin-top:8px">✅ <b>AI 修改</b>：很好！更自然的说法：<i>I'd like to touch base about next week's interview.</i>（"I'd like to" 比 "I want to" 更礼貌）</div>
+<div class="q">2. on the same page</div><div class="qa muted">点这里写一句…</div></section>
+<section class="card wide"><h3>🗂 卡片库 <small>按场景</small></h3>
+<table><thead><tr><th>表达</th><th>意思</th><th>场景</th><th>语气</th></tr></thead><tbody>${S.eng.map(([p,c,e,s,t])=>`<tr><td><b>${p}</b><div class="muted small" style="font-style:italic">${e}</div></td><td>${c}</td><td><span class="tag blue">${s}</span></td><td><span class="tag">${t}</span></td></tr>`).join('')}</tbody></table></section>
+</div>`,
+
+school:()=>{const c=S.courses[state.course||0];return `
+<div class="ph"><div><h1>🎓 教务处 · 学校事务</h1><div class="sub">课程、作业截止、课堂笔记都按课程和周次排好</div></div><button class="pill" data-ai>✨ 让 AI 整理课堂笔记</button></div>
+<div class="g4" style="margin-bottom:16px">${[['本学期课程',S.courses.length+' 门'],['本周截止',S.ddls.filter(d=>d[2]<=7).length+' 项'],['待整理笔记',S.courses.reduce((a,x)=>a+x[6],0)+' 篇'],['学期进度','第 9 / 12 周']].map(([k,v],i)=>`<div class="card stat"><div class="k">${k}</div><div class="v" style="${i===1?'color:var(--warn)':''}">${v}</div></div>`).join('')}</div>
+<div class="grid">
+<section class="card"><h3>⏰ 即将截止 <small>按时间排序 · 也会显示在首页日历</small></h3><ul class="mlist">${S.ddls.map(([code,n,d,when])=>`<li><div><div>${n}</div><div class="muted small">${code} · ${when}</div></div><span class="tag ${d<=3?'warn':''}">${d===0?'今天':d+' 天后'}</span></li>`).join('')}</ul></section>
+<section class="card"><h3>📅 这周的课</h3><ul class="mlist">${S.week.flatMap(([w,d,evs])=>evs.filter(e=>e[2]==='class').map(e=>`<li><span>周${w} ${e[0]} · ${e[1]}</span><span class="muted small">${d}</span></li>`)).join('')}</ul></section>
+<section class="card wide"><h3>📚 我的课程 <small>点一门课，查看它的笔记</small></h3>
+<div class="g4">${S.courses.map(([code,n,time,wk,tot,notes,todo],i)=>`<div class="course ${i===(state.course||0)?'on':''}" data-course="${i}"><div class="code">${code}</div><div class="n">${n}</div><div class="muted small">🕙 ${time}</div><div class="muted small">📝 ${notes} 篇笔记${todo?` · <span style="color:var(--warn)">${todo} 篇待整理</span>`:''}</div><div class="track" style="margin-top:8px"><div class="fill" style="width:${wk/tot*100}%;background:var(--blue)"></div></div><div class="muted small" style="margin-top:3px">第 ${wk}/${tot} 周</div></div>`).join('')}</div></section>
+<section class="card"><h3>🗂 ${c[0]} · 课堂笔记 <small>按周次</small></h3><ul class="mlist">${S.lectures.map(([w,t,s])=>`<li><div><b>${w}</b> <span class="muted">· ${t}</span></div><span class="tag ${s==='done'?'green':'blue'}">${s==='done'?'✓ 已整理':'预习'}</span></li>`).join('')}<li><div><b>收件箱</b> <span class="muted">· 上课拍的白板照片 ×2</span></div><span class="tag warn">待整理</span></li></ul></section>
+<section class="card"><h3>📝 Week 9 笔记要点 <small>AI 整理</small></h3>
+<div class="small"><b>核心概念</b><ul style="margin:4px 0 10px;padding-left:18px"><li>缺失值：删除 / 填充均值 / 插值，各自适用场景</li><li>异常值：IQR 法、Z-score 法</li></ul><b>🧠 自测题</b><ul style="margin:4px 0;padding-left:18px"><li>什么时候不应该用均值填充？</li><li>IQR 法里的 1.5 倍是怎么来的？</li></ul></div>
+<p class="muted small" style="margin:8px 0 0">💬 对 Claude 说"整理课堂笔记"：把零散笔记和白板照片归到对应课程和周次，生成要点和自测题。</p></section>
+</div>`},
+
+career:()=>`
+<div class="ph"><div><h1>💼 人事部</h1><div class="sub">求职进度和资料 · 详细记录在 jobsync</div></div><button class="pill blue">↗ 打开 jobsync</button></div>
+<section class="card" style="margin-bottom:16px"><h3>求职漏斗 <small>本月</small></h3><div class="pipe">${[['24','已投递'],['9','有回复'],['4','面试中'],['1','终面'],['0','Offer']].map(([n,l])=>`<div><b>${n}</b><span>${l}</span></div>`).join('')}</div></section>
+<div class="grid">
+<section class="card"><h3>📅 近期面试</h3><ul class="mlist"><li><span>Shopify · 产品分析师 · 二面</span><span class="tag warn">明天 14:00</span></li><li><span>RBC · 数据分析 · 一面</span><span class="tag">11/14</span></li><li><span>Wealthsimple · HR 电话</span><span class="tag">11/17</span></li></ul></section>
+<section class="card"><h3>📌 求职小知识 <small>来自知识库 #求职</small></h3>${S.know.filter(k=>k[0]==='求职').map(k=>`<div class="kcard" style="margin-bottom:8px"><div class="t">${k[1]}</div><div class="n">💬 ${k[2]}</div></div>`).join('')}</section>
+</div>
+<p class="muted small">注：公司名都是示例。</p>`,
+
+profile:()=>`
+<div class="ph"><div><h1>🔒 个人档案</h1><div class="sub">只存在这台 Mac 上 · 不同步 · AI 不可读</div></div><span class="tag green" style="font-size:13px;padding:5px 12px">🛡 仅本地</span></div>
+<div class="grid">
+<section class="card"><h3>📏 我的尺寸</h3><table><tbody>${[['上衣','S / 160/84A'],['裤子','26 腰 · 长 98cm'],['鞋','37.5（EU 38）'],['内衣','75B'],['戒指','港码 11 号'],['手腕','14.5 cm']].map(([k,v])=>`<tr><td class="muted">${k}</td><td>${v}</td></tr>`).join('')}</tbody></table></section>
+<section class="card"><h3>📉 身体数据 <small>体重 · 近 8 周</small></h3>
+<svg class="spark" viewBox="0 0 300 80" preserveAspectRatio="none"><polyline fill="none" stroke="var(--green)" stroke-width="2.5" points="0,22 43,28 86,25 129,36 172,40 215,38 258,50 300,54"/></svg>
+<div class="row"><span>体态</span><div class="track"><div class="fill g" style="width:64%"></div></div><span class="v">64 分</span></div><p class="muted small" style="margin:6px 0 0">体态照片 · 每月一张 · 存在本地</p></section>
+<section class="card"><h3>🔥 健康习惯 <small>最近 20 周</small></h3>${heat(29,20)}<div style="margin-top:10px" class="small muted">早睡 76% · 运动 54% · 体态练习 61% · 喝水 82%</div></section>
+<section class="card"><h3>🔑 账号密码 <small>Meld Encrypt 加密</small></h3>${state.unlocked?`<table><tbody><tr><td>邮箱</td><td class="muted">••••••••</td></tr><tr><td>银行</td><td class="muted">••••••••</td></tr><tr><td>学校系统</td><td class="muted">••••••••</td></tr></tbody></table><p class="muted small">（预览里不显示真实内容）</p>`:`<div class="lockbox">🔐<div class="muted small">这篇笔记已加密，需要输入密码才能打开</div><input type="password" placeholder="输入解锁密码"><br><button class="pill" data-unlock>解锁（预览）</button></div>`}</section>
+</div>`,
+
+review:()=>`
+<div class="ph"><div><h1>📊 周复盘 · 第 46 周</h1><div class="sub">11/09 – 11/15 · 每周日 20 分钟</div></div><button class="pill" data-ai>✨ 让 AI 写本周总结</button></div>
+<div class="g4" style="margin-bottom:16px">${[['花费','¥'+weekTotal,'↓12%'],['完成待办','23 / 31','74%'],['习惯达成','68%','↑6%'],['新英语表达','9 个','']].map(([k,v,d])=>`<div class="card stat"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('')}</div>
+<div class="grid">
+<section class="card"><h3>💰 钱花在哪</h3>${catRows()}</section>
+<section class="card"><h3>🚀 项目推进</h3>${projList(4)}</section>
+<section class="card"><h3>📚 重温 3 张旧知识卡</h3>${S.know.slice(2,5).map(k=>`<div class="kcard" style="margin-bottom:8px"><span class="tag acc">#${k[0]}</span><div class="t">${k[1]}</div></div>`).join('')}</section>
+<section class="card"><h3>🪞 自问</h3>
+<div class="q">这周做得好的</div><div class="qa">连续 6 天刷英语卡；外卖少点了 2 次</div>
+<div class="q">要改进的</div><div class="qa">周三熬夜到 2 点，第二天状态很差</div>
+<div class="q">下周三件要事</div><div class="qa">① Shopify 二面准备 ② 衣柜整理到 60% ③ 每天 11 点前睡</div></section>
+<section class="card wide"><div class="ai">✨ <b>AI 本周总结</b>：这周花费比上周少 12%，主要是外卖减少；服饰支出偏高（优衣库 ¥199）。求职推进顺利，进入二面。作息是最大短板：有 3 天晚于 1 点睡。建议下周把"11 点前睡"设为每日待办。</div></section>
+</div>`,
+};
+
+/* ---------------- mobile pages ---------------- */
+const MT=[['home','🏠','今天'],['finance','💰','记账'],['plus','＋',''],['food','🧊','冰箱'],['more','☰','更多']];
+function mWeek(){const todayIdx=(today.getDay()+6)%7;const sel=state.mday??todayIdx;const [w,d,evs]=S.week[sel];
+return `<div style="display:flex;gap:4px;margin-bottom:10px">${S.week.map(([w2,d2,e2],i)=>`<button data-mday="${i}" style="flex:1;border:none;border-radius:10px;padding:6px 0;cursor:pointer;background:${i===sel?'var(--accent)':i===todayIdx?'var(--accent-soft)':'var(--bg)'};color:${i===sel?'#fff':'inherit'};font-size:11px;line-height:1.3">${w2}<b style="display:block;font-size:14px">${d2.split('/')[1]}</b><span style="display:flex;gap:2px;justify-content:center;height:5px;margin-top:2px">${e2.map(x=>`<i style="width:4px;height:4px;border-radius:50%;background:${i===sel?'#fff':x[2]==='ddl'?'var(--warn)':x[2]==='class'?'var(--blue)':x[2]==='job'?'var(--purple)':'var(--green)'}"></i>`).join('')}</span></button>`).join('')}</div>
+${evs.map(([t,n,k])=>`<div class="ev ${k}" style="font-size:13px;padding:6px 8px;background:var(--bg)">${n}<span style="display:block">${t}${k==='ddl'?' 截止':''}</span></div>`).join('')}`}
+const M={
+home:()=>`<div class="mh">${today.getHours()<11?'早上好':today.getHours()<18?'下午好':'晚上好'} 👋</div><div class="msub">${fmt(today)} · 收件箱 ${S.inbox.length} 条</div>
+<div class="mcard"><h4>📋 今日待办 <small>${S.todos.filter(t=>t[2]).length}/${S.todos.length}</small></h4>${todoList()}</div>
+<div class="mcard"><h4>📅 本周日历 <small>点日期看当天安排</small></h4>${mWeek()}</div>
+<div class="mcard" data-mgo="finance" style="cursor:pointer"><h4>💰 本周已花 <small>11/09–11/15</small></h4><div class="stat"><span class="v">¥${weekTotal}</span> <span class="d">↓12%</span></div></div>`,
+
+finance:()=>`<div class="mh">记账</div><div class="msub">刷 Apple Pay 自动记 · 也可以点 ＋ 手动记</div>
+<div class="mcard"><div style="display:flex;justify-content:space-between"><div class="stat"><div class="k">本周</div><div class="v">¥${weekTotal}</div></div><div class="stat" style="text-align:right"><div class="k">本月</div><div class="v">¥1,786</div></div></div></div>
+<div class="mcard"><h4>分类 <small>本周</small></h4>${catRows()}</div>
+<div class="mcard"><h4>最近 <small>${S.txns.filter(t=>t[3]==='待分类').length} 笔待分类</small></h4><ul class="mlist">${S.txns.slice(0,6).map(([d,n,a,c])=>`<li><div><div>${n}</div><div class="muted small">${d} · <span class="${c==='待分类'?'tag warn':''}">${c}</span></div></div><b>¥${a}</b></li>`).join('')}</ul></div>`,
+
+knowledge:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">知识库</div><div class="msub">搜一搜之前收藏过的</div>
+<input class="search" placeholder="🔍 比如：圆肩、面试…">
+<div class="chips">${['全部','变美体态','求职','生活常识','人生'].map(c=>`<button class="${state.kfilter===c?'on':''}" data-kfilter="${c}">${c}</button>`).join('')}</div>
+${S.know.filter(k=>state.kfilter==='全部'||k[0]===state.kfilter).map(([t,n,note,src])=>`<div class="kcard" style="margin-bottom:10px"><span class="tag acc">#${t}</span> <span class="tag">${src}</span><div class="t">${n}</div><div class="n">💬 ${note}</div></div>`).join('')}`,
+
+more:()=>`<div class="mh">更多</div><div class="msub">手机上主要是"查"，整理和复盘在电脑上做</div>
+<div class="mcard menu">
+<a data-mgo="knowledge">📚 知识库</a><a data-mgo="school">🎓 学校（课程 · 截止）</a><a data-mgo="english">🦉 多邻国 · 英语</a><a data-mgo="items">🧺 我有什么（物品）</a><a data-mgo="career">💼 求职</a><a data-mgo="inbox">📥 收件箱</a><a data-mgo="profile">🔒 个人档案</a>
+</div>`,
+
+school:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">学校</div><div class="msub">第 9 / 12 周 · 本周 ${S.ddls.filter(d=>d[2]<=7).length} 项截止</div>
+<div class="mcard"><h4>⏰ 即将截止</h4><ul class="mlist">${S.ddls.map(([code,n,d,when])=>`<li><div><div>${n}</div><div class="muted small">${code} · ${when}</div></div><span class="tag ${d<=3?'warn':''}">${d===0?'今天':d+'天后'}</span></li>`).join('')}</ul></div>
+<div class="mcard"><h4>📅 今天的课</h4><div class="small">14:00 用户研究（UXD 201）</div></div>
+<div class="banner">💡 上课拍的白板照片，点 ＋ → 收件箱 存进来，回到电脑让 AI 归到对应课程</div>`,
+
+english:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">🦉 多邻国</div><div class="msub">🔥 连续 6 天 · 卡片共 112 张</div>${flashCard()}`,
+
+items:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">我有什么</div><div class="msub">逛街前先查一下，别再买重复的</div>
+<input class="search" placeholder="🔍 比如：耳钉、白鞋…">
+<div class="chips">${['全部','衣服','鞋','首饰','小工具','日用'].map(c=>`<button class="${state.filter===c?'on':''}" data-filter="${c}">${c}</button>`).join('')}</div>
+<div class="items" style="grid-template-columns:repeat(2,1fr)">${S.items.filter(i=>state.filter==='全部'||i[2]===state.filter).map(([e,n,c,loc])=>`<div class="item"><div class="img" style="height:72px;font-size:34px">${e}</div><div class="b"><div class="n">${n}</div><div class="m">📍 ${loc}</div></div></div>`).join('')}</div>`,
+
+food:()=>`<div class="mh">我的冰箱</div><div class="msub">在超市时打开看一眼</div><div class="mcard">${foodRows()}</div><div class="ai">💡 今晚可以做：番茄炒蛋 + 热牛奶</div>`,
+
+career:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">求职</div><div class="msub">本月投递 24 · 面试中 4</div>
+<div class="mcard"><h4>📅 近期面试</h4><ul class="mlist"><li><span>Shopify · 二面</span><span class="tag warn">明天 14:00</span></li><li><span>RBC · 一面</span><span class="tag">11/14</span></li></ul></div>
+<div class="mcard"><h4>📌 面试前看一眼</h4>${S.know.filter(k=>k[0]==='求职').map(k=>`<div class="small" style="margin:6px 0">• ${k[1]}：<span class="muted">${k[2]}</span></div>`).join('')}</div>`,
+
+inbox:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">收件箱</div><div class="msub">回到电脑上让 AI 整理</div><div class="mcard">${S.inbox.map(([w,e,t])=>`<div class="inbox-item"><span>${e}</span><div class="body"><div class="small">${t}</div><div class="when">${w}</div></div></div>`).join('')}</div>`,
+
+profile:()=>`<button class="back" data-mgo="more">‹ 更多</button><div class="mh">个人档案</div>
+<div class="mcard" style="text-align:center;padding:30px 16px">🔒<div style="font-weight:600;margin:8px 0 4px">只在电脑上</div><div class="muted small">个人档案不同步到手机，所以这里是空的。尺寸、身体数据、账号密码请在 Mac 上查看。</div></div>
+<div class="banner">💡 想在手机上查尺寸？可以把「尺寸」单独挪到会同步的文件夹，告诉我就行。</div>`,
+};
+const CAP=[['💰','记一笔','比如：奶茶 18，买衣服 299'],['📝','收件箱','随手记下任何事'],['✅','加待办','比如：明天买洗衣液'],['🔗','存知识','先复制小红书/抖音链接'],['🇬🇧','记英文','比如：circle back（同事邮件）'],['💡','灵感','胡思乱想也记下']];
+
+/* ---------------- render ---------------- */
+const app=document.getElementById('app');
+function render(){
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===state.mode));
+  document.getElementById('hint').textContent=state.mode==='desk'?'电脑版：完整面板，用来整理和复盘 · 左侧点击切换页面 · 数据都是示例':'手机版：简化版，用来随手记和查询 · 点底部中间的 ＋ 试试记一笔';
+  if(state.mode==='desk'){
+    let last='';
+    app.innerHTML=`<div class="dnav">${NAV.filter(n=>n[5]!=='parent').map(n=>`<button class="${state.page===n[1]?'on':''}" data-go="${n[1]}">${n[2]} ${n[3]}</button>`).join('')}</div><div class="desk"><nav class="side"><h4>LifeOS</h4>${NAV.map(([g,id,e,l,c,kind])=>{const h=g&&g!==last?`<h4 style="margin-top:14px">${g}</h4>`:'';if(g)last=g;const on=kind!=='parent'&&state.page===id;return h+`<a class="${on?'on':''} ${kind||''} ${id==='profile'?'lock':''}" data-go="${id}">${e} ${l}${c?`<span class="cnt">${c}</span>`:''}</a>`}).join('')}</nav><main class="dmain">${D[state.page]()}</main></div>`;
+  }else{
+    const tabKey=['home','finance','food'].includes(state.mpage)?state.mpage:'more';
+    app.innerHTML=`<div class="mwrap"><div class="phone"><div class="status"><span>9:41</span><span>📶 🔋</span></div><div class="mscroll">${M[state.mpage]()}</div>
+    <div class="tabbar">${MT.map(([id,i,l])=>id==='plus'?`<button class="plus" data-cap><span class="i">＋</span></button>`:`<button class="${tabKey===id?'on':''}" data-mgo="${id}"><span class="i">${i}</span>${l}</button>`).join('')}</div>
+    <div class="sheet" id="sheet"><div class="in"><div class="grab"></div><div style="font-weight:700;margin-bottom:12px">快速记录</div><div class="qgrid">${CAP.map(([i,l],k)=>`<button class="${state.capType===k?'on':''}" data-captype="${k}"><span class="i">${i}</span>${l}</button>`).join('')}</div><input class="minput" id="capIn" placeholder="${CAP[state.capType][2]}"><button class="mbtn" data-save>保存</button><p class="muted small" style="text-align:center;margin:10px 0 0">也可以直接说"嘿 Siri，记一笔"</p></div></div>
+    <div class="toast" id="toast"></div></div></div>`;
+  }
+}
+function toast(t){const el=document.getElementById('toast');if(!el)return;el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600)}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-go],[data-mgo],[data-todo],[data-heat],[data-filter],[data-course],[data-mday],[data-kfilter],[data-flip],[data-rate],[data-unlock],[data-cap],[data-captype],[data-save],[data-ai],#sheet,#modeSeg button');
+  if(!t)return;
+  if(t.matches('#modeSeg button')){state.mode=t.dataset.m;try{localStorage.setItem('los-mode',state.mode)}catch(_){};render();window.scrollTo(0,0);return}
+  if(t.dataset.go){state.page=t.dataset.go;render();window.scrollTo(0,0);return}
+  if(t.dataset.mgo){state.mpage=t.dataset.mgo;render();return}
+  if(t.dataset.todo!==undefined){const i=+t.dataset.todo;S.todos[i][2]=!S.todos[i][2];render();return}
+  if(t.dataset.heat!==undefined){state.heatH=+t.dataset.heat;render();return}
+  if(t.dataset.filter){state.filter=t.dataset.filter;render();return}
+  if(t.dataset.course!==undefined){state.course=+t.dataset.course;render();return}
+  if(t.dataset.mday!==undefined){state.mday=+t.dataset.mday;render();return}
+  if(t.dataset.kfilter){state.kfilter=t.dataset.kfilter;render();return}
+  if(t.dataset.flip){state.flip=!state.flip;render();return}
+  if(t.hasAttribute('data-rate')){state.fi=Math.min(state.fi+1,11);state.flip=false;render();return}
+  if(t.hasAttribute('data-unlock')){state.unlocked=true;render();return}
+  if(t.hasAttribute('data-ai')){alert('预览：真实版本里，这一步是你对 Claude 说一句话，由 AI 完成整理。');return}
+  if(t.hasAttribute('data-cap')){document.getElementById('sheet').classList.add('show');return}
+  if(t.dataset.captype!==undefined){state.capType=+t.dataset.captype;render();document.getElementById('sheet').classList.add('show');return}
+  if(t.hasAttribute('data-save')){const v=(document.getElementById('capIn').value||'').trim()||CAP[state.capType][2].replace('比如：','');
+    if(state.capType===0){const m=v.match(/(.+?)\s*(\d+(?:\.\d+)?)/);if(m){S.txns.unshift(['今天',m[1].trim(),+m[2],/奶茶|咖啡|茶|外卖|饭/.test(m[1])?'餐饮':/衣|裤|鞋/.test(m[1])?'服饰':'待分类','手动'])}}
+    else S.inbox.unshift(['刚刚',CAP[state.capType][0],v,CAP[state.capType][1]]);
+    render();toast('✓ 已记到「'+CAP[state.capType][1]+'」');return}
+  if(t.id==='sheet'&&e.target.id==='sheet'){t.classList.remove('show')}
+});
+document.getElementById('themeBtn').onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark'};
+render();
+</script>
+</body>
+</html>

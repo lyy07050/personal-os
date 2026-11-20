@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 教务处</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mobile.css?v=6">
+<style>
+.due-hero{background:var(--pink);margin-bottom:12px;padding:18px}
+.due-hero b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em;margin:12px 0 4px}
+.due-hero p{font-size:13.5px;color:var(--ink-2)}
+.tl{list-style:none}
+.tl li{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(37,45,41,.06)}
+.tl li:last-child{border-bottom:0}
+.tl .d{font-size:16px;color:var(--ink);display:inline-block;border:1.5px solid rgba(37,45,41,.2);border-radius:9px;padding:2px 4px;text-align:center}
+.tl b{display:block;font-size:14.5px;font-weight:600}
+.tl small{font-size:12px;color:var(--muted)}
+.courses{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:12px}
+.c{padding:14px 16px}
+.c b{display:block;font-size:18px;font-weight:600;letter-spacing:-.02em}
+.c small{font-size:12.5px;color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll">
+        <div class="status"><span>9:41</span><svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/></g></svg></div>
+        <header class="navbar"><a class="round" href="mobile-more.html" aria-label="返回所有部门"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3 5 9l6 6" fill="none" stroke="#252d29" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="title"><h1 class="h">教务处</h1><p>本周 3 个截止 · 08:00 同步</p></div></header>
+
+        <section class="card due-hero" aria-label="最近的截止"><span class="chip warn">还剩 9 小时</span><b>DATA 101 · 作业 4</b><p>今天 23:59 · Assignment · 10 分</p></section>
+        <section class="card" aria-label="截止时间线"><div class="label"><span>接下来</span></div><ul class="tl">
+          <li><span class="d num">11.25</span><div><b>INF 1340 · Assignment 3</b><small>周二 23:59</small></div><span class="chip" style="background:var(--yellow);color:#6f5420">7 天</span></li>
+          <li><span class="d num">11.27</span><div><b>INF 1343 · 项目提案</b><small>周四 18:00 · 小组</small></div><span class="chip">9 天</span></li>
+          <li><span class="d num">11.30</span><div><b>INF 2178 · 期中</b><small>周日 · 线上 90 分钟</small></div><span class="chip">12 天</span></li></ul></section>
+        <div class="courses">
+          <div class="card c" style="background:#e9e7e6"><b>INF 1340</b><small>周四 10:00</small></div>
+          <div class="card c" style="background:var(--sage)"><b>DATA 101</b><small>周一 14:00</small></div>
+          <div class="card c" style="background:var(--beige)"><b>INF 1343</b><small>周二 18:00</small></div>
+          <div class="card c" style="background:var(--purple)"><b>INF 2178</b><small>周三 13:00</small></div>
+        </div>
+      </div>
+      <div class="dock"><label class="search"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6.2" fill="none" stroke="#252d29" stroke-width="1.7"/><path d="m13.6 13.6 4 4" stroke="#252d29" stroke-width="1.7" stroke-linecap="round"/></svg><span>搜索课程、课件…</span></label><button class="fab" aria-label="新建"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CK='<svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>

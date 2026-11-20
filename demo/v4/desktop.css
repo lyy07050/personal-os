@@ -1,0 +1,135 @@
+/* 网页版共用样式 · 对应 Figma 桌面画板（1440 宽）。数值见 DESIGN.md / docs/2026-11-19-ui-design-spec.md */
+:root{
+  --paper:#ebf2ed; --page:#f0f5f2; --card:#ffffff; --tile:#f8fbf9;
+  --green:#3e5b4b; --ink:#252d29; --ink-2:#4f5c52; --table:#303a33; --muted:#636d64; --tab-off:#737e74;
+  --brown:#94604b; /* Figma 文字/棕 #a66b53 加深一点，小字才过 4.5:1 */ --warn:#a15c46; --chip-pink:#945b47; --done:#8fa98a; --outline:#a9b4a4;
+  --pink:#fdefee; --blue:#ecf8fe; --yellow:#fef7e0; --purple:#f3f0f4; --apricot:#e9e7e6; --sage:#dfe8db; --beige:#f2e8d3;
+  --m-yellow:#fef7de; --m-blue:#f4f8fe;
+  --sh-card:0 4px 16px rgba(60,85,70,.05);
+  --sh-lift:0 1.5px 4.5px rgba(52,72,59,.05),0 4.5px 13.5px rgba(52,72,59,.10);
+  --sh-sticker:drop-shadow(0 3px 6px rgba(46,42,39,.14));
+  --zcool:"ZCOOL KuaiLe","Noto Sans SC",sans-serif; --gaegu:"Gaegu",cursive; --mono:"DM Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"Noto Sans SC",sans-serif;font-size:16px;-webkit-font-smoothing:antialiased;min-width:1280px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+::selection{background:var(--sage);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.z{font-family:var(--zcool);font-weight:400}
+.g{font-family:var(--gaegu);font-weight:700}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.warn{color:var(--warn)}
+
+/* ---------- shell ---------- */
+.app{width:1440px;margin:0 auto;display:grid;grid-template-columns:210px 1174px;column-gap:16px;padding-right:40px;min-height:100vh;position:relative}
+.side{position:sticky;top:0;height:100vh;padding:28px 0 28px 22px;display:flex;flex-direction:column}
+.side .brand{display:block;font-family:var(--gaegu);font-weight:700;font-size:30px;line-height:1;margin-bottom:22px}
+.side .brand b{color:var(--brown);font-weight:700}
+.side h6{font-size:13px;font-weight:500;letter-spacing:.14em;color:var(--muted);margin:18px 0 6px}
+.side a{display:flex;justify-content:space-between;align-items:center;padding:5px 14px 5px 0;font-size:16px;color:var(--muted);transition:color .2s}
+.side a.sub{padding-left:14px}
+.side a:hover{color:var(--ink)}
+.side a.on{color:var(--ink);font-weight:600}
+.side a i{font-style:normal;color:var(--brown);font-size:14px}
+.side .foot{margin-top:auto;font-size:15px;color:var(--ink-2)}
+main{padding:24px 0 64px;min-width:0}
+
+/* top bar */
+.topbar{display:flex;justify-content:space-between;align-items:center;height:68px;margin-bottom:24px;margin-left:0}
+.tabs{display:inline-flex;align-items:center;gap:22px;background:#fff;border-radius:34px;height:68px;padding:0 26px;box-shadow:var(--sh-lift)}
+.tabs button{font-size:40px;line-height:1;color:var(--tab-off);position:relative;transition:color .2s}
+.tabs button.lat{font-family:var(--gaegu);font-weight:700}
+.tabs button.cjk{font-family:var(--zcool);font-size:28px}
+.tabs button.on{color:var(--ink)}
+.tabs sup{font-family:"Noto Sans SC";font-weight:500;font-size:15px;color:var(--brown);vertical-align:18px;margin-left:3px;line-height:0}
+.find{width:270px;height:52px;border-radius:26px;background:#fff;box-shadow:var(--sh-lift);display:flex;align-items:center;gap:8px;padding:0 20px;font-size:16px;color:var(--muted)}
+
+/* banner */
+.ban{position:relative;background:#fff;border-radius:22px;box-shadow:var(--sh-card);height:254px;padding:44px 48px 0;margin-bottom:32px}
+.ban .eye{font-size:16px;font-weight:500;letter-spacing:.14em;color:var(--ink-2)}
+.ban h1{font-family:var(--zcool);font-weight:400;font-size:60px;line-height:1.15;margin-top:6px}
+.ban .facts{font-size:16px;color:var(--ink-2);margin-top:8px}
+.ban .facts b{font-weight:400;color:var(--warn)}
+.ban .btns{display:flex;gap:10px;margin-top:16px}
+.ban .art{position:absolute;pointer-events:none;filter:var(--sh-sticker)}
+.btn{height:44px;padding:0 20px;border-radius:999px;font-size:16px;font-weight:500;display:inline-flex;align-items:center;gap:6px;transition:transform .2s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--green);color:#fff;box-shadow:0 1.5px 4.5px rgba(52,72,59,.08),0 6px 14px rgba(52,72,59,.18)}
+.btn.sec{background:#fff;box-shadow:var(--sh-lift)}
+
+/* sections */
+.stack{display:flex;flex-direction:column;gap:24px}
+.row{display:grid;gap:24px}
+.c2{grid-template-columns:1fr 1fr}
+.card{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:32px;position:relative}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}
+.head h2{font-family:var(--zcool);font-weight:400;font-size:30px;line-height:1.2}
+.head .note{font-size:14px;color:var(--muted)}
+.group{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:16px}
+.tile{background:var(--tile);border:1px solid rgba(37,45,41,.06);border-radius:18px;box-shadow:var(--sh-lift)}
+
+/* bits */
+.chip{display:inline-flex;align-items:center;height:30px;padding:0 13px;border-radius:999px;font-size:15px;font-weight:500;background:var(--sage);color:var(--green);white-space:nowrap}
+.chip.pink{background:var(--pink);color:var(--chip-pink)}
+.chip.yellow{background:var(--yellow);color:#7a5b1e}
+.chip.blue{background:var(--blue);color:#33586e}
+.chip.purple{background:var(--purple);color:#5e4b68}
+.chip.beige{background:var(--beige);color:#6b5530}
+.chip.apricot{background:var(--apricot);color:#5c5450}
+.chip.plain{background:none;color:var(--ink-2);padding:0}
+.ck{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--outline);background:#fff;display:inline-grid;place-items:center;flex:none;transition:background .2s,border-color .2s}
+.ck svg{opacity:0;transform:scale(.6);transition:all .2s}
+.done>.ck,.ck.on{background:var(--green);border-color:var(--green)}
+.done>.ck svg,.ck.on svg{opacity:1;transform:none}
+.done .t{text-decoration:line-through;color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--sage);overflow:hidden}
+.bar span{display:block;height:100%;border-radius:3px;background:var(--done)}
+.list{list-style:none}
+.list li{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(37,45,41,.07);font-size:18px}
+.list li:last-child{border-bottom:0}
+table{width:100%;border-collapse:collapse}
+th{font-size:14px;font-weight:500;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid rgba(37,45,41,.08)}
+td{font-size:16px;color:var(--table);padding:20px 12px;border-bottom:1px solid rgba(37,45,41,.06)}
+tr:last-child td{border-bottom:0}
+.amt{font-family:var(--mono);text-align:right}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.food-emoji{display:inline-grid;place-items:center;border-radius:50%;background:#f3f6f1;box-shadow:inset 0 0 0 1px rgba(37,45,41,.05);line-height:1}
+.food-img{display:block;filter:drop-shadow(0 2px 3px rgba(46,42,39,.12))}
+
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+
+/* type system (typeset pass 2026-11-20) */
+.g,td,.amt,.mono,.num{font-variant-numeric:tabular-nums}
+h1,h2,h3,.ban .facts{text-wrap:balance}
+p{text-wrap:pretty}
+.g small{font-size:.45em}
+
+/* ---------- 手账质感（delight 2026-11-20）：盖章 · 撕贴纸 · 和纸胶带 · 日期印章 ---------- */
+/* 和纸胶带：半透明、两端锯齿，desktop.js 贴在 banner 一角 */
+.tape{position:absolute;width:92px;height:24px;z-index:3;pointer-events:none;opacity:.78;background:var(--tape,#dfe8db);border-radius:2px;box-shadow:0 1px 2px rgba(46,42,39,.06)}
+.ban>.tape{top:-11px;left:30px;rotate:-5deg}
+/* 盖章：勾上的一瞬间压下去，带一圈墨晕 */
+@keyframes stamp{0%{scale:1.45;rotate:-14deg;box-shadow:0 0 0 0 rgba(62,91,75,.35)}55%{scale:.9;rotate:3deg}100%{scale:1;rotate:0deg;box-shadow:0 0 0 9px rgba(62,91,75,0)}}
+.stamp{animation:stamp .46s cubic-bezier(.2,.8,.2,1)}
+/* 撕贴纸：「吃完」时贴纸翘起、变淡 */
+@keyframes peel{0%{rotate:0deg;translate:0 0}45%{rotate:-16deg;translate:-4px -10px;scale:1.08}100%{rotate:-7deg;translate:-2px -3px;scale:1}}
+.box li.gone [data-food]{animation:peel .62s cubic-bezier(.2,.8,.2,1) both;filter:drop-shadow(0 6px 6px rgba(46,42,39,.18))}
+/* banner 插画：鼠标停在 banner 上时轻轻翘起 */
+.ban .art,.hero .art{transition:translate .5s cubic-bezier(.2,.8,.2,1),rotate .5s cubic-bezier(.2,.8,.2,1)}
+.ban:hover .art,.hero:hover .art{translate:0 -5px;rotate:-1.5deg}
+/* 日期印章：首页活动、教务处时间线 */
+.act .date{border:1.5px solid rgba(148,96,75,.38);border-radius:12px;padding:5px 6px 4px;background:rgba(255,255,255,.55)}
+.tl li>div:first-child .g{display:inline-block;border:1.5px solid rgba(37,45,41,.22);border-radius:10px;padding:2px 8px}
+/* 每周复盘：放进首页待办后，三件要事一条条被胶带贴住 */
+.three li{position:relative}
+.three li::before{content:"";position:absolute;left:-12px;top:50%;width:44px;height:18px;translate:0 -50%;rotate:-8deg;scale:0;opacity:.85;
+  background:#f8dcd8;border-radius:2px;transition:scale .35s cubic-bezier(.2,.8,.2,1)}
+.three.pinned li::before{scale:1}
+.three.pinned li:nth-child(2)::before{transition-delay:.12s;rotate:6deg;background-color:#fef7e0}
+.three.pinned li:nth-child(3)::before{transition-delay:.24s;background-color:#dfe8db}
+@media (prefers-reduced-motion:reduce){.stamp,.box li.gone [data-food]{animation:none}.ban:hover .art,.hero:hover .art{translate:none;rotate:none}}

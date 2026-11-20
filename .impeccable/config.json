@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "kicker-above-heading",
+        "value": "*",
+        "files": [
+          "demo/v4/desktop-*.html"
+        ],
+        "createdAt": "2026-11-20T05:47:49.312Z",
+        "reason": "assistant: numbered eyebrows (20 · FINANCE…) are part of the user's own Figma design, recorded in DESIGN.md/spec"
+      },
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "demo/v4/desktop-*.html"
+        ],
+        "createdAt": "2026-11-20T05:47:49.328Z",
+        "reason": "assistant: white group panels holding tinted tiles are the user's own Figma layout (spec §2.2 大分组框)"
+      }
+    ]
+  }
+}

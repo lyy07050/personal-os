@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>my little os. · 食物墙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desktop.css?v=7">
+<style>
+.boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.box{border-radius:18px;padding:20px;height:309px;display:flex;flex-direction:column;border:1px solid rgba(37,45,41,.06);box-shadow:var(--sh-lift)}
+.box .bh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.box h3{font-family:var(--zcool);font-weight:400;font-size:26px}
+.pill{height:24px;padding:0 9px;border-radius:12px;background:rgba(223,232,219,.9);font-size:12px;color:var(--green);display:inline-grid;place-items:center}
+.pill.warn{background:#f8dcd8;color:#8e4a35}
+.box ul{list-style:none}
+.box li{display:flex;align-items:center;gap:10px;font-size:16px;padding:8px 0}
+.box li .t{flex:1}
+.box li .ck{width:22px;height:22px;border-radius:50%}
+.box li [data-food]{width:42px;display:flex;justify-content:center}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted)}
+.empty b{font-weight:400;font-size:17px}
+.empty small{font-size:12.5px}
+.add{margin-top:auto;font-size:14px;color:var(--ink-2)}
+.shop .list li{font-size:20px}
+.shop .ic{width:60px;display:flex;justify-content:center}
+.recipes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.recipe{border-radius:16px;padding:22px 20px;background:#fff;box-shadow:var(--sh-lift)}
+.recipe h3{font-family:var(--zcool);font-weight:400;font-size:26px;margin-bottom:8px}
+.recipe p{font-size:16px;color:var(--ink-2);line-height:1.6;margin-bottom:14px}
+.box li .eat{height:26px;padding:0 10px;border-radius:13px;background:#fff;border:1px solid rgba(37,45,41,.12);font-size:12.5px;color:var(--ink-2);opacity:.0;transition:opacity .2s,background .2s}
+.box li:hover .eat,.box li .eat:focus-visible{opacity:1}
+.box li .eat:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.box li.gone{opacity:.35;text-decoration:line-through}
+.box .empty{flex:1;margin:4px 0 0;border:1.5px dashed rgba(37,45,41,.16);border-radius:14px;font-size:26px;color:var(--muted);transition:border-color .2s,color .2s}
+.box .empty:hover{border-color:var(--green);color:var(--green)}
+.box .add{margin-top:auto;align-self:flex-start;font-size:14px;color:var(--ink-2);opacity:0;transition:opacity .2s}
+.box:hover .add,.box .add:focus-visible{opacity:1}
+</style>
+</head>
+<body data-page="fridge">
+<div class="app">
+<main>
+  <div class="topbar">
+    <span></span>
+    <div class="find">⌕ 冰箱里有…</div>
+  </div>
+  <section class="ban">
+    <p class="eye">30 · KITCHEN</p>
+    <h1>食物墙</h1>
+    <p class="facts">冷藏 6 样 · 牛奶<b>明天过期</b></p>
+    <div class="btns"><button class="btn pri">＋ 放进冰箱</button><button class="btn sec">今天吃什么</button></div>
+    <img class="art" src="assets/fridge-cocktail.png" alt="" style="left:858px;top:-24px;width:163px">
+    <img class="art" src="assets/fridge-pomegranate.png" alt="" style="left:1021px;top:96px;width:180px">
+  </section>
+
+  <div class="stack">
+    <section class="group boxes" aria-label="食物收纳"><h2 class="sr">食物收纳</h2>
+      <div class="box" style="background:var(--tile)"><div class="bh"><h3>生鲜</h3><span class="pill">4 项</span></div>
+        <ul><li><span data-food="牛奶" data-size="30"></span><span class="t">牛奶</span><span class="pill warn">明天过期</span><button class="eat">吃完</button></li><li><span data-food="鸡蛋" data-size="30"></span><span class="t">鸡蛋</span><span class="pill">3 天</span><button class="eat">吃完</button></li><li><span data-food="小葱" data-size="30"></span><span class="t">小葱</span><span class="pill">5 天</span><button class="eat">吃完</button></li><li><span data-food="嫩豆腐" data-size="30"></span><span class="t">嫩豆腐</span><span class="pill">8 天</span><button class="eat">吃完</button></li></ul>
+        <button class="add" aria-label="添加物品">＋ 添加</button></div>
+      <div class="box" style="background:var(--blue)"><div class="bh"><h3>水果</h3><span class="pill">1 项</span></div>
+        <ul><li><span data-food="草莓" data-size="30"></span><span class="t">草莓</span><span class="pill">4 天</span><button class="eat">吃完</button></li></ul><button class="add" aria-label="添加物品">＋ 添加</button></div>
+      <div class="box" style="background:var(--pink)"><div class="bh"><h3>调味料</h3><span class="pill">0 项</span></div>
+        <button class="empty" aria-label="添加物品">＋</button></div>
+      <div class="box" style="background:var(--yellow)"><div class="bh"><h3>粉面速食</h3><span class="pill">0 项</span></div>
+        <button class="empty" aria-label="添加物品">＋</button></div>
+      <div class="box" style="background:var(--purple)"><div class="bh"><h3>药材</h3><span class="pill">0 项</span></div>
+        <button class="empty" aria-label="添加物品">＋</button></div>
+      <div class="box" style="background:var(--tile)"><div class="bh"><h3>零食</h3><span class="pill">1 项</span></div>
+        <ul><li><span data-food="酸奶" data-size="30"></span><span class="t">酸奶</span><span class="pill">6 天</span><button class="eat">吃完</button></li></ul><button class="add" aria-label="添加物品">＋ 添加</button></div>
+    </section>
+
+    <section class="card shop" aria-label="购物清单">
+      <div class="head" style="margin-bottom:6px"><h2>购物清单</h2><span class="note">周六去超市</span></div>
+      <ul class="list">
+        <li><button class="ck" aria-label="买到了" style="width:30px;height:30px"></button><span class="ic" data-food="鸡蛋" data-size="40"></span><span class="t">鸡蛋 12 个</span></li>
+        <li><button class="ck" aria-label="买到了" style="width:30px;height:30px"></button><span class="ic" data-food="菠菜" data-size="40"></span><span class="t">菠菜</span></li>
+        <li class="done"><button class="ck" aria-label="买到了" style="width:30px;height:30px"></button><span class="ic" data-food="牛奶" data-size="40"></span><span class="t">牛奶 2 L</span></li>
+        <li><button class="ck" aria-label="买到了" style="width:30px;height:30px"></button><span class="ic" data-food="鸡腿肉" data-size="40"></span><span class="t">鸡腿肉</span></li>
+        <li><button class="ck" aria-label="买到了" style="width:30px;height:30px"></button><span class="ic" data-food="燕麦" data-size="40"></span><span class="t">燕麦</span></li>
+      </ul>
+    </section>
+
+    <section class="card" aria-label="想做的食谱">
+      <div class="head"><h2>今天可以做</h2></div>
+      <div class="recipes">
+        <div class="recipe"><h3>牛奶燕麦杯</h3><p>牛奶 200 ml + 燕麦 + 草莓切丁，前一晚放冷藏。</p><span class="chip pink">牛奶</span> <span class="chip">草莓</span></div>
+        <div class="recipe"><h3>葱花炒蛋</h3><p>3 个鸡蛋打散加盐，小葱切花，中火 2 分钟。</p><span class="chip">鸡蛋</span> <span class="chip">小葱</span></div>
+        <div class="recipe"><h3>葱油拌豆腐</h3><p>豆腐切块，淋热油葱花和生抽，5 分钟。</p><span class="chip">豆腐</span> <span class="chip">小葱</span></div>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+<script src="desktop.js?v=6"></script>
+<script src="food.js?v=6"></script>
+<script>
+document.querySelectorAll('.box .eat').forEach(b=>b.onclick=()=>{const li=b.closest('li');const name=li.querySelector('.t').textContent;li.classList.add('gone');b.remove();
+  const ul=document.querySelector('.shop .list');const n=document.createElement('li');n.innerHTML=`<button class="ck" aria-label="买到了" style="width:30px;height:30px">${CK}</button><span class="ic">${foodIcon(name,40)}</span><span class="t">${name}</span>`;ul.appendChild(n);});
+</script>
+</body>
+</html>

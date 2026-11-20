@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人生 OS 风格探索</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Noto+Serif+SC:wght@400;600&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 ui-rounded,"SF Pro Rounded","PingFang SC","Hiragino Sans GB",sans-serif;background:var(--bg);color:var(--ink);transition:background .4s,color .4s;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* ---------- 切换条 ---------- */
+.picker{position:sticky;top:0;z-index:30;background:#1f1d1b;color:#fff;padding:10px 16px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.picker span{font-size:13px;opacity:.7;margin-right:6px}
+.picker button{border:1.5px solid #555;background:transparent;color:#fff;border-radius:999px;padding:6px 16px;font-size:14px}
+.picker button.on{background:#fff;color:#1f1d1b;border-color:#fff;font-weight:700}
+
+/* ---------- 通用骨架 ---------- */
+.stage{max-width:1280px;margin:0 auto;padding:26px 20px 70px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:30px;align-items:start}
+.intro{grid-column:1/-1}
+.intro h2{margin:0 0 4px;font-size:22px}
+.intro p{margin:0;color:var(--muted);font-size:14px;max-width:70ch}
+.swatches{display:flex;gap:6px;margin-top:10px}
+.swatches i{width:26px;height:26px;border-radius:50%;border:2px solid rgba(0,0,0,.08)}
+.dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.hero{grid-column:1/-1;display:flex;align-items:center;gap:16px}
+.hero h1{margin:0;font-size:30px;line-height:1.2}
+.hero .date{color:var(--muted);font-size:14px}
+.card{position:relative;background:var(--panel);border-radius:var(--r);padding:18px 20px;min-width:0;animation:rise .5s both}
+.card:nth-child(2){animation-delay:.05s}.card:nth-child(3){animation-delay:.1s}.card:nth-child(4){animation-delay:.15s}.card:nth-child(5){animation-delay:.2s}.card:nth-child(6){animation-delay:.25s}.card:nth-child(7){animation-delay:.3s}.card:nth-child(8){animation-delay:.35s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card h3{margin:0 0 12px;font-size:16px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h3 small{font-weight:400;font-size:12px;color:var(--muted)}
+.wide{grid-column:1/-1}
+.todo{list-style:none;margin:0;padding:0}
+.todo li{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;user-select:none}
+.todo .box{width:22px;height:22px;flex-shrink:0;display:grid;place-items:center;font-size:13px}
+.todo li.done .t{text-decoration:line-through;opacity:.5}
+.todo .tag{margin-left:auto;font-size:11.5px;padding:1px 9px;border-radius:99px;background:var(--chip);color:var(--chip-ink)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.day{border-radius:calc(var(--r) * .5);padding:6px 4px;min-height:132px;background:var(--soft)}
+.day .dh{text-align:center;font-size:11px;color:var(--muted);line-height:1.25;margin-bottom:5px}
+.day .dh b{display:block;font-size:15px;color:var(--ink)}
+.ev{font-size:11px;line-height:1.3;border-radius:6px;padding:3px 5px;margin-bottom:3px;background:var(--panel)}
+.ev.class{box-shadow:inset 3px 0 var(--c1)}.ev.ddl{box-shadow:inset 3px 0 var(--c2)}.ev.job{box-shadow:inset 3px 0 var(--c3)}.ev.life{box-shadow:inset 3px 0 var(--c4)}
+.big{font-family:"Baloo 2",ui-rounded,sans-serif;font-size:34px;font-weight:800;line-height:1}
+.delta{font-size:13px;font-weight:700;color:var(--c4);margin-left:8px}
+.row{display:grid;grid-template-columns:44px 1fr 46px;gap:10px;align-items:center;font-size:13px;margin:9px 0}
+.track{height:10px;background:var(--soft);border-radius:99px;position:relative}
+.fill{height:100%;border-radius:99px;background:var(--accent)}
+.row .v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:4px;overflow-x:auto}
+.heat i{width:14px;height:14px;border-radius:var(--hr);background:var(--soft)}
+.heat i.l1{background:var(--h1)}.heat i.l2{background:var(--h2)}.heat i.l3{background:var(--h3)}.heat i.l4{background:var(--h4)}
+.foods{display:flex;flex-wrap:wrap;gap:7px}
+.food{font-size:13px;padding:5px 11px;border-radius:99px;background:var(--chip);color:var(--chip-ink)}
+.food.soon{background:var(--warn-soft);color:var(--warn);font-weight:700}
+.tip{margin-top:12px;font-size:13.5px;padding:10px 14px;border-radius:calc(var(--r) * .6);background:var(--soft)}
+.btn{display:inline-block;margin-top:12px;border:none;border-radius:99px;padding:8px 18px;font-weight:700;font-size:14px;background:var(--accent);color:var(--on-accent)}
+.kgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.k .ktag{font-size:11.5px;color:var(--accent);font-weight:700}
+.k .kt{font-weight:700;margin:3px 0}
+.k .kn{font-size:13px;color:var(--muted)}
+.mascot{flex-shrink:0}
+
+/* 手机 */
+.phonecol{position:sticky;top:70px}
+.phonecol .cap{font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px}
+.phone{width:100%;max-width:340px;height:680px;margin:0 auto;border:9px solid #1d1c1a;border-radius:44px;background:var(--bg);overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 24px 50px rgba(0,0,0,.18)}
+.phone .sb{height:36px;display:flex;justify-content:space-between;align-items:center;padding:0 24px;font-size:12px;font-weight:700}
+.phone .scr{flex:1;overflow-y:auto;padding:4px 14px 90px}
+.phone .hero h1{font-size:22px}
+.phone .card{padding:14px;margin-bottom:12px}
+.strip{display:flex;gap:4px;margin-bottom:10px}
+.strip button{flex:1;border:none;border-radius:12px;padding:6px 0;background:var(--soft);font-size:11px;line-height:1.3}
+.strip button b{display:block;font-size:14px}
+.strip button.on{background:var(--accent);color:var(--on-accent)}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:74px;background:var(--panel);display:flex;justify-content:space-around;padding-top:9px;border-top:var(--tab-border)}
+.tabbar div{display:flex;flex-direction:column;align-items:center;font-size:10.5px;color:var(--muted);gap:2px;width:56px}
+.tabbar .i{font-size:21px;line-height:1}
+.tabbar .on{color:var(--accent);font-weight:700}
+.tabbar .plus .i{width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:26px;margin-top:-20px}
+
+/* ================= ① 奶油 ins 风 ================= */
+body[data-t="cream"]{--bg:#efe7db;--panel:#fbf8f2;--soft:#f1eadf;--ink:#4b4037;--muted:#9c8e80;--accent:#b5856a;--on-accent:#fff;--chip:#ece3d5;--chip-ink:#8a7867;--warn:#b5634d;--warn-soft:#f3ddd3;--r:6px;--hr:50%;--c1:#9aa78c;--c2:#c98a74;--c3:#a590a8;--c4:#8fa08a;--h1:#eadbc9;--h2:#dcc1a6;--h3:#c9a283;--h4:#b5856a;--tab-border:1px solid #e3d9ca;
+  font-family:"Noto Serif SC","Songti SC",serif;
+  background-image:radial-gradient(rgba(120,95,70,.07) 1px,transparent 1px);background-size:5px 5px}
+[data-t="cream"] .card{box-shadow:0 1px 0 #e2d8c8,0 10px 24px -14px rgba(90,70,50,.35)}
+[data-t="cream"] .card::before{content:"";position:absolute;top:-9px;left:26px;width:74px;height:20px;background:rgba(201,162,131,.45);transform:rotate(-3deg);border-left:2px dotted rgba(255,255,255,.7);border-right:2px dotted rgba(255,255,255,.7)}
+[data-t="cream"] .card:nth-child(odd)::before{left:auto;right:30px;transform:rotate(2.5deg);background:rgba(154,167,140,.45)}
+[data-t="cream"] .card h3{font-weight:600;letter-spacing:.04em}
+[data-t="cream"] .card h3 small,[data-t="cream"] .hero .en{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;letter-spacing:.02em}
+[data-t="cream"] .hero h1{font-weight:600;letter-spacing:.06em}
+[data-t="cream"] .todo .box{border:1.2px solid var(--muted);border-radius:50%}
+[data-t="cream"] .todo li.done .box{background:var(--accent);border-color:var(--accent);color:#fff}
+[data-t="cream"] .todo li{border-bottom:1px dotted #dccfbd}
+[data-t="cream"] .track{height:4px}
+[data-t="cream"] .big{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:44px}
+[data-t="cream"] .k{background:#fff;padding:12px 12px 16px;box-shadow:0 6px 16px -8px rgba(90,70,50,.4);transform:rotate(-1.2deg)}
+[data-t="cream"] .k:nth-child(2){transform:rotate(1.4deg)}
+[data-t="cream"] .k .pic{height:74px;background:linear-gradient(135deg,#e6d6c2,#d3bfa5);display:grid;place-items:center;font-size:30px;margin-bottom:8px}
+[data-t="cream"] .btn{border-radius:2px;letter-spacing:.1em;font-weight:400}
+
+/* ================= ② 猫猫风 ================= */
+body[data-t="cat"]{--bg:#fff3ea;--panel:#fffdfb;--soft:#ffeadd;--ink:#5c4740;--muted:#b39a90;--accent:#f08f7f;--on-accent:#fff;--chip:#ffe5d6;--chip-ink:#c57a63;--warn:#e0604f;--warn-soft:#ffd9d2;--r:26px;--hr:50%;--c1:#8cc0de;--c2:#f08f7f;--c3:#c9a2e0;--c4:#9ccf9b;--h1:#ffe0d2;--h2:#ffc4ae;--h3:#f8a48f;--h4:#f08f7f;--tab-border:none;
+  background-image:radial-gradient(circle at 12px 14px,rgba(240,143,127,.13) 5px,transparent 6px),radial-gradient(circle at 5px 6px,rgba(240,143,127,.13) 2.5px,transparent 3.5px),radial-gradient(circle at 12px 3px,rgba(240,143,127,.13) 2.5px,transparent 3.5px),radial-gradient(circle at 19px 6px,rgba(240,143,127,.13) 2.5px,transparent 3.5px);background-size:90px 90px}
+[data-t="cat"] .hero h1,[data-t="cat"] .card h3{font-family:"ZCOOL KuaiLe",ui-rounded,sans-serif;font-weight:400;letter-spacing:.03em}
+[data-t="cat"] .card h3{font-size:19px}
+[data-t="cat"] .card{box-shadow:0 8px 0 #ffd9c7;border:2px solid #ffd9c7;margin-top:10px}
+[data-t="cat"] .card::before,[data-t="cat"] .card::after{content:"";position:absolute;top:-13px;width:26px;height:26px;background:var(--panel);border:2px solid #ffd9c7;border-bottom:none;border-right:none;border-radius:8px 0 0 0;transform:rotate(45deg);z-index:0}
+[data-t="cat"] .card::before{left:26px}
+[data-t="cat"] .card::after{left:66px}
+[data-t="cat"] .card>*{position:relative;z-index:1}
+[data-t="cat"] .todo .box{border:2px solid #f6c2b3;border-radius:50%;background:#fff}
+[data-t="cat"] .todo li.done .box{background:var(--accent);border-color:var(--accent);font-size:12px}
+[data-t="cat"] .fill{position:relative}
+[data-t="cat"] .fill::after{content:"🐟";position:absolute;right:-9px;top:-9px;font-size:16px}
+[data-t="cat"] .bubble{background:#fff;border:2px solid #ffd9c7;border-radius:20px;padding:10px 16px;position:relative;font-size:14px}
+[data-t="cat"] .bubble::before{content:"";position:absolute;left:-9px;top:20px;width:14px;height:14px;background:#fff;border-left:2px solid #ffd9c7;border-bottom:2px solid #ffd9c7;transform:rotate(45deg)}
+[data-t="cat"] .mascot{animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px) rotate(-2deg)}}
+[data-t="cat"] .btn{box-shadow:0 4px 0 #d9735f}
+[data-t="cat"] .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #d9735f}
+[data-t="cat"] .tabbar{border-radius:26px 26px 0 0;box-shadow:0 -6px 0 #ffe5d6}
+[data-t="cat"] .k{background:var(--soft);border-radius:20px;padding:14px}
+
+/* ================= ③ Emoji 贴纸风 ================= */
+body[data-t="emoji"]{--bg:#fff8dc;--panel:#fff;--soft:#f4f1e6;--ink:#1f1d1b;--muted:#77726a;--accent:#ff5c8a;--on-accent:#fff;--chip:#1f1d1b;--chip-ink:#fff;--warn:#e5362b;--warn-soft:#ffd6d2;--r:20px;--hr:5px;--c1:#3d8bff;--c2:#ff5c8a;--c3:#9b6bff;--c4:#1fb86b;--h1:#d5f5e1;--h2:#9be8bb;--h3:#4fd18a;--h4:#1fb86b;--tab-border:3px solid #1f1d1b;
+  font-weight:500;
+  background-image:linear-gradient(#f3e9b8 1.5px,transparent 1.5px),linear-gradient(90deg,#f3e9b8 1.5px,transparent 1.5px);background-size:28px 28px}
+[data-t="emoji"] .card{border:3px solid #1f1d1b;box-shadow:5px 5px 0 #1f1d1b;transition:transform .15s,box-shadow .15s}
+[data-t="emoji"] .card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #1f1d1b}
+[data-t="emoji"] .dash>.card:nth-of-type(1){background:#ffd9e4}
+[data-t="emoji"] .dash>.card:nth-of-type(2){background:#d6e9ff}
+[data-t="emoji"] .dash>.card:nth-of-type(3){background:#fff1a6}
+[data-t="emoji"] .dash>.card:nth-of-type(4){background:#d9f7e3}
+[data-t="emoji"] .dash>.card:nth-of-type(5){background:#e8deff}
+[data-t="emoji"] .dash>.card:nth-of-type(6){background:#ffe2c2}
+[data-t="emoji"] .card h3{font-family:"Baloo 2","ZCOOL KuaiLe",ui-rounded,sans-serif;font-weight:800;font-size:19px}
+[data-t="emoji"] .dash .card h3{padding-right:58px}
+[data-t="emoji"] .hero h1{font-family:"Baloo 2","ZCOOL KuaiLe",ui-rounded,sans-serif;font-weight:800;font-size:36px}
+[data-t="emoji"] .sticker{position:absolute;top:-22px;right:14px;font-size:44px;transform:rotate(12deg);filter:drop-shadow(2px 3px 0 rgba(0,0,0,.25));z-index:2;transition:transform .2s}
+[data-t="emoji"] .card:hover .sticker{transform:rotate(-8deg) scale(1.15)}
+[data-t="emoji"] .card:nth-child(even) .sticker{transform:rotate(-10deg)}
+[data-t="emoji"] .todo .box{border:2.5px solid #1f1d1b;border-radius:7px;background:#fff}
+[data-t="emoji"] .todo li.done .box{background:#1fb86b;color:#fff;font-weight:800}
+[data-t="emoji"] .day,[data-t="emoji"] .tip,[data-t="emoji"] .track{background:rgba(255,255,255,.65)}
+[data-t="emoji"] .track{border:2px solid #1f1d1b;height:14px}
+[data-t="emoji"] .ev{border:1.5px solid #1f1d1b}
+[data-t="emoji"] .food{border:2px solid #1f1d1b;background:#fff;color:#1f1d1b;font-weight:700}
+[data-t="emoji"] .food.soon{background:#ff5c8a;color:#fff}
+[data-t="emoji"] .btn{border:3px solid #1f1d1b;box-shadow:3px 3px 0 #1f1d1b;background:#1f1d1b;color:#fff8dc}
+[data-t="emoji"] .k{background:#fff;border:2.5px solid #1f1d1b;border-radius:16px;padding:12px;display:flex;gap:12px;align-items:center}
+[data-t="emoji"] .k .pic{font-size:38px}
+[data-t="emoji"] .heat i{border:1.5px solid rgba(0,0,0,.12)}
+[data-t="emoji"] .phone .card{box-shadow:4px 4px 0 #1f1d1b}
+[data-t="emoji"] .strip button{border:2px solid #1f1d1b;background:#fff}
+[data-t="emoji"] .tabbar .plus .i{border:3px solid #1f1d1b;box-shadow:3px 3px 0 #1f1d1b}
+[data-t="emoji"] .mood{display:flex;gap:6px;margin-top:6px}
+[data-t="emoji"] .mood button{font-size:24px;border:2.5px solid #1f1d1b;background:#fff;border-radius:14px;width:44px;height:44px;transition:transform .15s}
+[data-t="emoji"] .mood button:hover{transform:scale(1.2) rotate(-6deg)}
+[data-t="emoji"] .mood button.on{background:#fff1a6;box-shadow:3px 3px 0 #1f1d1b}
+
+@media (max-width:980px){.stage{grid-template-columns:1fr}.phonecol{position:static}}
+@media (max-width:640px){.dash,.kgrid{grid-template-columns:1fr}.day{min-height:100px}.ev{font-size:10px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-t="cat">
+<div class="picker"><span>选一个风格看看 →</span>
+  <button data-pick="cream">☁️ 奶油 ins 风</button>
+  <button data-pick="cat">🐱 猫猫风</button>
+  <button data-pick="emoji">🎨 Emoji 贴纸风</button>
+</div>
+<div class="stage" id="stage"></div>
+
+<script>
+const CAT=`<svg class="mascot" width="92" height="86" viewBox="0 0 92 86" aria-hidden="true"><path d="M14 34 L10 6 L34 20Z" fill="#f6b99f" stroke="#5c4740" stroke-width="2.5" stroke-linejoin="round"/><path d="M78 34 L82 6 L58 20Z" fill="#f6b99f" stroke="#5c4740" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 26 L15 13 L26 20Z" fill="#ffd9d0"/><path d="M75 26 L77 13 L66 20Z" fill="#ffd9d0"/><ellipse cx="46" cy="50" rx="38" ry="32" fill="#fff6ef" stroke="#5c4740" stroke-width="2.5"/><path d="M30 20 Q46 30 62 20 Q56 14 46 15 Q36 14 30 20Z" fill="#f6b99f"/><ellipse cx="32" cy="48" rx="3.6" ry="5" fill="#5c4740"/><ellipse cx="60" cy="48" rx="3.6" ry="5" fill="#5c4740"/><circle cx="33.2" cy="46" r="1.2" fill="#fff"/><circle cx="61.2" cy="46" r="1.2" fill="#fff"/><path d="M43 56 L49 56 L46 59.5Z" fill="#f08f7f"/><path d="M46 59.5 Q46 64 41 64 M46 59.5 Q46 64 51 64" fill="none" stroke="#5c4740" stroke-width="2" stroke-linecap="round"/><ellipse cx="22" cy="58" rx="6" ry="3.6" fill="#ffc9bd" opacity=".8"/><ellipse cx="70" cy="58" rx="6" ry="3.6" fill="#ffc9bd" opacity=".8"/><path d="M4 50 H16 M5 58 H16 M76 50 H88 M76 58 H87" stroke="#5c4740" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+
+const T={
+ cream:{name:'奶油 ins 风',desc:'安静、干净、像一本手帐。奶油色和焦糖色，衬线字体，卡片上贴着和纸胶带，知识卡做成拍立得照片。适合喜欢简约、想让页面"不吵"的你。',
+   sw:['#efe7db','#fbf8f2','#b5856a','#9aa78c','#4b4037'],
+   hero:d=>`<div><div class="en date">${d.en}</div><h1>今天也慢慢来</h1><div class="date">${d.cn} · 有 4 件小事</div></div>`,
+   check:'✓',icons:{todo:'今日待办',cal:'本周日历',spend:'本周花费',heat:'习惯记录',fridge:'我的冰箱',duo:'多邻国',know:'每日小知识'},
+   small:{todo:'to do',cal:'this week',spend:'spending',heat:'habits',fridge:'in the fridge',duo:'6 day streak',know:'little notes'},
+   tip:'今晚可以做 · 番茄炒蛋配热牛奶',btn:'开始学习',kpic:['🧘‍♀️','💼'],tabs:['☼','¥','＋','❄','≡']},
+ cat:{name:'猫猫风',desc:'一只叫"团子"的猫住在你的 OS 里，每天跟你打招呼、提醒你事情。卡片长着猫耳朵，完成待办会盖上爪印，进度条的尽头有小鱼干。最温馨、最有陪伴感。',
+   sw:['#fff3ea','#fffdfb','#f08f7f','#f6b99f','#5c4740'],
+   hero:d=>`${CAT}<div><div class="bubble"><b>喵～下午好！</b> 今天有 4 件事，做完一件我就给你盖一个爪印 🐾<br><span style="color:var(--muted);font-size:12.5px">${d.cn} · 牛奶明天过期，记得喝掉哦</span></div></div>`,
+   check:'🐾',icons:{todo:'🐾 今天的小任务',cal:'📅 这周的安排',spend:'🐟 小鱼干花销',heat:'😺 打卡爪印',fridge:'🧊 团子巡逻冰箱',duo:'🦉 多邻国',know:'💡 每日小知识'},
+   small:{todo:'做完盖爪印',cal:'11/16 – 11/22',spend:'本周',heat:'最近 16 周',fridge:'6 样',duo:'连续 6 天',know:'团子今天想告诉你'},
+   tip:'🐱 团子建议：番茄炒蛋 + 热牛奶，正好把快过期的吃掉',btn:'开始学习 →',kpic:['',''],tabs:['🏠','🐟','🐾','🧊','☰']},
+ emoji:{name:'Emoji 贴纸风',desc:'大胆、活泼、像贴满贴纸的笔记本。每张卡片一个颜色、一个大 emoji 贴纸，粗黑边框和硬阴影，鼠标移上去贴纸会晃。还能用 emoji 记录今天的心情。最有活力。',
+   sw:['#fff8dc','#ffd9e4','#d6e9ff','#fff1a6','#1f1d1b'],
+   hero:d=>`<div style="font-size:60px;line-height:1">👋</div><div><h1>嗨！今天冲鸭</h1><div class="date">${d.cn} · 今天心情怎么样？</div><div class="mood">${['🥳','😊','😐','😮‍💨','😭'].map((m,i)=>`<button class="${i===1?'on':''}" data-mood>${m}</button>`).join('')}</div></div>`,
+   check:'✓',icons:{todo:'今日待办',cal:'本周日历',spend:'本周花费',heat:'习惯打卡',fridge:'我的冰箱',duo:'多邻国',know:'每日小知识'},
+   small:{todo:'1/5',cal:'11/16–11/22',spend:'CAD',heat:'16 周',fridge:'6 样',duo:'🔥 6 天',know:'随机 2 张'},
+   stick:{todo:'✅',cal:'🗓️',spend:'💸',heat:'🔥',fridge:'🧊',duo:'🦉',know:'💡'},
+   tip:'👩‍🍳 番茄炒蛋 + 热牛奶 = 清空快过期！',btn:'开始学习 GO',kpic:['🧘‍♀️','💼'],tabs:['🏠','💸','＋','🧊','🍔']},
+};
+const S={
+ todos:[['投递 2 份简历','求职',false],['买洗衣液','后勤',false],['体态练习 15 分钟','习惯',true],['整理收件箱','总部',false],['刷英语卡 20 张','英语',false]],
+ week:[['一','16',[['数据分析导论','class'],['刷英语卡','life']]],['二','17',[['用户研究','class'],['作业 4 截止','ddl']]],['三','18',[['二面','job'],['小组讨论','class']]],['四','19',[['数据库','class'],['健身','life']]],['五','20',[['访谈报告截止','ddl'],['和朋友吃饭','life']]],['六','21',[['一面','job']]],['日','22',[['周复盘','life']]]],
+ cats:[['餐饮',221,'var(--accent)'],['服饰',199,'var(--c3)'],['购物',98,'var(--c1)'],['交通',62,'var(--c4)']],
+ food:[['🥛','牛奶',1],['🥚','鸡蛋 ×4',3],['🍅','番茄 ×3',5],['🧀','芝士片',9],['🥟','速冻饺子',40],['🍚','大米',90]],
+ know:[['变美体态','3 个动作改善圆肩驼背','站姿时肋骨下沉，别挺胸'],['求职','面试结尾一定要问的 3 个问题','问团队现在最大的挑战是什么']],
+};
+let cur='cat', mday=0;
+try{const s=localStorage.getItem('los-style');if(s&&T[s])cur=s}catch(e){}
+const now=new Date();
+const D={cn:`${now.getMonth()+1}月${now.getDate()}日 周${'日一二三四五六'[now.getDay()]}`,en:now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})};
+mday=(now.getDay()+6)%7;
+function heat(){let s=7,h='';const r=()=>{s=(s*9301+49297)%233280;return s/233280};for(let i=0;i<112;i++){const v=r()+i/112*.35;const l=v>1.05?4:v>.85?3:v>.6?2:v>.4?1:0;h+=`<i class="${l?'l'+l:''}"></i>`}return `<div class="heat">${h}</div>`}
+function todo(t){return `<ul class="todo">${S.todos.map((x,i)=>`<li class="${x[2]?'done':''}" data-todo="${i}"><span class="box">${x[2]?t.check:''}</span><span class="t">${x[0]}</span><span class="tag">${x[1]}</span></li>`).join('')}</ul>`}
+function stick(t,k){return t.stick?`<span class="sticker">${t.stick[k]}</span>`:''}
+function h3(t,k){return `<h3>${t.icons[k]} <small>${t.small[k]}</small></h3>`}
+function render(){
+  const t=T[cur];document.body.dataset.t=cur;
+  document.querySelectorAll('[data-pick]').forEach(b=>b.classList.toggle('on',b.dataset.pick===cur));
+  const total=S.cats.reduce((a,c)=>a+c[1],0);
+  const kn=S.know.map((k,i)=>`<div class="k">${t.kpic[i]?`<div class="pic">${t.kpic[i]}</div>`:''}<div><div class="ktag">#${k[0]}</div><div class="kt">${k[1]}</div><div class="kn">${k[2]}</div></div></div>`).join('');
+  document.getElementById('stage').innerHTML=`
+  <div class="intro"><h2>${t.name}</h2><p>${t.desc}</p><div class="swatches">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</div></div>
+  <div class="dash">
+    <div class="hero">${t.hero(D)}</div>
+    <section class="card">${stick(t,'todo')}${h3(t,'todo')}${todo(t)}</section>
+    <section class="card">${stick(t,'cal')}${h3(t,'cal')}<div class="cal">${S.week.map(([w,d,evs])=>`<div class="day"><div class="dh">周${w}<b>${d}</b></div>${evs.map(e=>`<div class="ev ${e[1]}">${e[0]}</div>`).join('')}</div>`).join('')}</div></section>
+    <section class="card">${stick(t,'spend')}${h3(t,'spend')}<div><span class="big">$${total}</span><span class="delta">↓12%</span></div>${S.cats.map(([n,v,c])=>`<div class="row"><span>${n}</span><div class="track"><div class="fill" style="width:${v/221*100}%;background:${c}"></div></div><span class="v">$${v}</span></div>`).join('')}</section>
+    <section class="card">${stick(t,'heat')}${h3(t,'heat')}${heat()}</section>
+    <section class="card">${stick(t,'fridge')}${h3(t,'fridge')}<div class="foods">${S.food.map(([e,n,d])=>`<span class="food ${d<=3?'soon':''}">${e} ${n}${d<=3?' · '+(d===1?'明天过期':d+'天'):''}</span>`).join('')}</div><div class="tip">${t.tip}</div></section>
+    <section class="card">${stick(t,'duo')}${h3(t,'duo')}<div><span class="big">12</span> <span style="color:var(--muted);font-size:13px">张卡片等你</span></div><div class="tip"><b>touch base</b> · 简单联系一下、碰个头</div><button class="btn">${t.btn}</button></section>
+    <section class="card wide">${stick(t,'know')}${h3(t,'know')}<div class="kgrid">${kn}</div></section>
+  </div>
+  <div class="phonecol"><div class="cap">📱 手机首页长这样</div><div class="phone"><div class="sb"><span>9:41</span><span>●●● ▮</span></div><div class="scr">
+    <div class="hero" style="margin:6px 0 12px">${cur==='cat'?CAT.replace('width="92" height="86"','width="56" height="52"')+`<div><h1>喵～下午好</h1><div class="date">${D.cn}</div></div>`:cur==='emoji'?`<div style="font-size:36px">👋</div><div><h1>嗨！冲鸭</h1><div class="date">${D.cn}</div></div>`:`<div><div class="en date">${D.en}</div><h1>今天也慢慢来</h1></div>`}</div>
+    <section class="card">${h3(t,'todo')}${todo(t)}</section>
+    <section class="card">${h3(t,'cal')}<div class="strip">${S.week.map(([w,d],i)=>`<button class="${i===mday?'on':''}" data-mday="${i}">${w}<b>${d}</b></button>`).join('')}</div>${S.week[mday][2].map(e=>`<div class="ev ${e[1]}" style="font-size:13px;padding:6px 9px;background:var(--soft)">${e[0]}</div>`).join('')}</section>
+    <section class="card">${h3(t,'spend')}<span class="big">$${total}</span><span class="delta">↓12%</span></section>
+  </div><div class="tabbar">${['今天','记账','','冰箱','更多'].map((l,i)=>i===2?`<div class="plus"><span class="i">${t.tabs[2]}</span></div>`:`<div class="${i===0?'on':''}"><span class="i">${t.tabs[i]}</span>${l}</div>`).join('')}</div></div></div>`;
+}
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-pick]');if(p){cur=p.dataset.pick;try{localStorage.setItem('los-style',cur)}catch(_){};render();window.scrollTo({top:0});return}
+  const td=e.target.closest('[data-todo]');if(td){const i=+td.dataset.todo;S.todos[i][2]=!S.todos[i][2];render();return}
+  const md=e.target.closest('[data-mday]');if(md){mday=+md.dataset.mday;render();return}
+  const mo=e.target.closest('[data-mood]');if(mo){document.querySelectorAll('[data-mood]').forEach(b=>b.classList.remove('on'));mo.classList.add('on')}
+});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 物品墙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mobile.css?v=6">
+<style>
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;height:36px;padding:0 16px;border-radius:999px;background:#fff;font-size:14px;color:var(--ink-2);box-shadow:var(--shadow)}
+.chips button[aria-pressed="true"]{background:var(--green);color:#fff}
+.list ul{list-style:none}
+.list li{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(37,45,41,.06)}
+.list li:last-child{border-bottom:0}
+.list li[hidden]{display:none}
+.sw{width:36px;height:36px;border-radius:12px}
+.list b{display:block;font-size:15px;font-weight:600;letter-spacing:-.02em}
+.where{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--ink);margin-top:2px}
+.list small{font-size:12px;color:var(--muted);text-align:right}
+.list small.warn{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="scroll">
+        <div class="status"><span>9:41</span><svg width="74" height="14" viewBox="0 0 74 14" aria-hidden="true"><g fill="#252d29"><rect x="0" y="9" width="3" height="5" rx="1"/><rect x="5" y="6" width="3" height="8" rx="1"/><rect x="10" y="3" width="3" height="11" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><path d="M32 3.5a10 10 0 0 1 13 0l-1.6 1.7a7.6 7.6 0 0 0-9.8 0zM34.6 6.3a6.2 6.2 0 0 1 7.8 0l-1.6 1.7a3.8 3.8 0 0 0-4.6 0zM38.5 12.5l-2-2.1a2.6 2.6 0 0 1 4 0z"/><rect x="50" y="1" width="21" height="12" rx="3.5" fill="none" stroke="#252d29" stroke-opacity=".4"/><rect x="52" y="3" width="17" height="8" rx="2"/></g></svg></div>
+        <header class="navbar"><a class="round" href="mobile-more.html" aria-label="返回所有部门"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M11 3 5 9l6 6" fill="none" stroke="#252d29" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="title"><h1 class="h">物品墙</h1><p>42 件 · 2 件保修快到期</p></div></header>
+
+        <div class="chips" role="group" aria-label="类别"><button aria-pressed="true" data-c="all">全部</button><button aria-pressed="false" data-c="电子">电子</button><button aria-pressed="false" data-c="小玩意">小玩意</button><button aria-pressed="false" data-c="衣物">衣物</button><button aria-pressed="false" data-c="化妆品">化妆品</button><button aria-pressed="false" data-c="厨房">厨房</button></div>
+        <section class="card list" aria-label="物品"><ul id="list"><li data-c="电子"><span class="sw" style="background:var(--pink)"></span><div><b>降噪耳机</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>书桌抽屉</span></div><small class="">保修到 2027.11</small></li><li data-c="电子"><span class="sw" style="background:var(--pink)"></span><div><b>Kindle</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>床头</span></div><small class="warn">保修已过期</small></li><li data-c="小玩意"><span class="sw" style="background:var(--purple)"></span><div><b>香薰蜡烛</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>床头柜</span></div><small class="">还剩一半</small></li><li data-c="小玩意"><span class="sw" style="background:var(--purple)"></span><div><b>拍立得相纸</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>书桌第二个抽屉</span></div><small class="">剩 7 张</small></li><li data-c="衣物"><span class="sw" style="background:var(--blue)"></span><div><b>驼色大衣</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>衣柜左边</span></div><small class="">尺码 S</small></li><li data-c="衣物"><span class="sw" style="background:var(--blue)"></span><div><b>雪地靴</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>门口鞋柜</span></div><small class="">尺码 37</small></li><li data-c="化妆品"><span class="sw" style="background:var(--apricot)"></span><div><b>防晒霜</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>浴室镜柜</span></div><small class="warn">12 月要换</small></li><li data-c="厨房"><span class="sw" style="background:var(--yellow)"></span><div><b>电饭煲</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>厨房台面</span></div><small class="warn">保修 12 月到期</small></li><li data-c="厨房"><span class="sw" style="background:var(--yellow)"></span><div><b>手冲壶</b><span class="where"><svg width="12" height="15" viewBox="0 0 13 16" aria-hidden="true"><path d="M6.5 15s5.5-5.2 5.5-9A5.5 5.5 0 0 0 1 6c0 3.8 5.5 9 5.5 9z" fill="none" stroke="#3e5b4b" stroke-width="1.5"/><circle cx="6.5" cy="6" r="1.8" fill="#3e5b4b"/></svg>厨房上柜</span></div><small class="">滤纸在旁边</small></li></ul></section>
+      </div>
+      <div class="dock"><label class="search"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6.2" fill="none" stroke="#252d29" stroke-width="1.7"/><path d="m13.6 13.6 4 4" stroke="#252d29" stroke-width="1.7" stroke-linecap="round"/></svg><span>东西放哪了…</span></label><button class="fab" aria-label="新建"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CK='<svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+document.querySelector('.chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.chips button').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelectorAll('#list li').forEach(li=>li.hidden=!(b.dataset.c==='all'||li.dataset.c===b.dataset.c));});
+</script>
+<script src="mobile.js?v=6"></script>
+</body>
+</html>
