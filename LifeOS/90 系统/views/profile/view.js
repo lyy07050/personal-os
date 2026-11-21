@@ -102,11 +102,15 @@ function fromOldTables(t) {
   }
   return data;
 }
+const OLD_RE = /\n## (身体数据|尺码|账号密码)\n[\s\S]*?(?=\n## |\n%%|$)/g;
+const dropOldTables = (t) => t.replace(OLD_RE, "").replace(/\n{3,}/g, "\n\n");
+// 旧模板的明文表格里一个字都没填 → 可以直接删
+const oldTablesEmpty = (t) => {
+  const d = fromOldTables(t);
+  return [...d.body, ...d.size].every((r) => !r.a && !r.b) && !/\n## 账号密码\n[\s\S]*?\|[^|\n]*\|\s*[^|\s][^|\n]*\|/.test(t.replace(/\| (网站 \/ App|账号|密码|备注) /g, "| "));
+};
 async function writeNote(name, sealed, dropOld = false) {
-  await app.vault.process(L.fileOf(HERE), (t) => {
-    if (dropOld) t = t.replace(/\n## (身体数据|尺码)\n[\s\S]*?(?=\n## |\n%%|$)/g, "");
-    return V.writeBlob(t, name, sealed);
-  });
+  await app.vault.process(L.fileOf(HERE), (t) => V.writeBlob(dropOld ? dropOldTables(t) : t, name, sealed));
   text = await noteText();
 }
 
@@ -179,7 +183,22 @@ const STYLE = `
 .is-mobile .lifeos-dash .row.c2{grid-template-columns:1fr}`;
 
 const root = L.mount(dv, "", "");
-render();
+// 以前单独的「账号密码」笔记：现在账号密码在「个人档案」这一页里，这篇用不到了
+if (/账号密码\.md$/.test(HERE)) {
+  root.innerHTML = `<style>${STYLE}</style><section class="card"><div class="head"><h2>这篇用不到了</h2></div>
+    <p style="font-size:15px;color:var(--ink-2);line-height:1.7">账号密码现在在「个人档案」那一页里，用第二个密码单独加密。如果这篇下面的表格里填过东西，先搬过去；然后可以把这篇放进废纸篓。</p>
+    <div style="display:flex;gap:8px;margin-top:12px"><button class="btn pri go-p">去个人档案</button><button class="btn sec trash-me">放进废纸篓</button></div></section>`;
+  root.querySelector(".go-p").addEventListener("click", () => L.open("60 个人档案/个人档案"));
+  root.querySelector(".trash-me").addEventListener("click", async () => { await app.vault.trash(L.fileOf(HERE), true); L.notice("旧的账号密码笔记放进废纸篓了"); });
+} else {
+  // 旧模板留下的明文表格：完全空着就马上删掉；填过字的等设密码时搬进加密数据再删
+  if (OLD_RE.test(text) && oldTablesEmpty(text)) {
+    await app.vault.process(L.fileOf(HERE), dropOldTables);
+    text = await noteText();
+  }
+  OLD_RE.lastIndex = 0;
+  render();
+}
 
 // 改表格、加一行、删一行（都在已解锁的那一份数据上）
 root.addEventListener("input", (e) => {

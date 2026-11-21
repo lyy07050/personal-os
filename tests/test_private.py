@@ -89,3 +89,9 @@ def test_vault_uses_strong_settings():
     js = VAULT_JS.read_text(encoding="utf-8")
     assert "PBKDF2" in js and "AES-GCM" in js and "SHA-256" in js
     assert int(re.search(r"ITER = (\d+)", js).group(1)) >= 300000
+
+
+def test_profile_view_cleans_empty_old_tables():
+    js = (VIEWS / "profile/view.js").read_text(encoding="utf-8")
+    assert "oldTablesEmpty" in js and "dropOldTables" in js
+    assert "app.vault.trash(L.fileOf(HERE)" in js  # 旧的「账号密码」笔记：用户点按钮才进废纸篓
