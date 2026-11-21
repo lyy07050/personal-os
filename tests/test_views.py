@@ -106,7 +106,7 @@ def test_reminders():
       {name:"list-open", type:"清单", pinned:false, open:3},
       {name:"note-unpinned", type:"灵感", pinned:false, open:1}
     ]"""
-    assert _lib(f"L.reminders({cards}).map(c => c.name)") == ["pinned-open"]
+    assert _lib(f"L.reminders({cards}).map(c => c.name)") == ["pinned-open", "pinned-done"]
 
 
 def test_lib_parses_same_formats_as_python():
@@ -316,3 +316,10 @@ def test_home_progress_adjustable():
     data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
     assert 'role="slider"' in js and "D.setProgress(" in js
     assert "async function setProgress(" in data and "setProgress," in data
+
+
+def test_inbox_cards_have_pin_toggle():
+    js = (VIEWS / "inbox/view.js").read_text(encoding="utf-8")
+    assert 'class="pinb' in js and "aria-pressed" in js and 'L.setMeta(c.path, "pinned"' in js
+    home = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    assert "c.tasks.length ?" in home  # 没有勾选项的置顶卡也能显示

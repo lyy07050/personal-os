@@ -160,10 +160,13 @@ const html = `
     </section>
     <section class="mod" style="background:#f4f8fe;flex:1;position:relative">
       <div class="mh"><span>Reminder</span></div>
-      <div class="rems">${rem.map((c, ci) => {
+      <div class="rems">${rem.length ? "" : '<p class="rem-empty">在随手记里点卡片右上角的📌，就会钉到这里</p>'}${rem.map((c, ci) => {
+        if (!c.tasks.length) return `<div class="rg" ${ci ? 'style="margin-top:20px"' : ""}>
+          <div class="rt">${L.link(c.path, `<b>${esc(c.title)}</b>`)}</div>
+          ${c.body ? `<p class="rb">${esc(c.body.split("\n").slice(0, 3).join(" · "))}</p>` : ""}</div>`;
         const done = c.tasks.length - c.open, shown = L.doneLast(c.tasks.map((t, ti) => ({ ...t, ti })));
         return `<div class="rg" ${ci ? 'style="margin-top:20px"' : ""}>
-          <div class="rt"><b>${esc(c.title)}</b><small>${done} / ${c.tasks.length}</small></div>
+          <div class="rt">${L.link(c.path, `<b>${esc(c.title)}</b>`)}<small>${c.tasks.length ? `${done} / ${c.tasks.length}` : ""}</small></div>
           <div class="bar"><span style="width:${Math.round(done / c.tasks.length * 100)}%"></span></div>
           <ul>${shown.map((t) => `<li class="${t.done ? "done" : ""}" data-c="${ci}" data-t="${t.ti}"><button class="ck" aria-label="完成">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}</ul>
           </div>`;
@@ -288,6 +291,8 @@ const STYLE = `
 .lifeos-dash .rg li{display:flex;align-items:center;gap:8px;padding:3px 0}
 .lifeos-dash .rg li .ck{width:16px;height:16px;border-radius:4px;border-width:1.3px}
 .lifeos-dash .rg li .ck svg{width:9px}
+.lifeos-dash .rg .rb{font-size:13.5px;color:var(--ink-2);line-height:1.6;margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lifeos-dash .rem-empty{font-size:13px;color:var(--muted);line-height:1.6}
 .lifeos-dash .rg .more{font-size:12px;color:var(--muted)}
 .lifeos-dash .cloth{position:absolute;right:-20px;bottom:-28px;width:200px;pointer-events:none;filter:var(--sh-sticker)}
 .lifeos-dash .todo .head{display:flex;align-items:center;justify-content:space-between}

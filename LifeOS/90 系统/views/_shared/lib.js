@@ -84,7 +84,8 @@
       .sort((a, b) => String(a.date).localeCompare(String(b.date)))
       .slice(0, max);
   // Reminder：置顶、并且还有没勾的项（open = 没勾的任务数）
-  const reminders = (cards) => cards.filter((c) => c.pinned === true && (c.open || 0) > 0);
+  // 首页 Reminder：钉住的卡片都显示（勾完了也留着，取下钉子才消失）
+  const reminders = (cards) => cards.filter((c) => c.pinned === true);
 
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const CK = '<svg width="12" height="10" viewBox="0 0 11 9" aria-hidden="true"><path d="M1 4.6 4 7.5 10 1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';

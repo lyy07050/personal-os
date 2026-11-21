@@ -19,7 +19,7 @@ const word = D.wordOfDay(words);
 const studiedToday = (D.diaries().get(T) || {})["背词"] === true;
 const allCards = await L.cards(dv);
 const events = L.upcomingEvents(allCards, T);
-const rem = L.reminders(allCards)[0];
+const rem = L.reminders(allCards).find((c) => c.tasks.length); // 手机首页只放一张带勾选项的
 
 function spark() {
   const max = Math.max(...money.perDay, 1), ti = money.days.indexOf(T);

@@ -3,7 +3,7 @@ const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
 const esc = L.esc;
 const TYPES = ["活动", "备忘", "灵感", "链接", "清单"];
 const IDEA_BG = ["#e6ede2", "#faf0dc", "#f6e3df"];
-const PIN = '<svg class="pin" width="14" height="14" viewBox="0 0 16 16" aria-label="置顶"><path d="M9.8 1.5 14.5 6.2l-2 .6-2.6 2.6.3 3.4-1.3 1.3L6.3 11.5 2.5 15.3l-.8-.8 3.8-3.8L2.9 8.1l1.3-1.3 3.4.3L10.2 4.5z" fill="#94604b"/></svg>';
+const PIN = '<svg class="pin" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.8 1.5 14.5 6.2l-2 .6-2.6 2.6.3 3.4-1.3 1.3L6.3 11.5 2.5 15.3l-.8-.8 3.8-3.8L2.9 8.1l1.3-1.3 3.4.3L10.2 4.5z" fill="#94604b"/></svg>';
 
 const cards = (await L.cards(dv)).sort((a, b) => b.mtime - a.mtime || b.created.localeCompare(a.created));
 let idea = 0;
@@ -11,7 +11,9 @@ let idea = 0;
 function card(c, i) {
   const bg = c.type === "备忘" ? "#f4f8fe" : c.type === "活动" ? "#fef7de" : c.type === "灵感" ? IDEA_BG[idea++ % 3] : "#fff";
   const when = c.type === "活动" && c.date ? ` · ${L.md(c.date)} ${L.WEEK_CN[L.weekday(c.date)]}` : "";
-  const right = c.pinned ? PIN : esc(c.source);
+  // 右上角：来源 + 钉子按钮。钉住 = 首页 Reminder 里显示这张（待办卡在今日待办里，不用钉）
+  const pinb = c.type === "待办" ? "" : `<button class="pinb${c.pinned ? " on" : ""}" aria-pressed="${c.pinned}" aria-label="${c.pinned ? "从首页取下" : "钉到首页"}" title="${c.pinned ? "已钉到首页，点一下取下" : "钉到首页"}">${PIN}</button>`;
+  const right = `<span class="mr">${c.source ? `<span>${esc(c.source)}</span>` : ""}${pinb}</span>`;
   const tag = c.tags[0] || "";
   let body = "";
   if (c.type === "链接") {
@@ -81,6 +83,12 @@ const STYLE = `
 .lifeos-dash .note.big h3{font-size:24px}
 .lifeos-dash .note .say{font-family:var(--zcool);font-size:27px;line-height:1.55;color:#5c3f33}
 .lifeos-dash .note[hidden]{display:none}
+.lifeos-dash .note .mr{display:flex;align-items:center;gap:8px}
+.lifeos-dash .dash .note .pinb{width:28px;height:28px;margin:-6px -6px -6px 0;padding:0;border-radius:8px;display:grid;place-items:center;background:none;box-shadow:none;opacity:.28;filter:grayscale(1);transition:opacity .15s,filter .15s,background .15s}
+.lifeos-dash .dash .note:hover .pinb{opacity:.55}
+.lifeos-dash .dash .note .pinb:hover{background:rgba(37,45,41,.06);opacity:.9}
+.lifeos-dash .dash .note .pinb.on{opacity:1;filter:none}
+.lifeos-dash .dash .note .pinb:focus-visible{outline:2px solid var(--green);opacity:1}
 .lifeos-dash .note .go{cursor:pointer}
 .is-mobile .lifeos-dash .wall{columns:1}
 .is-mobile .lifeos-dash .filters{flex-wrap:wrap}`;
@@ -103,6 +111,21 @@ root.querySelector(".quick .save").addEventListener("click", async () => {
   await L.newCard(body, mode);
   ta.value = ""; ta.style.height = "";
   L.notice("已存进随手记");
+});
+
+// 钉子：钉到首页 / 从首页取下（写 frontmatter 的 pinned）
+root.querySelector(".wall").addEventListener("click", async (e) => {
+  const b = e.target.closest(".pinb");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const c = cards[+b.closest(".note").dataset.i], on = !c.pinned;
+  c.pinned = on;
+  b.classList.toggle("on", on);
+  b.setAttribute("aria-pressed", on);
+  b.setAttribute("aria-label", on ? "从首页取下" : "钉到首页");
+  b.title = on ? "已钉到首页，点一下取下" : "钉到首页";
+  await L.setMeta(c.path, "pinned", on);
+  L.notice(on ? `${c.title} 钉到首页了` : `${c.title} 从首页取下了`);
 });
 
 // 筛选和搜索
