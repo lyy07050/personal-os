@@ -445,3 +445,9 @@ def test_home_headings_jump_to_inbox_and_activities_delete():
     assert 'data-f="pinned"' in inbox and "inbox-filter" in inbox
     lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
     assert "function goto(" in lib
+
+
+def test_things_edit_dialog():
+    js = (VIEWS / "things/view.js").read_text(encoding="utf-8")
+    assert 'class="itd"' in js and "processFrontMatter" in js and "renameFile" in js
+    assert "L.open(path)" not in js  # 添加物品不再跳去空白笔记

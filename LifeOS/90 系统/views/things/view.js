@@ -33,11 +33,28 @@ const o = {
   arts: [{ file: "things-lantern.png", style: "left:698px;top:-92px;width:346px" }, { file: "things-snuff.png", style: "left:971px;top:39px;width:185px" }],
 };
 
-const card = (i) => `<article class="tile item has-del">${L.delBtn(i.name, `data-p="${esc(i.path)}" data-n="${esc(i.name)}"`, "corner")}${L.link(i.path, `<div class="ph" style="background:${BG[i.category] || "var(--tile)"}"><span class="chip">${esc(i.category)}</span></div><h3>${esc(i.name)}</h3>`)}
+// 点卡片 = 打开编辑小窗口（data-i 是它在 all 里的位置）
+const card = (i) => `<article class="tile item has-del" data-i="${all.indexOf(i)}" role="button" tabindex="0" aria-label="编辑 ${esc(i.name)}">${L.delBtn(i.name, `data-p="${esc(i.path)}" data-n="${esc(i.name)}"`, "corner")}<div class="ph" style="background:${BG[i.category] || "var(--tile)"}"><span class="chip">${esc(i.category)}</span></div><h3>${esc(i.name)}</h3>
   <p class="where">${PIN}${esc(i.location)}</p><dl><dt>购入</dt><dd>${i.bought ? dot(i.bought) : "—"}${i.price !== undefined && i.price !== null && i.price !== "" ? ` · $${esc(i.price)}` : ""}</dd>${third(i)}</dl></article>`;
 
 let byPlace = false;
 const STYLE = `
+.lifeos-dash .item[data-i]{cursor:pointer}
+.lifeos-dash .item[data-i]:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.lifeos-dash dialog.itd{border:0;border-radius:22px;padding:22px 24px;width:min(440px,92vw);background:#fff;color:var(--ink);box-shadow:0 20px 60px rgba(37,45,41,.25)}
+.lifeos-dash dialog.itd::backdrop{background:rgba(37,45,41,.25)}
+.lifeos-dash .itd form{display:grid;grid-template-columns:1fr 1fr;gap:10px 10px}
+.lifeos-dash .itd h3{grid-column:1/-1;font-family:var(--zcool);font-weight:400;font-size:24px;margin:0}
+.lifeos-dash .itd label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.lifeos-dash .itd label.w{grid-column:1/-1}
+.lifeos-dash .itd input,.lifeos-dash .itd select{height:40px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 12px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .itd input[name=n]{font-size:18px;font-weight:500}
+.lifeos-dash .itd .ea{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:6px}
+.lifeos-dash .itd .ea span{flex:1}
+.lifeos-dash .itd .ea button{height:40px;padding:0 18px;border-radius:999px;font-size:14px}
+.lifeos-dash .itd .cancel{background:var(--tile);color:var(--ink-2)}
+.lifeos-dash .itd .go{background:var(--green);color:#fff;font-weight:600}
+.lifeos-dash .itd .open{background:none;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;padding:0 6px!important}
 .lifeos-dash .items{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .lifeos-dash .item{border-radius:22px;padding:24px 24px 26px;min-height:340px;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .lifeos-dash .item:hover{transform:translateY(-2px)}
@@ -74,11 +91,64 @@ root.addEventListener("click", (e) => {
   L.removeWithUndo(root, b.closest(".has-del"), `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p));
 });
 
-// 添加物品：新建一篇物品笔记并打开
-async function addItem() {
-  const k = cat || "小玩意";
-  let path = `30 后勤部/物品/新物品.md`;
-  for (let n = 2; L.fileOf(path); n++) path = `30 后勤部/物品/新物品 ${n}.md`;
-  await app.vault.create(path, `---\ncategory: ${k}\nlocation: \nbought: ${T}\nprice: \nwarranty: \nnote: \n---\n# 新物品\n`);
-  L.open(path);
+// ---------- 编辑 / 添加物品的小窗口 ----------
+// 改的是物品笔记的 frontmatter；名字改了就连笔记一起改名（# 标题也跟着改）
+root.insertAdjacentHTML("beforeend", `<dialog class="itd" aria-label="物品"><form>
+  <h3></h3>
+  <label class="w">名字<input name="n" required></label>
+  <label>类别<select name="c">${L.ITEM_CATEGORIES.map((c) => `<option>${c}</option>`).join("")}</select></label>
+  <label>放在哪<input name="l" placeholder="比如 床头"></label>
+  <label>什么时候买的<input name="b" type="date"></label>
+  <label>价格（$）<input name="p" type="number" step="0.01" min="0" inputmode="decimal"></label>
+  <label>保修到<input name="w" type="date"></label>
+  <label>备注<input name="o" placeholder="尺码 M / 开封 11.02 / 剩余一半"></label>
+  <div class="ea"><button type="button" class="open">打开笔记</button><span></span><button type="button" class="cancel">取消</button><button class="go">保存</button></div></form></dialog>`);
+const itd = root.querySelector("dialog.itd"), itf = itd.querySelector("form");
+let editing = null; // null = 新物品
+function openItem(i) {
+  editing = i || null;
+  itd.querySelector("h3").textContent = i ? "编辑物品" : "添加物品";
+  itd.querySelector(".open").hidden = !i;
+  itf.reset();
+  itf.n.value = i ? i.name : ""; itf.c.value = i ? i.category : (cat || "小玩意"); itf.l.value = i && i.location !== "—" ? i.location : "";
+  itf.b.value = i ? i.bought : T; itf.p.value = i && i.price != null ? i.price : ""; itf.w.value = i ? i.warranty : ""; itf.o.value = i ? i.note : "";
+  itd.showModal(); itf.n.focus();
 }
+function addItem() { openItem(null); }
+itd.querySelector(".cancel").addEventListener("click", () => itd.close());
+itd.querySelector(".open").addEventListener("click", () => { itd.close(); if (editing) L.open(editing.path); });
+itf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = L.safeTitle(itf.n.value).trim();
+  if (!name) return;
+  const v = { category: itf.c.value, location: itf.l.value.trim(), bought: itf.b.value, price: itf.p.value === "" ? "" : Number(itf.p.value), warranty: itf.w.value, note: itf.o.value.trim() };
+  let path = editing ? editing.path : null;
+  if (!editing) {
+    path = `30 后勤部/物品/${name}.md`;
+    for (let n = 2; L.fileOf(path); n++) path = `30 后勤部/物品/${name} ${n}.md`;
+    await app.vault.create(path, `---\ncategory: ${v.category}\n---\n# ${name}\n`);
+  } else if (name !== editing.name) {
+    let to = `30 后勤部/物品/${name}.md`;
+    for (let n = 2; L.fileOf(to); n++) to = `30 后勤部/物品/${name} ${n}.md`;
+    await app.vault.process(L.fileOf(path), (t) => t.replace(`\n# ${editing.name}`, `\n# ${name}`));
+    await app.fileManager.renameFile(L.fileOf(path), to);
+    path = to;
+  }
+  await app.fileManager.processFrontMatter(L.fileOf(path), (fm) => { Object.assign(fm, v); });
+  const it = editing || {};
+  Object.assign(it, { path, name: path.split("/").pop().replace(/\.md$/, ""), category: v.category, location: v.location || "—", bought: v.bought, price: v.price, warranty: v.warranty, note: v.note });
+  if (!editing) { all.unshift(it); if (items !== all && cat === v.category) items.unshift(it); } // 总页面里 items 就是 all，只加一次
+  else if (cat && v.category !== cat) items.splice(items.indexOf(it), 1); // 分页面里改成别的类别就不在这页了
+  itd.close();
+  render();
+  L.notice(editing ? `${it.name} 改好了` : `${it.name} 加进物品墙了`);
+});
+root.addEventListener("click", (e) => {
+  if (e.target.closest(".delb")) return;
+  const c = e.target.closest(".item[data-i]");
+  if (c) openItem(all[+c.dataset.i]);
+});
+root.addEventListener("keydown", (e) => {
+  const c = e.target.closest(".item[data-i]");
+  if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openItem(all[+c.dataset.i]); }
+});

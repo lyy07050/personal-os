@@ -109,7 +109,8 @@ window.app = {
     create: async (p, t) => { files.set(p, t); log("新建 " + p); },
     trash: async (f) => { log("放进废纸篓 " + f.path); },
   },
-  fileManager: { processFrontMatter: async (f, fn) => { const fm = {}; fn(fm); log("属性 " + f.path + " " + JSON.stringify(fm)); } },
+  fileManager: { processFrontMatter: async (f, fn) => { const fm = {}; fn(fm); log("属性 " + f.path + " " + JSON.stringify(fm)); },
+    renameFile: async (f, to) => { log("改名 " + f.path + " → " + to); files.set(to, (await load(f.path)) || ""); } },
   workspace: { openLinkText: (p) => log("打开 " + p) },
 };
 window.moment = () => ({ format: () => TODAY });
