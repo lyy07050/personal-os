@@ -217,15 +217,16 @@
 
   // 在 dv.container 里放一个 .dash 根节点
   // ---------- 日程（10 总部/日程.md 一行一条） ----------
-  const EVENT_RE = /^- (\d{4}-\d{2}-\d{2})(?: ([0-2]\d:[0-5]\d))? (.+?)(?: \[地点::\s*([^\[\]]*?)\])?\s*$/;
+  const EVENT_RE = /^- (\d{4}-\d{2}-\d{2})(?: ([0-2]\d:[0-5]\d))? (.+?)((?: \[(?:地点|类别)::\s*[^\[\]]*?\])*)\s*$/;
   function parseEvent(line) {
     const m = EVENT_RE.exec(line);
     if (!m || isNaN(Date.parse(m[1])) || new Date(m[1]).toISOString().slice(0, 10) !== m[1]) return null;
     if (m[2] && +m[2].slice(0, 2) > 23) return null;
     const title = m[3].trim();
-    return title ? { date: m[1], time: m[2] || "", title, place: (m[4] || "").trim() } : null;
+    const f = fields(m[4] || "");
+    return title ? { date: m[1], time: m[2] || "", title, place: (f["地点"] || "").trim(), kind: (f["类别"] || "").trim() } : null;
   }
-  const formatEvent = (e) => `- ${e.date}${e.time ? " " + e.time : ""} ${String(e.title).split(/\s+/).filter(Boolean).join(" ")}${e.place ? ` [地点:: ${e.place}]` : ""}`;
+  const formatEvent = (e) => `- ${e.date}${e.time ? " " + e.time : ""} ${String(e.title).split(/\s+/).filter(Boolean).join(" ")}${e.place ? ` [地点:: ${e.place}]` : ""}${e.kind ? ` [类别:: ${e.kind}]` : ""}`;
 
   // 今日待办里的待办卡：没做完且（没写日期或日期 ≤ 今天），加上今天勾掉的
   const todoCards = (cards, day) => cards.filter((c) => c.type === "待办" && ((!c.done && (!c.date || c.date <= day)) || c.doneOn === day));

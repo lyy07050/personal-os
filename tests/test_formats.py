@@ -97,3 +97,12 @@ def test_event_roundtrip_odd_text():
     assert parse_event_line(line).title == "买 [礼物] 给妈妈"
     s = "- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen]"
     assert format_event(parse_event_line(s)) == s
+
+
+def test_parse_event_kind():
+    e = parse_event_line("- 2026-11-29 15:00 小组讨论 [地点:: Bahen] [类别:: 学校]")
+    assert e.title == "小组讨论" and e.place == "Bahen" and e.kind == "学校"
+    e = parse_event_line("- 2026-11-29 读书会 [类别:: 社交]")
+    assert e.place == "" and e.kind == "社交"
+    s = "- 2026-11-29 15:00 小组讨论 [地点:: Bahen] [类别:: 学校]"
+    assert format_event(parse_event_line(s)) == s

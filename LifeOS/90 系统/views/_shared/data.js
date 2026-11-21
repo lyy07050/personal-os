@@ -66,7 +66,7 @@
 
   // ---------- 截止 / 事情 / 面试 / 首页待办 ----------
   async function deadlines() {
-    return (await L.lines(dv, DL)).map((l, i) => ({ ...L.parseDeadline(l), line: i })).filter((d) => d.title);
+    return (await L.lines(dv, DL)).map((l, i) => ({ ...L.parseDeadline(l), line: i, raw: l })).filter((d) => d.title);
   }
   const projects = () => dv.pages('"10 总部/项目"').where((p) => p.progress !== undefined).array()
     .map((p) => ({ path: p.file.path, title: p.file.name, progress: Number(p.progress) || 0, status: p.status || "", area: p.area || "" }));
@@ -122,6 +122,21 @@
   async function updateEvent(raw, e) {
     await L.removeLine(EVENTS, raw);
     await addEvent(e);
+  }
+
+  // ---------- 日历上别处来的日程：在原来的地方改 ----------
+  // 作业截止：改 截止日期.md 里那一行（标题、截止时间），返回新的那行
+  async function editDeadline(d, { title, due }) {
+    const row = `- [${d.done ? "x" : " "}] ${title.replace(/[\[\]]/g, "").replace(/\s+/g, " ").trim()} [截止:: ${due || "无"}] [课程:: ${d.course}]`;
+    await L.replaceLine(DL, d.raw, row);
+    return row;
+  }
+  // 活动卡：改标题（卡片里的 # 标题行）和日期
+  async function editCard(path, oldTitle, { title, date }) {
+    const f = L.fileOf(path);
+    if (!f) return;
+    await app.vault.process(f, (t) => t.replace(`\n# ${oldTitle}`, `\n# ${title}`));
+    await L.setMeta(path, "date", date);
   }
 
   // ---------- 待办卡（随手记里 type: 待办） ----------
@@ -345,7 +360,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, updateEvent, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, updateEvent, editDeadline, editCard, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
     food, shopping, eat, addFood, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setGoalHome, setHabit, bodyOf, notes, courses, things,
   };

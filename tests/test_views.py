@@ -187,7 +187,7 @@ def test_mobile_plus_menu():
     assert "10 总部/手机/冰箱" in text
 
 
-EVENT_LINES = ["- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen]", "- 2026-11-29 和朋友吃饭", "- 11-29 吃饭", "- 2026-11-29 25:00 吃饭", "- 2026-11-29"]
+EVENT_LINES = ["- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen]", "- 2026-11-29 读书会 [地点:: 家] [类别:: 社交]", "- 2026-11-29 和朋友吃饭", "- 11-29 吃饭", "- 2026-11-29 25:00 吃饭", "- 2026-11-29"]
 
 
 def test_lib_event_matches_python():
@@ -200,8 +200,9 @@ def test_lib_event_matches_python():
         if p is None:
             assert j is None, line
         else:
-            assert j == {"date": p.date.isoformat(), "time": p.time or "", "title": p.title, "place": p.place}, line
-    assert _lib(f'L.formatEvent(L.parseEvent({json.dumps(EVENT_LINES[0], ensure_ascii=False)}))') == EVENT_LINES[0]
+            assert j == {"date": p.date.isoformat(), "time": p.time or "", "title": p.title, "place": p.place, "kind": p.kind}, line
+    for line in EVENT_LINES[:2]:
+        assert _lib(f'L.formatEvent(L.parseEvent({json.dumps(line, ensure_ascii=False)}))') == line
 
 
 def test_safe_title():
@@ -422,3 +423,13 @@ def test_goals_toggle_each_to_home():
     assert "to-home" not in rv and 'class="home-sw' in rv and "D.setGoalHome(" in rv and "aria-pressed" in rv
     data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
     assert "async function setGoalHome(" in data and "首页::" in data
+
+
+
+def test_every_calendar_item_editable():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    for kind in ('"截止"', '"活动"', '"面试"', '"课"'):
+        assert kind in js, kind
+    assert "EVENT_KINDS" in js and "从日历隐藏" in js and "hide_in_calendar" in js
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert "async function editDeadline(" in data

@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from lifeos_formats import (CATEGORIES, FOOD_KINDS, INBOX_TYPES, ITEM_CATEGORIES, NOTE_CATEGORIES, PLACES, STAGES,
-                            EVENTS_PATH, fields, frontmatter, parse_day, parse_deadline_line, parse_event_line, parse_food_line,
+                            EVENTS_PATH, EVENT_KINDS, fields, frontmatter, parse_day, parse_deadline_line, parse_event_line, parse_food_line,
                             parse_ledger_line)
 
 SKIP_DIRS = {"60 个人档案", "课件", ".obsidian", ".trash"}
@@ -98,8 +98,16 @@ def _check_inbox(path: Path, text: str) -> list[LintError]:
 
 def _check_events(path: Path, lines: list[str]) -> list[LintError]:
     """日程.md：每个 `- ` 开头的行都要是 `- YYYY-MM-DD[ HH:MM] 事情[ [地点:: …]]`。"""
-    return [LintError(path, i, "日程这一行要写成 - YYYY-MM-DD[ HH:MM] 事情")
-            for i, line in enumerate(lines, 1) if line.startswith("- ") and parse_event_line(line) is None]
+    out = []
+    for i, line in enumerate(lines, 1):
+        if not line.startswith("- "):
+            continue
+        e = parse_event_line(line)
+        if e is None:
+            out.append(LintError(path, i, "日程这一行要写成 - YYYY-MM-DD[ HH:MM] 事情"))
+        elif e.kind and e.kind not in EVENT_KINDS:
+            out.append(LintError(path, i, f"类别只能是：{'、'.join(EVENT_KINDS)}"))
+    return out
 
 
 def lint_file(root: Path, path: Path) -> list[LintError]:

@@ -11,6 +11,7 @@ ITEM_CATEGORIES = ("电子", "小玩意", "衣物", "化妆品", "厨房")
 NOTE_CATEGORIES = ("生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职")
 INBOX_TYPES = ("活动", "备忘", "灵感", "链接", "清单", "待办")
 EVENTS_PATH = "10 总部/日程.md"
+EVENT_KINDS = ("生活", "学校", "求职", "社交", "其他")  # 自己加的日程的类别 = 颜色
 STAGES = ("想投", "已投递", "面试中", "Offer")
 PLACES = ("冷藏", "冷冻", "常温")
 FOOD_KINDS = ("生鲜", "水果", "调味料", "粉面速食", "药材", "零食")
@@ -119,13 +120,14 @@ class Event:
     time: str | None
     title: str
     place: str = ""
+    kind: str = ""
 
 
-_EVENT = re.compile(r"^- (\d{4}-\d{2}-\d{2})(?: ([0-2]\d:[0-5]\d))? (.+?)(?: \[地点::\s*([^\[\]]*?)\])?\s*$")
+_EVENT = re.compile(r"^- (\d{4}-\d{2}-\d{2})(?: ([0-2]\d:[0-5]\d))? (.+?)((?: \[(?:地点|类别)::\s*[^\[\]]*?\])*)\s*$")
 
 
 def parse_event_line(line: str) -> Event | None:
-    """日程一行：`- 2026-11-29[ 15:00] 事情[ [地点:: 地点]]`。"""
+    """日程一行：`- 2026-11-29[ 15:00] 事情[ [地点:: 地点]][ [类别:: 学校]]`。"""
     m = _EVENT.match(line)
     if not m:
         return None
@@ -134,12 +136,14 @@ def parse_event_line(line: str) -> Event | None:
     if day is None or (time and int(time[:2]) > 23):
         return None
     title = m.group(3).strip()
-    return Event(day, time, title, (m.group(4) or "").strip()) if title else None
+    f = fields(m.group(4) or "")
+    return Event(day, time, title, f.get("地点", "").strip(), f.get("类别", "").strip()) if title else None
 
 
 def format_event(e: Event) -> str:
     title = " ".join(e.title.split())
-    return f"- {e.date.isoformat()}{' ' + e.time if e.time else ''} {title}" + (f" [地点:: {e.place}]" if e.place else "")
+    return (f"- {e.date.isoformat()}{' ' + e.time if e.time else ''} {title}" + (f" [地点:: {e.place}]" if e.place else "")
+            + (f" [类别:: {e.kind}]" if e.kind else ""))
 
 
 def format_deadline(d: Deadline) -> str:

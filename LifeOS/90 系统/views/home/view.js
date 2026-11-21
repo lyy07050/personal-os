@@ -12,7 +12,7 @@ const esc = L.esc;
 const DL_PATH = D.DL;
 const deadlines = await D.deadlines();
 const projects = D.projects().filter((p) => p.status !== "完成" && p.progress < 100); // 做完的事情不再占位置（笔记还在，标成「完成」）
-const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path }));
+const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path, company: i.company }));
 let myEvents = await D.events(); // 10 总部/日程.md
 const todos = L.doneLast(await D.todos()); // 没做的在前、做完的在后（只改显示顺序）
 
@@ -32,37 +32,40 @@ const allCards = await L.cards(dv);
 const events = allCards.filter((c) => c.type === "活动" && c.date && c.date >= T).sort((a, b) => a.date.localeCompare(b.date)); // 全部未来活动，卡片里滑着看
 const rem = L.reminders(allCards);
 
-const courses = dv.pages('"45 教务处/课程"').where((p) => p.next_class).array()
+const courses = dv.pages('"45 教务处/课程"').where((p) => p.next_class && p.hide_in_calendar !== true).array()
   .map((p) => ({ code: p.course || p.file.folder.split("/").pop(), when: String(p.next_class), path: p.file.path }));
 
 // ---------- 日程（仿苹果日历周视图，可以翻周） ----------
 let offset = 0; // 0 = 本周；只记在内存里，重新打开回到本周
 const daysOf = (off) => [...Array(7)].map((_, i) => L.addDays(mon, off * 7 + i));
 const hm2h = (hm) => +hm.slice(0, 2) + +hm.slice(3, 5) / 60;
-// 日历上每个日程的来历：自己加的（mine，可改可删）或别处来的（只能打开来源）
+// 日历上每个日程的来历：kind 决定点开后能改什么；obj 是原来的数据（改完直接改它再重画）
+// 自己加的日程按「类别」上色，像苹果日历的不同日历
+const EVENT_KINDS = [["生活", "y1"], ["学校", "b1"], ["求职", "r1"], ["社交", "g1"], ["其他", "p1"]];
+const kindCls = (k) => (EVENT_KINDS.find(([n]) => n === k) || EVENT_KINDS[0])[1];
 let refs = [];
-const ref = (kind, title, when, path) => refs.push({ kind, title, when, path }) - 1;
+const ref = (kind, obj) => refs.push({ kind, obj }) - 1;
 function weekCal(days) {
   refs = [];
   const allDay = days.map(() => []);
   const timed = [];
   const at = (d) => days.indexOf(d);
   deadlines.filter((d) => d.due && days.includes(d.due.slice(0, 10)))
-    .forEach((d) => allDay[at(d.due.slice(0, 10))].push({ c: "r1", t: `${d.title.replace(d.course, "").trim() || d.title} 截止`, x: ref("截止", d.title, d.due.replace(" ", " · "), DL_PATH) }));
-  allCards.filter((c) => c.type === "活动" && days.includes(c.date)).forEach((c) => allDay[at(c.date)].push({ c: "g1", t: c.title, x: ref("活动", c.title, L.md(c.date), c.path) }));
+    .forEach((d) => allDay[at(d.due.slice(0, 10))].push({ c: "r1", t: `${d.title.replace(d.course, "").trim() || d.title} 截止`, x: ref("截止", d) }));
+  allCards.filter((c) => c.type === "活动" && days.includes(c.date)).forEach((c) => allDay[at(c.date)].push({ c: "g1", t: c.title, x: ref("活动", c) }));
   myEvents.filter((e) => days.includes(e.date)).forEach((e) => {
-    const x = refs.push({ mine: e }) - 1;
-    if (e.time) timed.push({ d: at(e.date), h: hm2h(e.time), c: "y1 mine", t: `${esc(e.title)}<br>${e.time}`, x });
-    else allDay[at(e.date)].push({ c: "y1 mine", t: e.title, x });
+    const x = ref("mine", e), c = `${kindCls(e.kind)} mine`;
+    if (e.time) timed.push({ d: at(e.date), h: hm2h(e.time), c, t: `${esc(e.title)}<br>${e.time}`, x });
+    else allDay[at(e.date)].push({ c, t: e.title, x });
   });
-  if (days.includes(T)) allDay[6].push({ c: "p1", t: "周复盘", x: ref("每周复盘", `Week ${+L.isoWeek(T).slice(6)}`, "每周日", `10 总部/复盘/${L.isoWeek(T)}`) });
+  if (days.includes(T)) allDay[6].push({ c: "p1", t: "周复盘", x: ref("每周复盘", { path: `10 总部/复盘/${L.isoWeek(T)}` }) });
   courses.forEach((c) => {
     const m = /周([一二三四五六日])\s*(\d{1,2}):(\d{2})/.exec(c.when);
-    if (m) timed.push({ d: "一二三四五六日".indexOf(m[1]), h: +m[2] + +m[3] / 60, c: "b1", t: `${esc(c.code)}<br>${m[2]}:${m[3]}`, x: ref("课", c.code, c.when, c.path) });
+    if (m) timed.push({ d: "一二三四五六日".indexOf(m[1]), h: +m[2] + +m[3] / 60, c: "b1", t: `${esc(c.code)}<br>${m[2]}:${m[3]}`, x: ref("课", c) });
   });
   interviews.forEach((i) => {
     const d = at(i.when.slice(0, 10)), hm = i.when.slice(11, 16);
-    if (d >= 0 && hm) timed.push({ d, h: hm2h(hm), c: "r1", t: `面试<br>${hm}`, x: ref("面试", i.title, `${L.md(i.when.slice(0, 10))} ${hm}`, i.path) });
+    if (d >= 0 && hm) timed.push({ d, h: hm2h(hm), c: "r1", t: `面试<br>${hm}`, x: ref("面试", i) });
   });
   const ti = at(T);
   let h = "<div></div>" + days.map((d, i) => `<div class="dh ${i === ti ? "today" : ""} ${i > 4 ? "wkend" : ""}">${L.WEEK_CN[i]}${i === ti ? " · Today" : ""}<b>${+d.slice(8)}</b></div>`).join("");
@@ -245,18 +248,31 @@ const STYLE = `
 .lifeos-dash dialog.evd::backdrop{background:rgba(37,45,41,.22)}
 .lifeos-dash .evd .eh{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink-2);margin-bottom:10px}
 .lifeos-dash .evd .ex{width:30px;height:30px;border-radius:8px;background:none;color:var(--ink-2)}
-.lifeos-dash .evd .mineonly{display:grid;gap:8px}
-.lifeos-dash .evd [hidden]{display:none}
-.lifeos-dash .evd .r{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lifeos-dash .evd .fs{display:grid;gap:8px}
+.lifeos-dash .evd .r{display:flex;gap:8px}
+.lifeos-dash .evd .r>*{flex:1}
+.lifeos-dash .evd select{height:40px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 10px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .evd .kinds{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.lifeos-dash .evd .kd{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:999px;border-left:0;font-size:13px;cursor:pointer;opacity:.6;transition:opacity .15s,box-shadow .15s}
+.lifeos-dash .evd .kd input{position:absolute;opacity:0;pointer-events:none}
+.lifeos-dash .evd .kd:has(input:checked){opacity:1;box-shadow:0 0 0 2px currentColor inset}
+.lifeos-dash .evd .kd:has(input:focus-visible){outline:2px solid var(--green);outline-offset:2px}
+.lifeos-dash .evd .hint{font-size:13px;color:var(--muted);margin:2px 0 0}
+.lifeos-dash .evd .hide{background:var(--tile);color:var(--ink-2)}
+.lifeos-dash .evd .open{background:none!important;color:var(--ink-2)!important;font-weight:400!important;padding:0 8px!important;text-decoration:underline;text-underline-offset:3px}
+.lifeos-dash .evd [hidden]{display:none!important}
+.lifeos-dash .evd .kd.y1{background:#fbf3dc;color:#6f5420}
+.lifeos-dash .evd .kd.b1{background:#e7f1fb;color:#30577d}
+.lifeos-dash .evd .kd.r1{background:#fbe9e7;color:#8e3f33}
+.lifeos-dash .evd .kd.g1{background:#e8f1e4;color:#3e5b4b}
+.lifeos-dash .evd .kd.p1{background:#efe9f6;color:#56417a}
 .lifeos-dash .evd input{height:40px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 12px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
-.lifeos-dash .evd .mineonly input[name=n]{font-size:18px;font-weight:500}
-.lifeos-dash .evd .ot{font-family:var(--zcool);font-weight:400;font-size:24px;margin:0 0 6px}
-.lifeos-dash .evd .ow{font-size:15px;color:var(--ink-2);margin:0}
+.lifeos-dash .evd input[name=n]{font-size:18px;font-weight:500}
 .lifeos-dash .evd .ea{display:flex;align-items:center;gap:8px;margin-top:16px}
 .lifeos-dash .evd .ea span{flex:1}
 .lifeos-dash .evd .ea button{height:38px;padding:0 18px;border-radius:999px;font-size:14px}
 .lifeos-dash .evd .del{background:#f6e3df;color:#8f3f31}
-.lifeos-dash .evd .save,.lifeos-dash .evd .open{background:var(--green);color:#fff;font-weight:600}
+.lifeos-dash .evd .save{background:var(--green);color:#fff;font-weight:600}
 .lifeos-dash .cal .top .nav{width:28px;height:28px;border-radius:50%;font-size:18px;line-height:26px;color:var(--ink-2);transition:background .2s}
 .lifeos-dash .cal .top .nav:hover{background:var(--sage)}
 .lifeos-dash .cal .top .wl{min-width:150px;text-align:center}
@@ -443,48 +459,120 @@ evf.addEventListener("submit", async (e) => {
   redraw();
   L.notice(`${title} 加进日程了`);
 });
-// 像苹果日历：点空白处 → 在那天那个钟点加日程；点日程 → 小窗口（自己加的可以改、删；别处来的显示详情和「打开」）
-cal.insertAdjacentHTML("beforeend", `<dialog class="evd" aria-label="日程"><form method="dialog" class="evdf">
+// 像苹果日历：点空白处 → 在那天那个钟点加日程；点任何日程 → 小窗口里改、删（改的是它原来所在的地方）
+//   自己加的：事情、日期、时间、地点、类别（颜色），可删
+//   作业截止：标题、日期、时间，可删（删掉 截止日期.md 那一行）
+//   活动卡：标题、日期，可删（卡片进废纸篓）
+//   面试：公司、日期、时间，可删（面试笔记进废纸篓）
+//   课：课程名、星期几、时间；不删，只能「从日历隐藏」
+//   周复盘：每周日的提醒，只能打开
+const WD = "一二三四五六日";
+cal.insertAdjacentHTML("beforeend", `<dialog class="evd" aria-label="日程"><form class="evdf">
   <div class="eh"><span class="ek"></span><button type="button" class="ex" aria-label="关闭">✕</button></div>
-  <div class="mineonly"><input name="n" aria-label="事情" required><div class="r"><input name="d" type="date" aria-label="日期" required><input name="t" type="time" aria-label="时间（不填 = 全天）"></div><input name="p" placeholder="地点（可不填）" aria-label="地点"></div>
-  <div class="other"><h3 class="ot"></h3><p class="ow"></p></div>
-  <div class="ea"><button type="button" class="del">删除</button><span></span><button type="button" class="open">打开</button><button class="save">保存</button></div></form></dialog>`);
+  <div class="fs">
+    <input name="n" aria-label="标题" required>
+    <div class="r"><input name="d" type="date" aria-label="日期"><select name="w" aria-label="星期几">${[...WD].map((x) => `<option value="${x}">周${x}</option>`).join("")}</select><input name="t" type="time" aria-label="时间"></div>
+    <input name="p" placeholder="地点（可不填）" aria-label="地点">
+    <div class="kinds" role="radiogroup" aria-label="类别">${EVENT_KINDS.map(([k, c]) => `<label class="kd ${c}"><input type="radio" name="k" value="${k}"><span>${k}</span></label>`).join("")}</div>
+    <p class="hint"></p>
+  </div>
+  <div class="ea"><button type="button" class="del">删除</button><button type="button" class="hide">从日历隐藏</button><button type="button" class="open">打开原笔记</button><span></span><button class="save">保存</button></div></form></dialog>`);
 const evd = cal.querySelector("dialog.evd"), evdf = evd.querySelector("form"), $e = (s) => evd.querySelector(s);
 let editing = null, editingEl = null;
+// 每种日程：显示哪些栏、标题叫什么、能不能删 / 隐藏
+const KIND_UI = {
+  mine: { label: "我的日程", n: "事情", show: ["n", "d", "t", "p", "kinds"], del: true },
+  截止: { label: "作业截止", n: "作业", show: ["n", "d", "t"], del: true, open: true },
+  活动: { label: "活动（随手记卡片）", n: "活动", show: ["n", "d"], del: true, open: true },
+  面试: { label: "面试", n: "公司", show: ["n", "d", "t"], del: true, open: true },
+  课: { label: "课（每周）", n: "课程", show: ["n", "w", "t"], hide: true, open: true, hint: "课每周重复，改的是下次上课的时间" },
+  每周复盘: { label: "每周复盘", n: "", show: [], open: true, hint: "每周日自动出现的提醒，打开就能写本周复盘" },
+};
 function openEv(el) {
   const r = refs[+el.dataset.x];
   if (!r) return;
   editingEl = el; editing = r;
-  const mine = !!r.mine;
-  $e(".mineonly").hidden = !mine; $e(".other").hidden = mine;
-  $e(".del").hidden = $e(".save").hidden = !mine; $e(".open").hidden = mine;
-  if (mine) {
-    $e(".ek").textContent = "我的日程";
-    evdf.n.value = r.mine.title; evdf.d.value = r.mine.date; evdf.t.value = r.mine.time || ""; evdf.p.value = r.mine.place || "";
-  } else {
-    $e(".ek").textContent = r.kind; $e(".ot").textContent = r.title; $e(".ow").textContent = r.when || "";
+  const ui = KIND_UI[r.kind], o = r.obj;
+  $e(".ek").textContent = ui.label;
+  for (const k of ["n", "d", "w", "t", "p"]) evdf[k].hidden = !ui.show.includes(k);
+  $e(".kinds").hidden = !ui.show.includes("kinds");
+  $e(".r").hidden = !["d", "w", "t"].some((k) => ui.show.includes(k));
+  evdf.n.placeholder = ui.n; evdf.n.setAttribute("aria-label", ui.n || "标题");
+  $e(".del").hidden = !ui.del; $e(".hide").hidden = !ui.hide; $e(".open").hidden = !ui.open; $e(".save").hidden = !ui.show.length;
+  $e(".hint").textContent = ui.hint || ""; $e(".hint").hidden = !ui.hint;
+  evdf.reset();
+  if (r.kind === "mine") {
+    evdf.n.value = o.title; evdf.d.value = o.date; evdf.t.value = o.time || ""; evdf.p.value = o.place || "";
+    (evdf.querySelector(`input[name=k][value="${o.kind || "生活"}"]`) || evdf.querySelector("input[name=k]")).checked = true;
+  } else if (r.kind === "截止") {
+    evdf.n.value = o.title; evdf.d.value = (o.due || "").slice(0, 10); evdf.t.value = (o.due || "").slice(11, 16);
+  } else if (r.kind === "活动") {
+    evdf.n.value = o.title; evdf.d.value = o.date;
+  } else if (r.kind === "面试") {
+    evdf.n.value = o.company || o.title.replace(/ 面试$/, ""); evdf.d.value = o.when.slice(0, 10); evdf.t.value = o.when.slice(11, 16);
+  } else if (r.kind === "课") {
+    const m = /周([一二三四五六日])\s*(\d{1,2}):(\d{2})/.exec(o.when) || [];
+    evdf.n.value = o.code; evdf.w.value = m[1] || "一"; evdf.t.value = m[2] ? `${m[2].padStart(2, "0")}:${m[3]}` : "";
   }
   evd.showModal();
-  (mine ? evdf.n : $e(".open")).focus();
+  (ui.show.length ? evdf.n : $e(".open")).focus();
 }
 $e(".ex").addEventListener("click", () => evd.close());
-$e(".open").addEventListener("click", () => { evd.close(); if (editing && editing.path) L.open(editing.path); });
+$e(".open").addEventListener("click", () => { evd.close(); const o = editing && editing.obj; if (o && o.path) L.open(o.path); });
 evdf.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!editing || !editing.mine) return;
-  const title = evdf.n.value.trim(), date = evdf.d.value;
-  if (!title || !date) return;
-  await D.updateEvent(editing.mine.raw, { date, time: evdf.t.value, title, place: evdf.p.value.trim() });
+  if (!editing) return;
+  const r = editing, o = r.obj, title = evdf.n.value.replace(/\s+/g, " ").trim();
+  if (!title) return;
+  const date = evdf.d.value, time = evdf.t.value;
+  if (r.kind === "mine") {
+    if (!date) return;
+    const kind = (evdf.querySelector("input[name=k]:checked") || {}).value || "";
+    await D.updateEvent(o.raw, { date, time, title, place: evdf.p.value.trim(), kind: kind === "生活" && !o.kind ? "" : kind });
+    myEvents = await D.events();
+  } else if (r.kind === "截止") {
+    const due = date ? `${date} ${time || "23:59"}` : "";
+    o.raw = await D.editDeadline(o, { title, due }); o.title = title; o.due = due || null;
+  } else if (r.kind === "活动") {
+    if (!date) return;
+    await D.editCard(o.path, o.title, { title, date }); o.title = title; o.date = date;
+  } else if (r.kind === "面试") {
+    const when = `${date}${time ? " " + time : ""}`;
+    await L.setMeta(o.path, "company", title); await L.setMeta(o.path, "date", when);
+    o.company = title; o.title = `${title} 面试`; o.when = when;
+  } else if (r.kind === "课") {
+    const when = `周${evdf.w.value} ${time || "09:00"}`;
+    await L.setMeta(o.path, "course", title); await L.setMeta(o.path, "next_class", when);
+    o.code = title; o.when = when;
+  }
   evd.close();
-  myEvents = await D.events();
   redraw();
   L.notice(`${title} 改好了`);
 });
+// 删除：变淡 4 秒可撤销，时间到了在原来的地方删掉
 $e(".del").addEventListener("click", () => {
-  if (!editing || !editing.mine) return;
-  const ev = editing.mine, el = editingEl;
+  if (!editing) return;
+  const r = editing, o = r.obj, el = editingEl;
   evd.close();
-  L.removeWithUndo(root, el, `「${ev.title}」日程删掉了`, async () => { await L.removeLine(D.EVENTS, ev.raw); myEvents = await D.events(); });
+  const drop = (arr) => { const i = arr.indexOf(o); if (i >= 0) arr.splice(i, 1); };
+  const name = r.kind === "面试" ? o.title : o.title;
+  const commit = {
+    mine: async () => { await L.removeLine(D.EVENTS, o.raw); myEvents = await D.events(); },
+    截止: async () => { await L.removeLine(DL_PATH, o.raw); drop(deadlines); },
+    活动: async () => { await L.trashFile(o.path); drop(allCards); },
+    面试: async () => { await L.trashFile(o.path); drop(interviews); },
+  }[r.kind];
+  if (commit) L.removeWithUndo(root, el, `「${name}」删掉了`, commit);
+});
+// 课：不删笔记，只是不在日历上显示（课程主页加 hide_in_calendar: true，想恢复就在笔记里删掉这行）
+$e(".hide").addEventListener("click", async () => {
+  if (!editing || editing.kind !== "课") return;
+  const o = editing.obj;
+  evd.close();
+  await L.setMeta(o.path, "hide_in_calendar", true);
+  courses.splice(courses.indexOf(o), 1);
+  redraw();
+  L.notice(`${o.code} 不在日历上显示了`);
 });
 const grid = cal.querySelector(".week");
 grid.addEventListener("click", (e) => {
