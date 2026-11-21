@@ -1,7 +1,7 @@
 # 人生 OS · Claude Code 工作说明
 
 这个项目是 Charlotte 的 Obsidian 仓库 `LifeOS/`，加上仓库外的工具 `tools/` 和测试 `tests/`。
-产品与安全规则见 `PRODUCT.md`，视觉规则见 `DESIGN.md`，搭建计划见 `docs/superpowers/plans/2026-11-20-life-os-build.md`。
+产品与安全规则见 `PRODUCT.md`，视觉规则见 `DESIGN.md`，每个页面的加、改、删见 `docs/interactions.md`，搭建计划见 `docs/superpowers/plans/2026-11-20-life-os-build.md`。
 用中文回复。
 
 ## 安全（最高优先级）
@@ -20,7 +20,14 @@
 - 截止：`LifeOS/45 教务处/截止日期.md`，`- [ ] DATA 101 作业 4 [截止:: 2026-11-18 23:59] [课程:: DATA 101]`
 - 随手记卡片：`LifeOS/00 随手记/` 一张一篇，frontmatter `type`（活动 / 备忘 / 灵感 / 链接 / 清单）、`pinned`、`source`，活动另有 `date: YYYY-MM-DD`
 - 知识卡：`LifeOS/40 研发部/知识卡/` 一张一篇，frontmatter `category`（生活小知识 / 体态 / 变美 / 多伦多生活 / 回国吃喝玩乐 / 学习 / 求职，只放一个）、`source`
-- 英语：`LifeOS/40 研发部/英语/单词本.md`，每行 `front::back`，文件带 `#flashcards`
+- 英语：`LifeOS/40 研发部/英语/单词本.md`，每行 `front::back`，文件带 `#flashcards`；行尾的 `<!--SR:…-->` 是复习记录，改单词时原样保留
+- 日程：`LifeOS/10 总部/日程.md`，`- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen] [类别:: 社交]`；全天不写时间；地点、类别都可不写，类别只用 生活 / 学校 / 求职 / 社交 / 其他（不写 = 生活）；Quercus 同步只写 `<!-- quercus:start -->` 和 `<!-- quercus:end -->` 之间
+- 待办卡：随手记卡片 `type: 待办`，`done: true/false`，可选 `date`（哪天做）、`done_on`（哪天勾的）
+- 订阅：`LifeOS/20 财务部/订阅.md`，`- Spotify 学生 [金额:: 6.49] [周期:: 月] [扣款日:: 3] [分类:: 娱乐] [方式:: 信用卡] [记到:: 2026-11]`；年付 `[周期:: 年] [扣款日:: 11-15]`；`记到` 是已自动记进账本的最后一个月，不要手动改
+- 事情：`LifeOS/10 总部/项目/<名字>.md`，frontmatter `progress`（0–100）、`status`（未开始 / 进行中 / 完成）、`area`（school / career / money / english / errands / life）
+- 复盘三件要事：`- [ ] 事情 [来源:: 复盘]`，放进首页待办的那条末尾加 ` [首页:: 是]`
+- 课程主页：`next_class: 周一 14:00`；不想在日历上显示就加 `hide_in_calendar: true`
+- 个人档案：内容是页面加密后写的 `%% lifeos-vault:profile v1.… %%` / `%% lifeos-vault:accounts v1.… %%`，**不读、不改、不解释**这个文件夹里的任何东西
 
 ## 指令
 
