@@ -35,7 +35,7 @@ const html = L.banner(o) + `<div class="stack">
   <section class="group boxes" aria-label="食物收纳">${L.FOOD_KINDS.map(box).join("")}</section>
   <section class="card shop" aria-label="购物清单">
     <div class="head" style="margin-bottom:6px"><h2>购物清单</h2>${L.link(SHOP.replace(/\.md$/, ""), "打开清单", "note")}</div>
-    <ul class="list">${shop.map((s, i) => `<li data-i="${i}" class="${s.done ? "done" : ""}"><button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(s.text.split(/\s/)[0], 40)}</span><span class="t">${esc(s.text)}</span></li>`).join("")}</ul>
+    <ul class="list">${L.doneLast(shop.map((s, i) => ({ ...s, i }))).map((s) => `<li data-i="${s.i}" class="${s.done ? "done" : ""}"><button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(s.text.split(/\s/)[0], 40)}</span><span class="t">${esc(s.text)}</span></li>`).join("")}</ul>
   </section>
   <section class="card" aria-label="今天可以做">
     <div class="head"><h2>今天可以做</h2></div>
@@ -95,16 +95,20 @@ root.querySelectorAll(".addf").forEach((form) => form.addEventListener("submit",
 }));
 
 // 吃完 → 打勾 + 进购物清单
+// 每个分类框一页 5 样，多了用 ‹ › 翻
+root.querySelectorAll(".box > ul").forEach((ul) => L.pager(ul, 5));
+
 root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEventListener("click", async () => {
   const f = food.find((x) => x.line === +li.dataset.l);
   li.classList.add("gone"); li.querySelector(".eat").remove();
   await D.eat(f);
   const ul = root.querySelector(".shop .list"), n = document.createElement("li");
   n.innerHTML = `<button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(f.name, 40)}</span><span class="t">${esc(f.name)}</span>`;
-  ul.appendChild(n);
+  ul.insertBefore(n, ul.querySelector(":scope > li.done")); // 放在「还没买」的最后
 }));
 
 root.querySelectorAll(".shop li[data-i]").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
   if (li.classList.toggle("done")) L.stamp(li.querySelector(".ck"));
+  L.sinkDone(li);
   await L.toggleTaskAt(SHOP, shop[+li.dataset.i].line);
 }));

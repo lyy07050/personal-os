@@ -53,7 +53,7 @@ if (section === "term") {
     const count = files.filter((f) => f.course === c.code).length;
     return `<div class="tile course">${L.link(c.path, `<div class="code" style="background:${CODE_BG[i % CODE_BG.length]}">${esc(c.code)}</div>`)}<div class="body"><h3>${esc(c.name)}</h3><dl><dt>下次课</dt><dd>${esc(c.next)}</dd><dt>截止</dt><dd class="${n !== null && n <= 0 ? "warn" : ""}">${next ? `${esc(next.title.replace(c.code, "").trim())} · ${n === 0 ? "今晚" : L.md(next.due)}` : "—"}</dd><dt>课件</dt><dd>${count} 个</dd></dl></div></div>`;
   }).join("")}</section>
-  <section class="card tl"><div class="head"><h2>截止时间线</h2>${L.link("45 教务处/教务面板/截止日期", "全部 →", "note")}</div><ul class="list">${upcoming.slice(0, 4).map((d) => tlItem(d)).join("")}</ul></section>
+  <section class="card tl"><div class="head"><h2>截止时间线</h2>${L.link("45 教务处/教务面板/截止日期", "全部 →", "note")}</div><ul class="list tl-scroll">${upcoming.map((d) => tlItem(d)).join("")}</ul></section>
   <section class="card files"><div class="head"><h2>最近下载的课件</h2></div><ul class="list">${files.slice(0, 4).map(fileItem).join("")}</ul></section>`;
 } else if (section === "deadlines") {
   const past = dls.filter((d) => d.done || !d.due || d.due.slice(0, 10) < T);
@@ -70,6 +70,8 @@ if (section === "term") {
 }
 
 const STYLE = `
+.lifeos-dash .tl .list{max-height:420px}
+.lifeos-dash .tl .tl-scroll{max-height:330px}
 .lifeos-dash .courses{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px}
 .lifeos-dash .course{min-height:300px;border-radius:22px;overflow:hidden;padding:0}
 .lifeos-dash .course .code{height:92px;display:flex;align-items:center;padding:0 24px;font-family:"Crimson Text",serif;font-weight:600;font-size:39px;color:rgba(37,45,41,.72)}
@@ -95,10 +97,12 @@ const STYLE = `
 .is-mobile .lifeos-dash .tl li{grid-template-columns:80px 1fr;row-gap:6px}`;
 
 const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE);
+root.querySelectorAll(".tl .list").forEach((ul) => L.scrolly(ul)); // 时间线在卡片里滑
 L.wireBanner(root, o);
 root.querySelectorAll(".tl li .ck").forEach((ck) => ck.addEventListener("click", async () => {
   const li = ck.closest("li");
   if (li.classList.toggle("done")) L.stamp(ck);
+  L.sinkDone(li);
   await L.toggleTaskAt(DL, +li.dataset.l);
 }));
 async function syncAsk() {

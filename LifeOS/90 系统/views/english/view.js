@@ -54,6 +54,7 @@ if (section === "today") {
 }
 
 const STYLE = `
+.lifeos-dash .wlist{max-height:520px}
 .lifeos-dash .streak .g{font-size:56px;line-height:1;color:var(--green)}
 .lifeos-dash .streak .g small{font-size:32px;color:var(--ink-2)}
 .lifeos-dash .days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:22px;text-align:center;font-size:15px;color:var(--ink-2)}
@@ -78,6 +79,8 @@ const STYLE = `
 .lifeos-dash .addw label{font-size:14px;color:var(--ink-2);display:flex;gap:6px;align-items:center}`;
 
 const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE);
+// 单词表、错词本在卡片里上下滑
+root.querySelectorAll(".stack table, .stack .miss").forEach((t) => { const w = document.createElement("div"); w.className = "wlist"; t.replaceWith(w); w.appendChild(t); L.scrolly(w); });
 L.wireBanner(root, o);
 root.querySelector(".ban").insertAdjacentHTML("beforeend", addForm);
 const form = root.querySelector(".addw");

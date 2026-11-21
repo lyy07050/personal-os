@@ -115,6 +115,8 @@ const html = L.banner(o) + `<div class="stack">
 </div>`;
 
 const STYLE = `
+.lifeos-dash .bills{max-height:460px}
+.lifeos-dash .bills thead th{position:sticky;top:0;background:#fff;z-index:1}
 .lifeos-dash .big small{font-size:32px;color:var(--ink-2)}
 .lifeos-dash .big{margin:6px 0 22px}
 .lifeos-dash .prog{height:12px;border-radius:6px;background:#e8eee9;margin-bottom:16px}
@@ -148,6 +150,8 @@ const STYLE = `
 .is-mobile .lifeos-dash .fin-buttons{display:none}`;
 
 const root = L.mount(dv, html, STYLE);
+// 账单流水在卡片里上下滑（表头跟着停在上面）
+root.querySelectorAll("table").forEach((t) => { if (!t.querySelector("thead th")) return; const w = document.createElement("div"); w.className = "bills"; t.replaceWith(w); w.appendChild(t); L.scrolly(w); });
 L.wireBanner(root, o);
 
 // 待分类：✓ 确认（同时把关键词记进分类规则，下次自动分好）· 改 · 撤销

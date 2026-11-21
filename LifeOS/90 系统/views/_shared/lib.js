@@ -292,7 +292,8 @@
     setTimeout(() => {
       const list = li.parentElement;
       if (!list) return;
-      if (li.classList.contains("done")) list.appendChild(li);
+      const tail = [...list.children].find((n) => n.classList.contains("new")) || null; // 「加一项」那一行永远在最后
+      if (li.classList.contains("done")) list.insertBefore(li, tail);
       else list.insertBefore(li, [...list.children].find((n) => n !== li && n.classList.contains("done")) || null);
       if (!calm() && li.animate) li.animate([{ opacity: 0, transform: "translateY(-6px)" }, { opacity: 1, transform: "none" }], { duration: 260, easing: "ease-out" });
     }, 600);

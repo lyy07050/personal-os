@@ -62,6 +62,7 @@ function render() {
   } else body = `<section class="group items" aria-label="物品">${items.map(card).join("")}</section>`;
   root.querySelector(".dash-body") ? root.querySelector(".dash-body").innerHTML = body
     : (root.insertAdjacentHTML("beforeend", L.banner(o) + `<div class="stack dash-body">${body}</div>`), L.wireBanner(root, o));
+  root.querySelectorAll(".dash-body .items").forEach((g) => L.pager(g, 6)); // 一页 6 张，多了用 ‹ › 翻
 }
 render();
 

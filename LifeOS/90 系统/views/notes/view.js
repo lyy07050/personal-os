@@ -92,6 +92,7 @@ const STYLE = `
 .is-mobile .lifeos-dash .cards{grid-template-columns:1fr}`;
 
 const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE);
+root.querySelectorAll(".stack .cards").forEach((g) => L.pager(g, 6)); // 一页两排共 6 张
 L.wireBanner(root, o);
 
 // 分类方块：筛选这一类；再次点击或点 ✕ 取消筛选

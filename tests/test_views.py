@@ -263,3 +263,18 @@ def test_home_uses_scroll_and_pager():
     for s in ("L.scrolly(", "L.pager(", "L.sinkDone(", "L.doneLast("):
         assert s in js, s
     assert "还有 ${" not in js
+
+
+def test_walls_use_pager():
+    for v in ("fridge", "things", "notes"):
+        assert "L.pager(" in (VIEWS / f"{v}/view.js").read_text(encoding="utf-8"), v
+
+
+def test_lists_sink_done():
+    for v in ("fridge", "school", "career", "inbox"):
+        assert "L.sinkDone(" in (VIEWS / f"{v}/view.js").read_text(encoding="utf-8"), v
+
+
+def test_long_lists_scroll():
+    for v in ("english", "school", "finance"):
+        assert "L.scrolly(" in (VIEWS / f"{v}/view.js").read_text(encoding="utf-8"), v

@@ -34,7 +34,7 @@ const o = {
 };
 
 const ivCard = (i) => !i ? "" : `<section class="card"><div class="head" style="margin-bottom:6px"><h2>${L.link(i.path, esc(i.name))}</h2><span class="note">${esc(ivLabel(i))}</span></div>
-  <ul class="list">${i.tasks.map((t) => `<li class="${t.completed ? "done" : ""}" data-p="${esc(i.path)}" data-l="${t.line}"><button class="ck" aria-label="完成" style="width:30px;height:30px">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}</ul></section>`;
+  <ul class="list">${L.doneLast(i.tasks.map((t) => ({ ...t, done: t.completed }))).map((t) => `<li class="${t.completed ? "done" : ""}" data-p="${esc(i.path)}" data-l="${t.line}"><button class="ck" aria-label="完成" style="width:30px;height:30px">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}</ul></section>`;
 const tipCard = (t) => `<section class="card tip"><div class="nh"><span>${esc(t.file.name)}</span>${L.link(t.file.path, "知识库 →")}</div><p>${esc(tipText[t.file.path])}</p></section>`;
 
 let body = "";
@@ -74,6 +74,7 @@ root.querySelectorAll(".col .more").forEach((b) => b.addEventListener("click", (
 root.querySelectorAll("li[data-l] .ck").forEach((ck) => ck.addEventListener("click", async () => {
   const li = ck.closest("li");
   if (li.classList.toggle("done")) L.stamp(ck);
+  L.sinkDone(li);
   await L.toggleTaskAt(li.dataset.p, +li.dataset.l);
 }));
 async function addJob() {

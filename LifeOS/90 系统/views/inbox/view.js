@@ -22,7 +22,7 @@ function card(c, i) {
     body = `<p${c.type === "灵感" && c.body.length < 16 ? ' class="say"' : ""}>${esc(c.body).replace(/\n/g, "<br>")}</p>`;
   }
   const tasks = c.tasks.length || c.type === "备忘" || c.type === "清单"
-    ? `<ul>${c.tasks.map((t, ti) => `<li class="${t.done ? "done" : ""}" data-t="${ti}"><button class="ck" aria-label="完成">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}
+    ? `<ul>${L.doneLast(c.tasks.map((t, ti) => ({ ...t, ti }))).map((t) => `<li class="${t.done ? "done" : ""}" data-t="${t.ti}"><button class="ck" aria-label="完成">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}
        <li class="new"><button class="ck" aria-label="新的一项" tabindex="-1"></button><input aria-label="加一项"></li></ul>` : "";
   const done = c.tasks.length - c.open;
   const count = c.tasks.length ? `${done} / ${c.tasks.length}${c.type === "清单" ? " 已完成" : ""}` : c.type === "链接" ? '<a class="go">打开链接 ↗</a>' : "";
@@ -127,6 +127,7 @@ root.querySelectorAll(".note").forEach((n) => {
   const c = cards[+n.dataset.i];
   n.querySelectorAll("li[data-t]").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
     if (li.classList.toggle("done")) L.stamp(li.querySelector(".ck"));
+    L.sinkDone(li);
     await L.toggleTaskAt(c.path, c.tasks[+li.dataset.t].line);
   }));
   const input = n.querySelector("li.new input");
