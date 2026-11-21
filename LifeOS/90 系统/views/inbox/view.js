@@ -47,7 +47,7 @@ const html = `
   </div>
 </section>
 <div class="filters">
-  <button class="on" data-f="all">全部 ${cards.length}</button>${TYPES.map((t) => `<button data-f="${t}">${t} ${counts[t]}</button>`).join("")}
+  <button class="on" data-f="all">全部 ${cards.length}</button>${TYPES.map((t) => `<button data-f="${t}">${t} ${counts[t]}</button>`).join("")}<button data-f="pinned">📌 钉住 ${cards.filter((c) => c.pinned).length}</button>
   <span class="sort">按最近更新 ↓</span>
 </div>
 <div class="wall">${cards.map(card).join("")}</div>`;
@@ -146,7 +146,8 @@ const apply = () => {
   root.querySelectorAll(".note").forEach((n) => {
     const c = cards[+n.dataset.i];
     const hit = !q || (c.title + c.body + c.tasks.map((t) => t.text).join(" ")).toLowerCase().includes(q);
-    n.hidden = !((filter === "all" || n.dataset.k === filter) && hit);
+    const kindOk = filter === "all" || (filter === "pinned" ? c.pinned : n.dataset.k === filter);
+    n.hidden = !(kindOk && hit);
   });
 };
 root.querySelectorAll(".filters button").forEach((b) => b.addEventListener("click", () => {
@@ -155,6 +156,11 @@ root.querySelectorAll(".filters button").forEach((b) => b.addEventListener("clic
   apply();
 }));
 root.querySelector(".find .q").addEventListener("input", apply);
+// 从首页点「最近的活动」「Reminder」过来：一打开就筛好
+{
+  const want = L.takeIntent("inbox-filter"), b = want && root.querySelector(`.filters button[data-f="${want}"]`);
+  if (b) b.click();
+}
 
 // 勾选、加一项、打开链接
 root.querySelectorAll(".note").forEach((n) => {

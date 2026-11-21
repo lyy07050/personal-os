@@ -97,7 +97,7 @@ function foodTile(f, i) {
   const n = f.expires ? L.daysLeft(f.expires, T) : null;
   return `<div class="tile food" data-f="${i}"><h3>${esc(f.name)}</h3><small>${esc(f.qty)}</small><div class="left"><button class="ck" aria-label="吃完" title="吃完" ${n !== null && n <= 1 ? 'style="border-color:var(--warn)"' : ""}>${L.CK}</button><span class="${n !== null && n <= 1 ? "warn" : ""}">${n === null ? "—" : L.leftLabel(n)}</span></div><div class="pic">${foodIcon(f.name, 96)}</div></div>`;
 }
-const actRow = (e) => `<div class="act">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div></div>`;
+const actRow = (e) => `<div class="act has-del" data-p="${esc(e.path)}">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div>${L.delBtn(e.title)}</div>`;
 // 一行待办；日程（kind === "ev"）用圆点，不能勾
 const todoLi = (t, i) => `<li data-i="${i}" class="${t.done ? "done" : ""}${t.kind === "ev" ? " ev-row" : ""}">${t.kind === "ev" ? '<span class="dot" aria-hidden="true"></span>' : `<button class="ck" aria-label="完成">${L.CK}</button>`}<span class="t">${esc(t.text)}</span><small class="${t.warn ? "warn" : ""}">${esc(t.tag)}</small></li>`;
 
@@ -162,14 +162,14 @@ const html = `
   </div>
   <aside class="rcol">
     <section class="mod" style="background:#fef7de">
-      <div class="mh"><span>最近的活动</span><button class="plus" aria-label="加活动" aria-expanded="false">＋</button></div>
+      <div class="mh"><button class="mh-go" data-go="活动" title="去随手记看全部活动">最近的活动 <i aria-hidden="true">→</i></button><button class="plus" aria-label="加活动" aria-expanded="false">＋</button></div>
       <form class="mini actf" hidden aria-label="加活动">
         <input name="t" placeholder="什么活动" aria-label="活动" required><input name="d" type="date" aria-label="日期" required>
         <input name="s" placeholder="从哪看到的（小红书、邮件…）" aria-label="来源"><input name="n" placeholder="地点 · 备注" aria-label="备注"><button class="go">加上</button></form>
       <div class="acts">${events.map(actRow).join("")}</div>
     </section>
     <section class="mod" style="background:#f4f8fe;flex:1;position:relative">
-      <div class="mh"><span>Reminder</span></div>
+      <div class="mh"><button class="mh-go" data-go="pinned" title="去随手记看钉住的卡片">Reminder <i aria-hidden="true">→</i></button></div>
       <div class="rems">${rem.length ? "" : '<p class="rem-empty">在随手记里点卡片右上角的📌，就会钉到这里</p>'}${rem.map((c, ci) => {
         if (!c.tasks.length) return `<div class="rg" ${ci ? 'style="margin-top:20px"' : ""}>
           <div class="rt">${L.link(c.path, `<b>${esc(c.title)}</b>`)}</div>
@@ -324,6 +324,11 @@ const STYLE = `
 .lifeos-dash .act .date .g{font-size:20px;color:var(--brown);display:block;line-height:1}
 .lifeos-dash .act .date small{font-size:12px;color:var(--muted)}
 .lifeos-dash .act b{display:block;font-weight:400;font-size:15px}
+.lifeos-dash .act>div:nth-child(2){flex:1;min-width:0}
+.lifeos-dash .act .delb{margin-left:auto}
+.lifeos-dash .dash .mh-go{background:none;border:0;box-shadow:none;padding:0;height:auto;font:inherit;font-size:15px;color:var(--ink);cursor:pointer}
+.lifeos-dash .dash .mh-go i{font-style:normal;color:var(--muted);opacity:0;transition:opacity .15s,translate .15s;display:inline-block}
+.lifeos-dash .dash .mh-go:hover i,.lifeos-dash .dash .mh-go:focus-visible i{opacity:1;translate:3px 0}
 .lifeos-dash .act span{font-size:12px;color:var(--muted)}
 .lifeos-dash .rg{margin-top:12px}
 .lifeos-dash .rg .rt{display:flex;justify-content:space-between;align-items:baseline}
@@ -676,6 +681,21 @@ projf.addEventListener("submit", async (e) => {
     setTo(bar, Number(bar.getAttribute("aria-valuenow")) + step);
   });
 }
+// 「最近的活动」「Reminder」标题：跳到随手记，只看活动 / 只看钉住的
+root.querySelectorAll(".mh-go").forEach((b) => b.addEventListener("click", () => L.goto("00 随手记/随手记", "inbox-filter", b.dataset.go)));
+// 最近的活动：每一行右边的垃圾桶 → 4 秒可撤销，时间到了活动卡进废纸篓，日历上也去掉
+root.querySelector(".acts").addEventListener("click", (e) => {
+  const b = e.target.closest(".delb");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const row = b.closest(".act"), path = row.dataset.p, c = allCards.find((x) => x.path === path), title = c ? c.title : row.querySelector("b").textContent;
+  L.removeWithUndo(root, row, `「${title}」删掉了`, async () => {
+    await L.trashFile(path);
+    const i = events.findIndex((x) => x.path === path); if (i >= 0) events.splice(i, 1);
+    const j = allCards.findIndex((x) => x.path === path); if (j >= 0) allCards.splice(j, 1);
+    redraw();
+  });
+});
 // 最近的活动「＋」：新建一张活动卡（随手记 type: 活动），按日期插进列表
 const actf = root.querySelector(".actf"), toggleAct = wirePlus(root.querySelector(".mod .plus"), actf), acts = root.querySelector(".acts");
 actf.addEventListener("submit", async (e) => {

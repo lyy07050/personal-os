@@ -433,3 +433,13 @@ def test_every_calendar_item_editable():
     assert "EVENT_KINDS" in js and "从日历隐藏" in js and "hide_in_calendar" in js
     data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
     assert "async function editDeadline(" in data
+
+
+def test_home_headings_jump_to_inbox_and_activities_delete():
+    home = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    assert 'data-go="活动"' in home and 'data-go="pinned"' in home and "L.goto(" in home
+    assert "L.trashFile(" in home  # 最近的活动可以删
+    inbox = (VIEWS / "inbox/view.js").read_text(encoding="utf-8")
+    assert 'data-f="pinned"' in inbox and "inbox-filter" in inbox
+    lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
+    assert "function goto(" in lib

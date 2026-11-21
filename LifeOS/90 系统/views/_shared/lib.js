@@ -444,6 +444,15 @@
     if (f) await app.vault.trash(f, true);
   }
 
+  // 打开另一个面板，并告诉它一打开要做什么（比如随手记只看「活动」）。用 sessionStorage 传一次就清掉
+  function goto(path, key, value) {
+    try { sessionStorage.setItem(`lifeos:${key}`, value); } catch (e) { /* 私密窗口里存不了就算了，照样打开 */ }
+    open(path);
+  }
+  function takeIntent(key) {
+    try { const v = sessionStorage.getItem(`lifeos:${key}`); sessionStorage.removeItem(`lifeos:${key}`); return v; } catch (e) { return null; }
+  }
+
   // 打开一个仓库里的笔记
   const open = (path) => hasApp && app.workspace.openLinkText(path, "", false);
 
@@ -452,7 +461,7 @@
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
     safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone, formatLedger, moneySheet, METHODS,
-    flashcards, subDue, notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile,
+    flashcards, subDue, notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile, goto, takeIntent,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],
     NOTE_CATEGORIES: ["生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职"],
