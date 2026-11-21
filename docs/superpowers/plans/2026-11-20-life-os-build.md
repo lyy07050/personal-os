@@ -183,6 +183,8 @@
 
 ### Task 7: 个人档案（加密，电脑和手机各一份）
 
+> **2026-11-21 改了做法**：不用 Meld Encrypt，改成页面自己加密（Web Crypto），一篇「个人档案」里放身体数据、尺码和账号密码（第二个密码），照设计稿 `demo/v4/desktop-private.html`。原因和细节见 `docs/superpowers/specs/2026-11-21-add-edit-delete-design.md`，现在的用法见 `docs/interactions.md` 第 11 节。下面是原计划，留作记录。
+
 **Files:**
 - Create: `LifeOS/60 个人档案/` 下三个**空模板**：`个人档案.md`（身体数据、尺码两节，只有标题）、`账号密码.md`（只有标题）；`90 系统/views/profile/view.js`（读当前打开的已解密内容渲染成两张表）
 - Create: `LifeOS/90 系统/个人档案使用说明.md`
