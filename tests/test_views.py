@@ -350,3 +350,16 @@ def test_pages_have_delete_buttons():
     for v, call in want.items():
         js = (VIEWS / f"{v}/view.js").read_text(encoding="utf-8")
         assert "L.delBtn(" in js and "L.removeWithUndo(" in js and call in js, v
+
+
+def test_fridge_shopping_and_recipes_editable():
+    js = (VIEWS / "fridge/view.js").read_text(encoding="utf-8")
+    assert "L.removeLine(SHOP" in js  # 购物清单能删
+    assert 'aria-label="加一道菜"' in js and "D.addRecipe(" in js and "L.trashFile(" in js
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert "async function addRecipe(" in data and "addRecipe," in data
+
+
+def test_undo_waits_four_seconds():
+    lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
+    assert "revert = () => {}, ms = 4000)" in lib

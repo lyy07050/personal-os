@@ -19,6 +19,15 @@
     return (await L.lines(dv, SHOP)).map((l, i) => ({ m: /^- \[( |x)\] (.+)$/.exec(l), line: i })).filter((x) => x.m)
       .map((x) => ({ done: x.m[1] === "x", text: x.m[2], line: x.line }));
   }
+  // 新食谱：30 后勤部/食谱/<菜名>.md，食材写进 ingredients，做法写在正文
+  async function addRecipe({ name, ingredients, steps = "" }) {
+    const t = L.safeTitle(name);
+    let path = `30 后勤部/食谱/${t}.md`;
+    for (let i = 2; L.fileOf(path); i++) path = `30 后勤部/食谱/${t} ${i}.md`;
+    const ing = ingredients.map((s) => s.replace(/[\[\]]/g, "").trim()).filter(Boolean);
+    await app.vault.create(path, `---\ningredients: [${ing.join(", ")}]\n---\n# ${name.replace(/\s+/g, " ").trim()}\n\n${steps.trim()}\n`);
+    return path;
+  }
   // 吃完：食物.md 这一行打勾，名字进购物清单
   async function eat(f) {
     await L.replaceLine(FOOD, f.raw, L.toggleTaskLine(f.raw));
@@ -277,7 +286,7 @@
 
   return {
     T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense, addProject, setProgress,
-    food, shopping, eat, addFood, recipes, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
+    food, shopping, eat, addFood, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };
 })

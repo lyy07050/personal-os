@@ -281,3 +281,6 @@
 .lifeos-dash .undo-bar.show .uc{animation:lifeos-undo var(--ms,2s) linear forwards}
 @keyframes lifeos-undo{to{transform:scaleX(0)}}
 @media (prefers-reduced-motion:reduce){.lifeos-dash .undo-bar{transition:none}.lifeos-dash .undo-bar.show .uc{animation:none}}
+
+/* 横幅右上角的贴纸在窄窗口会伸出去，出现横向滚动条：横向裁掉，竖向照常 */
+.lifeos-dash .dash{overflow-x:clip}

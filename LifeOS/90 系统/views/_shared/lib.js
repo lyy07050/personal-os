@@ -344,7 +344,7 @@
   // 先给反悔的时间：底部出一条「…  撤销」，ms 毫秒后才真的执行 commit；点撤销就执行 revert
   // 同一页面上一条还没执行完又来一条：先把上一条执行掉
   // 撤销条挂在 body 上（面板里有 container 查询，fixed 会跟着面板滚走），外面包一层 .lifeos-dash 好让样式生效
-  function undoable(root, text, commit, revert = () => {}, ms = 2000) {
+  function undoable(root, text, commit, revert = () => {}, ms = 4000) {
     let host = document.body.querySelector(":scope > .lifeos-undo-host");
     if (!host) {
       document.body.insertAdjacentHTML("beforeend", '<div class="lifeos-dash lifeos-undo-host"><div class="undo-bar" role="status" aria-live="polite"><span class="ut"></span><button class="ub">撤销</button><i class="uc"></i></div></div>');

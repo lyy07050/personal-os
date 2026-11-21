@@ -424,7 +424,7 @@ root.querySelector(".fr").addEventListener("click", async (e) => {
   const el = ck.closest(".food"), f = cold[+el.dataset.f];
   if (!f || el.classList.contains("gone")) return;
   el.classList.add("gone"); L.stamp(ck); ck.classList.add("on");
-  // 先等 2 秒给反悔的时间，时间到了才打勾、进购物清单、从冰箱里拿掉
+  // 先等 4 秒给反悔的时间，时间到了才打勾、进购物清单、从冰箱里拿掉
   L.undoable(root, `${f.name} 吃完了，会加进购物清单`, async () => {
     el.remove(); fridgePager.refresh();
     await D.eat(f);
@@ -481,7 +481,7 @@ projf.addEventListener("submit", async (e) => {
     const lab = bar.nextElementSibling; lab.textContent = pctLabel(n); lab.classList.toggle("muted", !n);
     const li = bar.closest("li");
     D.setProgress(li.dataset.path, n);
-    // 到 100% = 做完了：2 秒后从列表里收起；点撤销回到原来的进度
+    // 到 100% = 做完了：4 秒后从列表里收起；点撤销回到原来的进度
     if (n === 100) {
       li.classList.add("leaving");
       L.undoable(root, `${li.querySelector("a").textContent} 完成了，从事情进度里收起`, async () => li.remove(),

@@ -31,15 +31,24 @@ const box = (kind) => {
       : `<button class="empty" aria-label="添加">＋</button>`}${addForm(kind)}</div>`;
 };
 
+// 购物清单一行（按文字找回文件里那一行，不靠行号）
+const shopLi = (s) => `<li class="has-del ${s.done ? "done" : ""}" data-t="${esc(s.text)}"><button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(s.text.split(/\s/)[0], 40)}</span><span class="t">${esc(s.text)}</span>${L.delBtn(s.text)}</li>`;
+const shopRaw = (li) => `- [${li.classList.contains("done") ? "x" : " "}] ${li.dataset.t}`;
+// 一道菜：标题、做法、食材（冰箱里有的绿色）、右上角删除
+const recipeCard = (r) => `<div class="recipe has-del">${L.delBtn(r.name, `data-p="${esc(r.path)}" data-n="${esc(r.name)}"`, "corner")}${L.link(r.path, `<h3>${esc(r.name)}</h3>`)}<p>${esc(r.text)}</p>${r.ingredients.map((g) => `<span class="chip ${inFridge(g) ? "" : "plain"}">${esc(g)}</span>`).join(" ")}</div>`;
 const html = L.banner(o) + `<div class="stack">
   <section class="group boxes" aria-label="食物收纳">${L.FOOD_KINDS.map(box).join("")}</section>
   <section class="card shop" aria-label="购物清单">
     <div class="head" style="margin-bottom:6px"><h2>购物清单</h2>${L.link(SHOP.replace(/\.md$/, ""), "打开清单", "note")}</div>
-    <ul class="list">${L.doneLast(shop.map((s, i) => ({ ...s, i }))).map((s) => `<li data-i="${s.i}" class="${s.done ? "done" : ""}"><button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(s.text.split(/\s/)[0], 40)}</span><span class="t">${esc(s.text)}</span></li>`).join("")}</ul>
+    <ul class="list">${L.doneLast(shop).map(shopLi).join("")}</ul>
   </section>
   <section class="card" aria-label="今天可以做">
-    <div class="head"><h2>今天可以做</h2></div>
-    <div class="recipes">${recipes.slice(0, 3).map((r) => `<div class="recipe">${L.link(r.path, `<h3>${esc(r.name)}</h3>`)}<p>${esc(r.text)}</p>${r.ingredients.map((g) => `<span class="chip ${inFridge(g) ? "" : "plain"}">${esc(g)}</span>`).join(" ")}</div>`).join("")}</div>
+    <div class="head"><h2>今天可以做</h2><button class="plus" aria-label="加一道菜" aria-expanded="false">＋</button></div>
+    <form class="recf" hidden aria-label="加一道菜">
+      <input name="n" placeholder="菜名（比如 番茄炒蛋）" aria-label="菜名" required>
+      <input name="g" placeholder="食材，用逗号隔开（番茄，鸡蛋）" aria-label="食材">
+      <input name="s" placeholder="怎么做（一两句就行）" aria-label="做法"><button class="btn pri">加上</button></form>
+    <div class="recipes">${recipes.map(recipeCard).join("")}</div>
   </section></div>`;
 
 const STYLE = `
@@ -68,9 +77,17 @@ const STYLE = `
 .lifeos-dash .shop .list li{font-size:20px}
 .lifeos-dash .shop .ic{width:60px;display:flex;justify-content:center}
 .lifeos-dash .recipes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.lifeos-dash .shop .list li .delb{margin-left:auto}
+.lifeos-dash .dash .plus{width:34px;height:34px;border-radius:50%;background:var(--sage);color:var(--green);font-size:20px;line-height:34px;text-align:center;flex:none;transition:background .2s,color .2s}
+.lifeos-dash .dash .plus:hover,.lifeos-dash .dash .plus[aria-expanded="true"]{background:var(--green);color:#fff}
+.lifeos-dash .recf{display:grid;grid-template-columns:1fr 1.2fr 1.6fr auto;gap:8px;margin:0 0 16px}
+.lifeos-dash .recf[hidden]{display:none}
+.lifeos-dash .recf input{height:40px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:#fff;padding:0 12px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .recf .btn{height:40px}
 .lifeos-dash .recipe{border-radius:16px;padding:22px 20px;background:#fff;box-shadow:var(--sh-lift)}
 .lifeos-dash .recipe h3{font-family:var(--zcool);font-weight:400;font-size:26px;margin-bottom:8px}
 .lifeos-dash .recipe p{font-size:16px;color:var(--ink-2);line-height:1.6;margin-bottom:14px}
+.is-mobile .lifeos-dash .recf{grid-template-columns:1fr}
 .is-mobile .lifeos-dash .boxes,.is-mobile .lifeos-dash .recipes{grid-template-columns:1fr}
 .is-mobile .lifeos-dash .box{min-height:0}`;
 
@@ -98,7 +115,7 @@ root.querySelectorAll(".addf").forEach((form) => form.addEventListener("submit",
 // 每个分类框一页 5 样，多了用 ‹ › 翻
 const pagers = [...root.querySelectorAll(".box > ul")].map((ul) => L.pager(ul, 5));
 
-// 点「吃完」先变淡，等 2 秒（可以撤销），时间到了才打勾、进购物清单
+// 点「吃完」先变淡，等 4 秒（可以撤销），时间到了才打勾、进购物清单
 root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEventListener("click", () => {
   const f = food.find((x) => x.line === +li.dataset.l);
   if (li.classList.contains("gone")) return;
@@ -107,14 +124,49 @@ root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEve
     const pg = pagers.find((p) => p.el.contains(li));
     li.remove(); if (pg) pg.refresh();
     await D.eat(f);
-    const ul = root.querySelector(".shop .list"), n = document.createElement("li");
-    n.innerHTML = `<button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(f.name, 40)}</span><span class="t">${esc(f.name)}</span>`;
-    ul.insertBefore(n, ul.querySelector(":scope > li.done")); // 放在「还没买」的最后
+    const ul = root.querySelector(".shop .list"), box = document.createElement("ul");
+    box.innerHTML = shopLi({ text: f.name, done: false });
+    ul.insertBefore(box.firstElementChild, ul.querySelector(":scope > li.done")); // 放在「还没买」的最后
   }, () => li.classList.remove("gone"));
 }));
 
-root.querySelectorAll(".shop li[data-i]").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
-  if (li.classList.toggle("done")) L.stamp(li.querySelector(".ck"));
-  L.sinkDone(li);
-  await L.toggleTaskAt(SHOP, shop[+li.dataset.i].line);
-}));
+// 购物清单：勾 = 买到了；垃圾桶 = 删掉这一行（4 秒内可撤销）
+root.querySelector(".shop .list").addEventListener("click", async (e) => {
+  const li = e.target.closest("li[data-t]");
+  if (!li) return;
+  if (e.target.closest(".delb")) {
+    const raw = shopRaw(li);
+    L.removeWithUndo(root, li, `「${li.dataset.t}」从购物清单删掉了`, () => L.removeLine(SHOP, raw));
+  } else if (e.target.closest(".ck")) {
+    const before = shopRaw(li);
+    if (li.classList.toggle("done")) L.stamp(li.querySelector(".ck"));
+    L.sinkDone(li);
+    await L.replaceLine(SHOP, before, shopRaw(li));
+  }
+});
+
+// 今天可以做：一页 3 道，多了用 ‹ › 翻；「＋」加一道菜，垃圾桶删掉（食谱放进废纸篓）
+const recPager = L.pager(root.querySelector(".recipes"), 3);
+const recf = root.querySelector(".recf"), recPlus = root.querySelector('[aria-label="加一道菜"].plus');
+const toggleRec = (open) => { recf.hidden = !open; recPlus.setAttribute("aria-expanded", open); if (open) recf.n.focus(); };
+recPlus.addEventListener("click", () => toggleRec(recf.hidden));
+recf.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleRec(false); });
+recf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = recf.n.value.trim();
+  if (!name) return;
+  const ingredients = recf.g.value.split(/[,，、\s]+/), steps = recf.s.value;
+  const path = await D.addRecipe({ name, ingredients, steps });
+  const box = document.createElement("div");
+  box.innerHTML = recipeCard({ name, path, text: steps.trim(), ingredients: ingredients.map((s) => s.trim()).filter(Boolean) });
+  recPager.add(box.firstElementChild, 0); // 新加的放第一个
+  recf.reset(); toggleRec(false);
+  L.notice(`${name} 加进今天可以做了`);
+});
+root.addEventListener("click", (e) => {
+  const b = e.target.closest(".recipe .delb[data-p]");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const card = b.closest(".recipe");
+  L.removeWithUndo(root, card, `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p), () => recPager.refresh());
+});
