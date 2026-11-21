@@ -407,3 +407,11 @@ def test_flashcards_in_panel():
     assert "L.flashcards(" in en and 'D.setHabit(T, "背词", true)' in en and "MISTAKES" in en
     notes = (VIEWS / "notes/view.js").read_text(encoding="utf-8")
     assert "L.flashcards(" in notes
+
+
+def test_calendar_click_to_add_edit_delete():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    assert 'class="evd"' in js and "D.updateEvent(" in js and "L.removeLine(D.EVENTS" in js
+    assert "data-slot" in js  # 点空格子加日程
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert "async function updateEvent(" in data and "raw: x.raw" in data

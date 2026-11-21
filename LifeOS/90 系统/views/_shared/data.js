@@ -88,7 +88,7 @@
   // ---------- 日程 ----------
   // 10 总部/日程.md：手写的行 + 以后 Quercus 写在标记段里的行；文件不在就是没有日程
   async function events() {
-    return (await L.lines(dv, EVENTS)).map((l, i) => ({ e: L.parseEvent(l), line: i })).filter((x) => x.e).map((x) => ({ ...x.e, line: x.line }));
+    return (await L.lines(dv, EVENTS)).map((l, i) => ({ e: L.parseEvent(l), line: i, raw: l })).filter((x) => x.e).map((x) => ({ ...x.e, line: x.line, raw: x.raw }));
   }
   // 加一条：插在标记段外、按「日期 时间」排好的位置；文件不在就新建
   async function addEvent(e) {
@@ -110,6 +110,12 @@
       ls.splice(at, 0, row);
       return ls.join("\n") + "\n";
     });
+  }
+
+  // 改一条：先删掉原来那行，再按新的日期时间排好插回去
+  async function updateEvent(raw, e) {
+    await L.removeLine(EVENTS, raw);
+    await addEvent(e);
   }
 
   // ---------- 待办卡（随手记里 type: 待办） ----------
@@ -320,7 +326,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, updateEvent, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
     food, shopping, eat, addFood, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

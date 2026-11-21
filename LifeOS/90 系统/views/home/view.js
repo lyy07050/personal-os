@@ -33,38 +33,44 @@ const events = allCards.filter((c) => c.type === "活动" && c.date && c.date >=
 const rem = L.reminders(allCards);
 
 const courses = dv.pages('"45 教务处/课程"').where((p) => p.next_class).array()
-  .map((p) => ({ code: p.course || p.file.folder.split("/").pop(), when: String(p.next_class) }));
+  .map((p) => ({ code: p.course || p.file.folder.split("/").pop(), when: String(p.next_class), path: p.file.path }));
 
 // ---------- 日程（仿苹果日历周视图，可以翻周） ----------
 let offset = 0; // 0 = 本周；只记在内存里，重新打开回到本周
 const daysOf = (off) => [...Array(7)].map((_, i) => L.addDays(mon, off * 7 + i));
 const hm2h = (hm) => +hm.slice(0, 2) + +hm.slice(3, 5) / 60;
+// 日历上每个日程的来历：自己加的（mine，可改可删）或别处来的（只能打开来源）
+let refs = [];
+const ref = (kind, title, when, path) => refs.push({ kind, title, when, path }) - 1;
 function weekCal(days) {
+  refs = [];
   const allDay = days.map(() => []);
   const timed = [];
   const at = (d) => days.indexOf(d);
   deadlines.filter((d) => d.due && days.includes(d.due.slice(0, 10)))
-    .forEach((d) => allDay[at(d.due.slice(0, 10))].push({ c: "r1", t: `${d.title.replace(d.course, "").trim() || d.title} 截止` }));
-  allCards.filter((c) => c.type === "活动" && days.includes(c.date)).forEach((c) => allDay[at(c.date)].push({ c: "g1", t: c.title }));
+    .forEach((d) => allDay[at(d.due.slice(0, 10))].push({ c: "r1", t: `${d.title.replace(d.course, "").trim() || d.title} 截止`, x: ref("截止", d.title, d.due.replace(" ", " · "), DL_PATH) }));
+  allCards.filter((c) => c.type === "活动" && days.includes(c.date)).forEach((c) => allDay[at(c.date)].push({ c: "g1", t: c.title, x: ref("活动", c.title, L.md(c.date), c.path) }));
   myEvents.filter((e) => days.includes(e.date)).forEach((e) => {
-    if (e.time) timed.push({ d: at(e.date), h: hm2h(e.time), c: "y1 mine", t: `${esc(e.title)}<br>${e.time}` });
-    else allDay[at(e.date)].push({ c: "y1 mine", t: e.title });
+    const x = refs.push({ mine: e }) - 1;
+    if (e.time) timed.push({ d: at(e.date), h: hm2h(e.time), c: "y1 mine", t: `${esc(e.title)}<br>${e.time}`, x });
+    else allDay[at(e.date)].push({ c: "y1 mine", t: e.title, x });
   });
-  if (days.includes(T)) allDay[6].push({ c: "p1", t: "周复盘" });
+  if (days.includes(T)) allDay[6].push({ c: "p1", t: "周复盘", x: ref("每周复盘", `Week ${+L.isoWeek(T).slice(6)}`, "每周日", `10 总部/复盘/${L.isoWeek(T)}`) });
   courses.forEach((c) => {
     const m = /周([一二三四五六日])\s*(\d{1,2}):(\d{2})/.exec(c.when);
-    if (m) timed.push({ d: "一二三四五六日".indexOf(m[1]), h: +m[2] + +m[3] / 60, c: "b1", t: `${esc(c.code)}<br>${m[2]}:${m[3]}` });
+    if (m) timed.push({ d: "一二三四五六日".indexOf(m[1]), h: +m[2] + +m[3] / 60, c: "b1", t: `${esc(c.code)}<br>${m[2]}:${m[3]}`, x: ref("课", c.code, c.when, c.path) });
   });
   interviews.forEach((i) => {
     const d = at(i.when.slice(0, 10)), hm = i.when.slice(11, 16);
-    if (d >= 0 && hm) timed.push({ d, h: hm2h(hm), c: "r1", t: `面试<br>${hm}` });
+    if (d >= 0 && hm) timed.push({ d, h: hm2h(hm), c: "r1", t: `面试<br>${hm}`, x: ref("面试", i.title, `${L.md(i.when.slice(0, 10))} ${hm}`, i.path) });
   });
   const ti = at(T);
   let h = "<div></div>" + days.map((d, i) => `<div class="dh ${i === ti ? "today" : ""} ${i > 4 ? "wkend" : ""}">${L.WEEK_CN[i]}${i === ti ? " · Today" : ""}<b>${+d.slice(8)}</b></div>`).join("");
-  h += `<div class="allday"><span class="lb">全天</span>${allDay.map((evs) => `<div>${evs.map((e) => `<span class="ev ${e.c}">${esc(e.t)}</span>`).join("")}</div>`).join("")}</div>`;
-  h += `<div class="hours">${["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"].map((t) => `<span class="hl">${t}</span>` + '<span class="cell"></span>'.repeat(7)).join("")}`;
+  // 空白处带 data-slot（日期 | 开始小时），点了就在那里加日程
+  h += `<div class="allday"><span class="lb">全天</span>${allDay.map((evs, i) => `<div data-slot="${days[i]}|">${evs.map((e) => `<span class="ev ${e.c}" data-x="${e.x}" role="button" tabindex="0">${esc(e.t)}</span>`).join("")}</div>`).join("")}</div>`;
+  h += `<div class="hours">${[9, 11, 13, 15, 17, 19].map((hr) => `<span class="hl">${String(hr).padStart(2, "0")}:00</span>` + days.map((d) => `<span class="cell" data-slot="${d}|${hr}"></span>`).join("")).join("")}`;
   // 9 点前、21 点后的放在最上 / 最下一格，不让它消失
-  h += timed.map((e) => `<span class="ev ${e.c}" style="left:calc(40px + (100% - 40px) / 7 * ${e.d} + 3px);width:calc((100% - 40px) / 7 - 6px);top:${(Math.min(Math.max(e.h, 9), 20) - 9) / 2 * 36}px;height:38px;margin:0">${e.t}</span>`).join("");
+  h += timed.map((e) => `<span class="ev ${e.c}" style="left:calc(40px + (100% - 40px) / 7 * ${e.d} + 3px);width:calc((100% - 40px) / 7 - 6px);top:${(Math.min(Math.max(e.h, 9), 20) - 9) / 2 * 36}px;height:38px;margin:0" data-x="${e.x}" role="button" tabindex="0">${e.t}</span>`).join("");
   return h + "</div>";
 }
 
@@ -230,7 +236,27 @@ const STYLE = `
 .lifeos-dash .hours .cell{border-top:1px solid rgba(37,45,41,.06);border-left:1px solid rgba(37,45,41,.04)}
 .lifeos-dash .hours .ev{position:absolute;white-space:normal}
 .lifeos-dash .ev.y1{background:#fbf3dc;border-color:#c9a24a;color:#6f5420}
-.lifeos-dash .ev.mine{cursor:pointer}
+.lifeos-dash .ev[data-x]{cursor:pointer}
+.lifeos-dash .ev[data-x]:hover{filter:brightness(.97)}
+.lifeos-dash .ev[data-x]:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.lifeos-dash .hours .cell,.lifeos-dash .allday>div{cursor:cell}
+.lifeos-dash .hours .cell:hover,.lifeos-dash .allday>div:hover{background:rgba(62,91,75,.04)}
+.lifeos-dash dialog.evd{border:0;border-radius:22px;padding:20px 22px;width:min(380px,92vw);background:#fff;color:var(--ink);box-shadow:0 20px 60px rgba(37,45,41,.25)}
+.lifeos-dash dialog.evd::backdrop{background:rgba(37,45,41,.22)}
+.lifeos-dash .evd .eh{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink-2);margin-bottom:10px}
+.lifeos-dash .evd .ex{width:30px;height:30px;border-radius:8px;background:none;color:var(--ink-2)}
+.lifeos-dash .evd .mineonly{display:grid;gap:8px}
+.lifeos-dash .evd [hidden]{display:none}
+.lifeos-dash .evd .r{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lifeos-dash .evd input{height:40px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 12px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .evd .mineonly input[name=n]{font-size:18px;font-weight:500}
+.lifeos-dash .evd .ot{font-family:var(--zcool);font-weight:400;font-size:24px;margin:0 0 6px}
+.lifeos-dash .evd .ow{font-size:15px;color:var(--ink-2);margin:0}
+.lifeos-dash .evd .ea{display:flex;align-items:center;gap:8px;margin-top:16px}
+.lifeos-dash .evd .ea span{flex:1}
+.lifeos-dash .evd .ea button{height:38px;padding:0 18px;border-radius:999px;font-size:14px}
+.lifeos-dash .evd .del{background:#f6e3df;color:#8f3f31}
+.lifeos-dash .evd .save,.lifeos-dash .evd .open{background:var(--green);color:#fff;font-weight:600}
 .lifeos-dash .cal .top .nav{width:28px;height:28px;border-radius:50%;font-size:18px;line-height:26px;color:var(--ink-2);transition:background .2s}
 .lifeos-dash .cal .top .nav:hover{background:var(--sage)}
 .lifeos-dash .cal .top .wl{min-width:150px;text-align:center}
@@ -417,7 +443,63 @@ evf.addEventListener("submit", async (e) => {
   redraw();
   L.notice(`${title} 加进日程了`);
 });
-cal.querySelector(".week").addEventListener("click", (e) => { if (e.target.closest(".ev.mine")) L.open(D.EVENTS); });
+// 像苹果日历：点空白处 → 在那天那个钟点加日程；点日程 → 小窗口（自己加的可以改、删；别处来的显示详情和「打开」）
+cal.insertAdjacentHTML("beforeend", `<dialog class="evd" aria-label="日程"><form method="dialog" class="evdf">
+  <div class="eh"><span class="ek"></span><button type="button" class="ex" aria-label="关闭">✕</button></div>
+  <div class="mineonly"><input name="n" aria-label="事情" required><div class="r"><input name="d" type="date" aria-label="日期" required><input name="t" type="time" aria-label="时间（不填 = 全天）"></div><input name="p" placeholder="地点（可不填）" aria-label="地点"></div>
+  <div class="other"><h3 class="ot"></h3><p class="ow"></p></div>
+  <div class="ea"><button type="button" class="del">删除</button><span></span><button type="button" class="open">打开</button><button class="save">保存</button></div></form></dialog>`);
+const evd = cal.querySelector("dialog.evd"), evdf = evd.querySelector("form"), $e = (s) => evd.querySelector(s);
+let editing = null, editingEl = null;
+function openEv(el) {
+  const r = refs[+el.dataset.x];
+  if (!r) return;
+  editingEl = el; editing = r;
+  const mine = !!r.mine;
+  $e(".mineonly").hidden = !mine; $e(".other").hidden = mine;
+  $e(".del").hidden = $e(".save").hidden = !mine; $e(".open").hidden = mine;
+  if (mine) {
+    $e(".ek").textContent = "我的日程";
+    evdf.n.value = r.mine.title; evdf.d.value = r.mine.date; evdf.t.value = r.mine.time || ""; evdf.p.value = r.mine.place || "";
+  } else {
+    $e(".ek").textContent = r.kind; $e(".ot").textContent = r.title; $e(".ow").textContent = r.when || "";
+  }
+  evd.showModal();
+  (mine ? evdf.n : $e(".open")).focus();
+}
+$e(".ex").addEventListener("click", () => evd.close());
+$e(".open").addEventListener("click", () => { evd.close(); if (editing && editing.path) L.open(editing.path); });
+evdf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!editing || !editing.mine) return;
+  const title = evdf.n.value.trim(), date = evdf.d.value;
+  if (!title || !date) return;
+  await D.updateEvent(editing.mine.raw, { date, time: evdf.t.value, title, place: evdf.p.value.trim() });
+  evd.close();
+  myEvents = await D.events();
+  redraw();
+  L.notice(`${title} 改好了`);
+});
+$e(".del").addEventListener("click", () => {
+  if (!editing || !editing.mine) return;
+  const ev = editing.mine, el = editingEl;
+  evd.close();
+  L.removeWithUndo(root, el, `「${ev.title}」日程删掉了`, async () => { await L.removeLine(D.EVENTS, ev.raw); myEvents = await D.events(); });
+});
+const grid = cal.querySelector(".week");
+grid.addEventListener("click", (e) => {
+  const ev = e.target.closest(".ev[data-x]");
+  if (ev) return openEv(ev);
+  const slot = e.target.closest("[data-slot]");
+  if (!slot) return;
+  // 一格是 2 小时：点在格子下半部分就是后一个钟点
+  const [date, hr] = slot.dataset.slot.split("|");
+  let time = "";
+  if (hr) { const r = slot.getBoundingClientRect(); time = `${String(+hr + (e.clientY - r.top > r.height / 2 ? 1 : 0)).padStart(2, "0")}:00`; }
+  openEvf(true);
+  evf.d.value = date; evf.t.value = time; evf.n.focus();
+});
+grid.addEventListener("keydown", (e) => { const ev = e.target.closest(".ev[data-x]"); if (ev && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openEv(ev); } });
 
 // 冰箱：勾上 = 吃完 → 这行打勾，名字进购物清单
 root.querySelector(".fr").addEventListener("click", async (e) => {
