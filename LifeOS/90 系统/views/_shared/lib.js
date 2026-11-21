@@ -168,16 +168,18 @@
   // 卡片标题 = 文件名：去掉文件名不允许的字符，连续空白合成一个，最长 40
   const safeTitle = (text) => String(text).replace(/[\\/:*?"<>|#^[\]\n\r]/g, " ").replace(/\s+/g, " ").trim().slice(0, 40).trim() || "随手记";
   // type 是「待办」时 frontmatter 写 done / date，其他类型照旧写 pinned / source
+  // 第一行是标题，后面的行是正文；meta 可带 date（待办、活动）和 source（活动）
   async function newCard(text, type = "备忘", meta = {}) {
-    const title = safeTitle(text);
+    const [first, ...more] = String(text).trim().split("\n");
+    const title = safeTitle(first);
     let path = `00 随手记/${title}.md`;
     for (let i = 2; fileOf(path); i++) path = `00 随手记/${title} ${i}.md`;
     const head = type === "待办"
       ? `type: 待办\ndone: false\n${meta.date ? `date: ${meta.date}\n` : ""}created: ${today()}`
-      : `type: ${type}\npinned: false\nsource: \ncreated: ${today()}`;
-    // 标题照原文（一行）；文件名才需要去掉 / : 这些字符；多行的原文放在标题下面
-    const line = String(text).replace(/\s+/g, " ").trim().slice(0, 80) || title;
-    const rest = /\n/.test(String(text).trim()) ? `\n${text}\n` : "";
+      : `type: ${type}\npinned: false\nsource: ${meta.source || ""}\n${meta.date ? `date: ${meta.date}\n` : ""}created: ${today()}`;
+    // 标题照原文（一行）；文件名才需要去掉 / : 这些字符
+    const line = first.replace(/\s+/g, " ").trim().slice(0, 80) || title;
+    const rest = more.join("\n").trim() ? `\n${more.join("\n").trim()}\n` : "";
     const body = `---\n${head}\n---\n# ${line}\n${rest}`;
     await app.vault.create(path, body);
     return path;

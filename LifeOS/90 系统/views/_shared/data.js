@@ -105,6 +105,8 @@
 
   // ---------- 待办卡（随手记里 type: 待办） ----------
   const addTodo = (text, date = "") => L.newCard(text, "待办", date ? { date } : {});
+  // 活动卡（随手记 type: 活动）：note 是第二行，比如「Bahen 1F · 需要报名」，首页「最近的活动」把它显示在标题下面
+  const addActivity = ({ title, date, source = "", note = "" }) => L.newCard(note.trim() ? `${title}\n${note.trim()}` : title, "活动", { date, source: source.trim() });
 
   // 今日待办：有时间的（面试、今天的日程）→ 全天日程 → 今天截止的作业 → 待办卡 → 复盘三件要事 → 事情（同名只留一条）
   // 日程（kind "ev"）没有 done，界面上用圆点、不能勾；每周固定的课不进来
@@ -239,7 +241,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity,
     food, shopping, eat, addFood, recipes, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

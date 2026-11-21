@@ -78,6 +78,12 @@ function spark() {
 
 const dateLong = `${L.MONTH_EN[+T.slice(5, 7) - 1].slice(0, 3)} <span class="g">${+T.slice(8)}</span> · ${["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][L.weekday(T)]}`;
 const left = todos.filter((t) => !t.done && t.kind !== "ev").length;
+// Fridge 一格
+function foodTile(f, i) {
+  const n = f.expires ? L.daysLeft(f.expires, T) : null;
+  return `<div class="tile food" data-f="${i}"><h3>${esc(f.name)}</h3><small>${esc(f.qty)}</small><div class="left"><button class="ck" aria-label="吃完" title="吃完" ${n !== null && n <= 1 ? 'style="border-color:var(--warn)"' : ""}>${L.CK}</button><span class="${n !== null && n <= 1 ? "warn" : ""}">${n === null ? "—" : L.leftLabel(n)}</span></div><div class="pic">${foodIcon(f.name, 96)}</div></div>`;
+}
+const actRow = (e) => `<div class="act">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div></div>`;
 // 一行待办；日程（kind === "ev"）用圆点，不能勾
 const todoLi = (t, i) => `<li data-i="${i}" class="${t.done ? "done" : ""}${t.kind === "ev" ? " ev-row" : ""}">${t.kind === "ev" ? '<span class="dot" aria-hidden="true"></span>' : `<button class="ck" aria-label="完成">${L.CK}</button>`}<span class="t">${esc(t.text)}</span><small class="${t.warn ? "warn" : ""}">${esc(t.tag)}</small></li>`;
 
@@ -125,11 +131,12 @@ const html = `
 <div class="r3">
   <div class="stack">
     <section class="group fr" style="padding:18px 16px 16px">
-      <div class="tabs2">${L.link("30 后勤部/食物墙", '<span class="on">Fridge</span>')}</div>
-      <div class="foods">${cold.map((f, i) => {
-        const n = f.expires ? L.daysLeft(f.expires, T) : null;
-        return `<div class="tile food" data-f="${i}"><h3>${esc(f.name)}</h3><small>${esc(f.qty)}</small><div class="left"><button class="ck" aria-label="吃完" title="吃完" ${n !== null && n <= 1 ? 'style="border-color:var(--warn)"' : ""}>${L.CK}</button><span class="${n !== null && n <= 1 ? "warn" : ""}">${n === null ? "—" : L.leftLabel(n)}</span></div><div class="pic">${foodIcon(f.name, 96)}</div></div>`;
-      }).join("")}</div>
+      <div class="tabs2">${L.link("30 后勤部/食物墙", '<span class="on">Fridge</span>')}<button class="plus" aria-label="放进冰箱" aria-expanded="false">＋</button></div>
+      <form class="mini foodf" hidden aria-label="放进冰箱">
+        <input name="n" placeholder="名字" aria-label="名字" required><input name="q" placeholder="数量" aria-label="数量"><input name="d" type="number" min="0" inputmode="numeric" placeholder="几天到期" aria-label="几天到期">
+        <select name="p" aria-label="位置"><option>冷藏</option><option>冷冻</option><option>常温</option></select>
+        <select name="k" aria-label="类别">${L.FOOD_KINDS.map((k) => `<option>${k}</option>`).join("")}</select><button class="go">放进去</button></form>
+      <div class="foods">${cold.map(foodTile).join("")}</div>
     </section>
     <section class="card prog" style="padding:22px 22px 18px">
       <div class="head" style="margin-bottom:8px"><h2 style="font-size:26px">事情进度</h2></div>
@@ -138,8 +145,11 @@ const html = `
   </div>
   <aside class="rcol">
     <section class="mod" style="background:#fef7de">
-      <div class="mh"><span>最近的活动</span></div>
-      <div class="acts">${events.map((e) => `<div class="act">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div></div>`).join("")}</div>
+      <div class="mh"><span>最近的活动</span><button class="plus" aria-label="加活动" aria-expanded="false">＋</button></div>
+      <form class="mini actf" hidden aria-label="加活动">
+        <input name="t" placeholder="什么活动" aria-label="活动" required><input name="d" type="date" aria-label="日期" required>
+        <input name="s" placeholder="从哪看到的（小红书、邮件…）" aria-label="来源"><input name="n" placeholder="地点 · 备注" aria-label="备注"><button class="go">加上</button></form>
+      <div class="acts">${events.map(actRow).join("")}</div>
     </section>
     <section class="mod" style="background:#f4f8fe;flex:1;position:relative">
       <div class="mh"><span>Reminder</span></div>
@@ -166,6 +176,17 @@ const STYLE = `
 .lifeos-dash .hero .art{position:absolute;pointer-events:none;filter:var(--sh-sticker);transition:translate .5s cubic-bezier(.2,.8,.2,1),rotate .5s cubic-bezier(.2,.8,.2,1)}
 .lifeos-dash .hero:hover .art{translate:0 -5px;rotate:-1.5deg}
 .lifeos-dash .r1{display:grid;grid-template-columns:383px 1fr;gap:24px;margin-bottom:24px}
+.lifeos-dash .fr .tabs2,.lifeos-dash .mod .mh{display:flex;justify-content:space-between;align-items:center}
+.lifeos-dash .dash .plus{width:30px;height:30px;border-radius:50%;background:var(--sage);color:var(--green);font-size:18px;line-height:30px;text-align:center;flex:none;transition:background .2s,color .2s}
+.lifeos-dash .mod .plus{background:rgba(255,255,255,.7)}
+.lifeos-dash .dash .plus:hover,.lifeos-dash .dash .plus[aria-expanded="true"]{background:var(--green);color:#fff}
+.lifeos-dash .mini{display:grid;gap:8px;margin:0 0 12px}
+.lifeos-dash .foodf{grid-template-columns:1.4fr 1fr 1fr 1fr 1fr auto}
+.lifeos-dash .actf{grid-template-columns:1fr 1fr}
+.lifeos-dash .actf .go{grid-column:1/-1}
+.lifeos-dash .mini[hidden]{display:none}
+.lifeos-dash .mini input,.lifeos-dash .mini select{height:38px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:#fff;padding:0 12px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none}
+.lifeos-dash .mini .go{height:38px;padding:0 16px;border-radius:999px;background:var(--green);color:#fff;font-size:14px;font-weight:600}
 .lifeos-dash .todo .list{max-height:372px;margin-right:-8px;padding-right:8px}
 .lifeos-dash .prog .list{max-height:262px;margin-right:-8px;padding-right:8px}
 .lifeos-dash .acts{max-height:300px}
@@ -291,7 +312,7 @@ const STYLE = `
 const root = L.mount(dv, html, STYLE);
 // 卡片里上下滑、Fridge 翻页
 ["todo .list", "prog .list", "acts", "rems"].forEach((sel) => L.scrolly(root.querySelector("." + sel)));
-L.pager(root.querySelector(".fr .foods"), 4);
+const fridgePager = L.pager(root.querySelector(".fr .foods"), 4);
 
 // ---------- 交互 ----------
 const form = root.querySelector("form.capture"), sw = form.querySelector(".sw");
@@ -379,12 +400,58 @@ evf.addEventListener("submit", async (e) => {
 cal.querySelector(".week").addEventListener("click", (e) => { if (e.target.closest(".ev.mine")) L.open(D.EVENTS); });
 
 // 冰箱：勾上 = 吃完 → 这行打勾，名字进购物清单
-root.querySelectorAll(".food").forEach((el) => el.querySelector(".ck").addEventListener("click", async () => {
-  const f = cold[+el.dataset.f];
-  el.classList.add("gone"); L.stamp(el.querySelector(".ck")); el.querySelector(".ck").classList.add("on");
+root.querySelector(".fr").addEventListener("click", async (e) => {
+  const ck = e.target.closest(".food .ck"); if (!ck) return;
+  const el = ck.closest(".food"), f = cold[+el.dataset.f];
+  if (!f || el.classList.contains("gone")) return;
+  el.classList.add("gone"); L.stamp(ck); ck.classList.add("on");
   await D.eat(f);
   L.notice(`${f.name} 吃完了，已加进购物清单`);
-}));
+});
+
+// 「＋」小表单：点开 / 再点或 Esc 收起
+function wirePlus(btn, form) {
+  const toggle = (open) => { form.hidden = !open; btn.setAttribute("aria-expanded", open); if (open) form.querySelector("input").focus(); };
+  btn.addEventListener("click", () => toggle(form.hidden));
+  form.addEventListener("keydown", (e) => { if (e.key === "Escape") toggle(false); });
+  return toggle;
+}
+// Fridge「＋」：写进 食物.md；放进冷藏的马上出现在格子里（按到期排好）
+const foodf = root.querySelector(".foodf"), toggleFood = wirePlus(root.querySelector(".fr .plus"), foodf);
+foodf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = foodf.n.value.trim(), place = foodf.p.value;
+  if (!name) return;
+  const days = foodf.d.value;
+  await D.addFood({ name, qty: foodf.q.value, days, place, kind: foodf.k.value });
+  if (place === "冷藏") {
+    const f = { name, qty: foodf.q.value.trim() || "1", expires: days === "" ? null : L.addDays(T, +days) };
+    cold.push(f);
+    const at = cold.slice(0, -1).filter((x) => (x.expires || "9999") <= (f.expires || "9999")).length;
+    const box = document.createElement("div"); box.innerHTML = foodTile(f, cold.length - 1);
+    fridgePager.add(box.firstElementChild, at);
+  }
+  foodf.reset(); toggleFood(false);
+  L.notice(`${name} 放进${place}了`);
+});
+// 最近的活动「＋」：新建一张活动卡（随手记 type: 活动），按日期插进列表
+const actf = root.querySelector(".actf"), toggleAct = wirePlus(root.querySelector(".mod .plus"), actf), acts = root.querySelector(".acts");
+actf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = actf.t.value.trim(), date = actf.d.value;
+  if (!title || !date) return;
+  const path = await D.addActivity({ title, date, source: actf.s.value, note: actf.n.value });
+  if (date >= T) {
+    const ev = { path, title, date, source: actf.s.value.trim(), body: actf.n.value.trim() };
+    let at = events.findIndex((x) => x.date > date);
+    if (at < 0) at = events.length;
+    const box = document.createElement("div"); box.innerHTML = actRow(ev);
+    acts.insertBefore(box.firstElementChild, acts.children[at] || null);
+    events.splice(at, 0, ev);
+  }
+  actf.reset(); toggleAct(false);
+  L.notice(`${title} 加进最近的活动了`);
+});
 
 root.querySelectorAll(".rg li").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
   const c = rem[+li.dataset.c], t = c.tasks[+li.dataset.t];

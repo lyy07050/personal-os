@@ -278,3 +278,9 @@ def test_lists_sink_done():
 def test_long_lists_scroll():
     for v in ("english", "school", "finance"):
         assert "L.scrolly(" in (VIEWS / f"{v}/view.js").read_text(encoding="utf-8"), v
+
+
+def test_home_plus_for_fridge_and_activities():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    for s in ('aria-label="放进冰箱"', 'aria-label="加活动"', "D.addFood(", "D.addActivity("):
+        assert s in js, s
