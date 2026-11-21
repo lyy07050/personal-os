@@ -1,6 +1,7 @@
 // 人事部 · 求职。参数 {section: "pipeline" | "interviews" | "notes"}。布局照 demo/v4/desktop-career.html。
 // JobSync 是本机上单独跑的网站（端口 3737），这里只放入口。
 const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
+const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const esc = L.esc;
 const T = L.today();
 const section = (input && input.section) || "pipeline";
@@ -37,12 +38,14 @@ const ivCard = (i) => !i ? "" : `<section class="card"><div class="head" style="
   <ul class="list">${L.doneLast(i.tasks.map((t) => ({ ...t, done: t.completed }))).map((t) => `<li class="${t.completed ? "done" : ""}" data-p="${esc(i.path)}" data-l="${t.line}"><button class="ck" aria-label="完成" style="width:30px;height:30px">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}</ul></section>`;
 const tipCard = (t) => `<section class="card tip"><div class="nh"><span>${esc(t.file.name)}</span>${L.link(t.file.path, "知识库 →")}</div><p>${esc(tipText[t.file.path])}</p></section>`;
 
+// 一张投递卡；点卡片 = 改公司、职位、阶段、日期
+const coCard = (j, hide = false) => `<div class="co has-del" data-j="${jobs.indexOf(j)}" role="button" tabindex="0" title="点一下修改" ${hide ? "hidden" : ""}>${L.delBtn(j.company, `data-p="${esc(j.path)}" data-n="${esc(j.company)}"`, "corner")}<b>${esc(j.company)}</b><small>${esc(j.role)}</small>${chip(j)}</div>`;
 let body = "";
 if (section === "pipeline") {
   body = `<section class="group board" aria-label="求职流程">${STAGES.map((s) => {
     const mine = jobs.filter((j) => j.stage === s), show = s === "已投递" ? 3 : 2;
     return `<div class="col tile" data-s="${s}"><div class="ch"><h3 class="${s === "Offer" ? "g" : ""}">${s}</h3><span>${mine.length}</span></div>
-      ${mine.map((j, k) => `<div class="co has-del" ${k >= show ? "hidden" : ""}>${L.delBtn(j.company, `data-p="${esc(j.path)}" data-n="${esc(j.company)}"`, "corner")}${L.link(j.path, `<b>${esc(j.company)}</b>`)}<small>${esc(j.role)}</small>${chip(j)}</div>`).join("")}
+      ${mine.map((j, k) => coCard(j, k >= show)).join("")}
       ${mine.length > show ? `<button class="more">另外 ${mine.length - show} 家 →</button>` : ""}${mine.length ? "" : '<div class="slot" aria-hidden="true"></div>'}</div>`;
   }).join("")}</section>${ivCard(nextIv)}${tips[0] ? tipCard(tips[0]) : ""}`;
 } else if (section === "interviews") {
@@ -58,6 +61,7 @@ const STYLE = `
 .lifeos-dash .col h3{font-family:var(--zcool);font-weight:400;font-size:26px}
 .lifeos-dash .col h3.g{font-family:var(--gaegu);font-size:30px}
 .lifeos-dash .col .ch span{font-size:16px;color:var(--brown);font-weight:500}
+.lifeos-dash .co[data-j]{cursor:pointer}
 .lifeos-dash .co{background:#fff;border-radius:16px;border:1px solid rgba(37,45,41,.06);padding:16px 18px;margin-bottom:12px;box-shadow:0 1px 2px rgba(52,72,59,.04)}
 .lifeos-dash .co[hidden]{display:none}
 .lifeos-dash .co b{display:block;font-weight:500;font-size:18px}
@@ -78,6 +82,31 @@ root.addEventListener("click", (e) => {
   e.preventDefault(); e.stopPropagation();
   L.removeWithUndo(root, b.closest(".has-del"), `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p));
 });
+function editJobCard(el) {
+  const j = jobs[+el.dataset.j];
+  if (!j) return;
+  L.editSheet(root, {
+    title: "改投递", values: { company: j.company, role: j.role, stage: j.stage, when: j.when },
+    fields: [{ k: "company", label: "公司", required: true }, { k: "role", label: "职位" },
+      { k: "stage", label: "阶段", type: "select", options: STAGES }, { k: "when", label: "日期 / 备注", placeholder: "2026-11-20 或 等二面" }],
+    onSave: async (v) => {
+      await D.editJob(j.path, v);
+      const moved = v.stage !== j.stage;
+      Object.assign(j, v);
+      const box = document.createElement("div"); box.innerHTML = coCard(j);
+      const card = box.firstElementChild;
+      if (moved) { // 换阶段：挪到那一栏
+        el.remove();
+        const col = root.querySelector(`.col[data-s="${v.stage}"]`);
+        if (col) { col.querySelector(".slot")?.remove(); col.querySelector(".ch").after(card); }
+      } else el.replaceWith(card);
+      L.notice(`${v.company} 改好了`);
+    },
+    openPath: j.path,
+  });
+}
+root.addEventListener("click", (e) => { if (e.target.closest(".delb")) return; const c = e.target.closest(".co[data-j]"); if (c) editJobCard(c); });
+root.addEventListener("keydown", (e) => { const c = e.target.closest(".co[data-j]"); if (c && e.key === "Enter") editJobCard(c); });
 root.querySelectorAll("li[data-l] .ck").forEach((ck) => ck.addEventListener("click", async () => {
   const li = ck.closest("li");
   if (li.classList.toggle("done")) L.stamp(ck);

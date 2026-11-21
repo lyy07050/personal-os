@@ -91,15 +91,15 @@ const left = todos.filter((t) => !t.done && t.kind !== "ev").length;
 // 事情进度一行；新事情的类别（存英文，首页待办右边显示）
 const AREAS = [["school", "学校"], ["career", "求职"], ["money", "钱"], ["english", "英语"], ["errands", "杂事"], ["life", "生活"]];
 const pctLabel = (n) => (n ? n + "%" : "未开始");
-const projRow = (p) => `<li data-path="${esc(p.path)}">${L.link(p.path, esc(p.title))}<span class="bar" role="slider" tabindex="0" aria-label="${esc(p.title)} 的进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}" title="点一下或按左右键调进度"><span style="width:${p.progress}%"></span></span><span class="p ${p.progress ? "" : "muted"}">${pctLabel(p.progress)}</span></li>`;
+const projRow = (p) => `<li data-path="${esc(p.path)}"><button class="pname editable" title="点一下修改">${esc(p.title)}</button><span class="bar" role="slider" tabindex="0" aria-label="${esc(p.title)} 的进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}" title="点一下或按左右键调进度"><span style="width:${p.progress}%"></span></span><span class="p ${p.progress ? "" : "muted"}">${pctLabel(p.progress)}</span></li>`;
 // Fridge 一格
 function foodTile(f, i) {
   const n = f.expires ? L.daysLeft(f.expires, T) : null;
-  return `<div class="tile food" data-f="${i}"><h3>${esc(f.name)}</h3><small>${esc(f.qty)}</small><div class="left"><button class="ck" aria-label="吃完" title="吃完" ${n !== null && n <= 1 ? 'style="border-color:var(--warn)"' : ""}>${L.CK}</button><span class="${n !== null && n <= 1 ? "warn" : ""}">${n === null ? "—" : L.leftLabel(n)}</span></div><div class="pic">${foodIcon(f.name, 96)}</div></div>`;
+  return `<div class="tile food" data-f="${i}"><h3 class="editable" title="点一下修改">${esc(f.name)}</h3><small>${esc(f.qty)}</small><div class="left"><button class="ck" aria-label="吃完" title="吃完" ${n !== null && n <= 1 ? 'style="border-color:var(--warn)"' : ""}>${L.CK}</button><span class="${n !== null && n <= 1 ? "warn" : ""}">${n === null ? "—" : L.leftLabel(n)}</span></div><div class="pic">${foodIcon(f.name, 96)}</div></div>`;
 }
 const actRow = (e) => `<div class="act has-del" data-p="${esc(e.path)}">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div>${L.delBtn(e.title)}</div>`;
 // 一行待办；日程（kind === "ev"）用圆点，不能勾
-const todoLi = (t, i) => `<li data-i="${i}" class="${t.done ? "done" : ""}${t.kind === "ev" ? " ev-row" : ""}">${t.kind === "ev" ? '<span class="dot" aria-hidden="true"></span>' : `<button class="ck" aria-label="完成">${L.CK}</button>`}<span class="t">${esc(t.text)}</span><small class="${t.warn ? "warn" : ""}">${esc(t.tag)}</small></li>`;
+const todoLi = (t, i) => `<li data-i="${i}" class="${t.done ? "done" : ""}${t.kind === "ev" ? " ev-row" : ""}">${t.kind === "ev" ? '<span class="dot" aria-hidden="true"></span>' : `<button class="ck" aria-label="完成">${L.CK}</button>`}<span class="t${t.kind === "card" ? " editable" : ""}"${t.kind === "card" ? ' title="点一下修改"' : ""}>${esc(t.text)}</span><small class="${t.warn ? "warn" : ""}">${esc(t.tag)}</small></li>`;
 
 const html = `
 <div class="topbar"><span></span><form class="find capture"><button type="button" class="sw" aria-pressed="false" title="打开后存成今日待办">待办</button><input placeholder="我想记…" aria-label="记进随手记"><span class="ok">已存进随手记</span></form></div>
@@ -316,6 +316,7 @@ const STYLE = `
 .lifeos-dash .prog .bar[role=slider],.lifeos-dash .prog li[data-path]{cursor:pointer}
 .lifeos-dash .prog li[data-path] a{cursor:pointer}
 .lifeos-dash .prog .bar[role=slider]:focus-visible{outline:2px solid var(--green,#5a8);outline-offset:2px}
+.lifeos-dash .dash .prog .pname{background:none;border:0;box-shadow:none;padding:0;height:auto;font:inherit;font-size:15px;color:var(--ink);text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lifeos-dash .prog .p{text-align:right;color:var(--ink-2);font-size:14px}
 .lifeos-dash .rcol{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:16px;display:flex;flex-direction:column;gap:20px;position:relative}
 .lifeos-dash .mod{border-radius:18px;padding:16px}
@@ -404,6 +405,20 @@ form.addEventListener("submit", async (e) => {
 // 今日待办：勾选（用事件委托，新加的行也能勾）、「＋」加一条
 const todoList = root.querySelector(".todo .list"), addBtn = root.querySelector(".todo .add"), addForm = root.querySelector(".addtodo");
 todoList.addEventListener("click", async (e) => {
+  // 自己加的待办：点文字 = 改文字、日期，或删掉
+  const tx = e.target.closest(".t.editable");
+  if (tx) {
+    const li = tx.closest("li"), t = todos[+li.dataset.i];
+    if (!t || t.kind !== "card") return;
+    const card = allCards.find((c) => c.path === t.path) || {};
+    return L.editSheet(root, {
+      title: "改待办", values: { title: t.text, date: card.date || "" },
+      fields: [{ k: "title", label: "要做什么", wide: true, required: true }, { k: "date", label: "哪天做（空着 = 随时）", type: "date" }],
+      onSave: async (v) => { await D.editTodo(t.path, t.text, v); t.text = v.title; card.date = v.date; tx.textContent = v.title; L.notice("待办改好了"); },
+      onDelete: () => L.removeWithUndo(root, li, `「${t.text}」删掉了`, () => L.trashFile(t.path)),
+      openPath: t.path,
+    });
+  }
   const ck = e.target.closest(".ck"); if (!ck) return;
   const li = ck.closest("li"), t = todos[+li.dataset.i];
   if (!t || t.kind === "ev") return;
@@ -597,6 +612,30 @@ grid.addEventListener("keydown", (e) => { const ev = e.target.closest(".ev[data-
 
 // 冰箱：勾上 = 吃完 → 这行打勾，名字进购物清单
 root.querySelector(".fr").addEventListener("click", async (e) => {
+  // 点名字 = 改这样食物
+  const h = e.target.closest(".food h3.editable");
+  if (h) {
+    const el = h.closest(".food"), f = cold[+el.dataset.f];
+    if (!f || el.classList.contains("gone")) return;
+    return L.editSheet(root, {
+      title: "改食物", values: { name: f.name, qty: f.qty, expires: f.expires || "", place: f.place, kind: f.kind || "" },
+      fields: [
+    { k: "name", label: "名字", wide: true, required: true },
+    { k: "qty", label: "数量", placeholder: "1 盒 / 500 g" },
+    { k: "expires", label: "到期（空着 = 不会坏）", type: "date" },
+    { k: "place", label: "放在哪", type: "select", options: ["冷藏", "冷冻", "常温"] },
+    { k: "kind", label: "类别", type: "select", options: [["", "（不分）"], ...L.FOOD_KINDS] },
+  ],
+      onSave: async (v) => {
+        f.raw = await D.editFood(f, v);
+        Object.assign(f, v, { expires: v.expires || null });
+        const box = document.createElement("div"); box.innerHTML = foodTile(f, +el.dataset.f);
+        if (v.place === "冷藏") el.replaceWith(box.firstElementChild); else { el.remove(); fridgePager.refresh(); }
+        L.notice(`${f.name} 改好了`);
+      },
+      onDelete: () => L.removeWithUndo(root, el, `「${f.name}」删掉了`, async () => { await L.removeLine(D.FOOD, f.raw); fridgePager.refresh(); }),
+    });
+  }
   const ck = e.target.closest(".food .ck"); if (!ck) return;
   const el = ck.closest(".food"), f = cold[+el.dataset.f];
   if (!f || el.classList.contains("gone")) return;
@@ -632,6 +671,19 @@ foodf.addEventListener("submit", async (e) => {
   }
   foodf.reset(); toggleFood(false);
   L.notice(`${name} 放进${place}了`);
+});
+// 事情进度：点名字 = 改名字、类别，或删掉（笔记进废纸篓）
+root.querySelector(".prog .list").addEventListener("click", (e) => {
+  const b = e.target.closest(".pname");
+  if (!b) return;
+  const li = b.closest("li"), path = li.dataset.path, p = projects.find((x) => x.path === path) || { path, title: b.textContent, area: "" };
+  L.editSheet(root, {
+    title: "改事情", values: { title: p.title, area: p.area },
+    fields: [{ k: "title", label: "要推进的事", wide: true, required: true }, { k: "area", label: "类别", type: "select", options: [["", "（不分）"], ...AREAS] }],
+    onSave: async (v) => { const to = await D.editProject(p, v); Object.assign(p, { title: v.title, area: v.area, path: to }); li.dataset.path = to; b.textContent = v.title; L.notice(`${v.title} 改好了`); },
+    onDelete: () => L.removeWithUndo(root, li, `「${p.title}」删掉了`, () => L.trashFile(p.path)),
+    openPath: p.path,
+  });
 });
 // 事情进度「＋」：新建一篇事情笔记，马上出现在列表最后
 const projf = root.querySelector(".projf"), toggleProj = wirePlus(root.querySelector(".prog .plus"), projf);

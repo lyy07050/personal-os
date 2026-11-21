@@ -19,6 +19,37 @@
     return (await L.lines(dv, SHOP)).map((l, i) => ({ m: /^- \[( |x)\] (.+)$/.exec(l), line: i })).filter((x) => x.m)
       .map((x) => ({ done: x.m[1] === "x", text: x.m[2], line: x.line }));
   }
+  // ---------- 改：求职、订阅、单词、事情、待办 ----------
+  const editJob = (path, v) => app.fileManager.processFrontMatter(L.fileOf(path), (fm) => { fm.company = v.company; fm.role = v.role; fm.stage = v.stage; fm.when = v.when; });
+  async function editSub(old, v) {
+    const line = subLine({ ...v, charged: old.charged });
+    await L.replaceLine(SUBS, old.raw, line);
+    return line;
+  }
+  // 单词：只换 front::back，行尾的复习记录 <!--SR:…--> 原样留着
+  async function editWord(w, front, back) {
+    const sr = (w.raw.match(/\s*<!--SR:.*?-->/) || [""])[0];
+    const line = `${front}::${back}${sr}`;
+    await L.replaceLine(w.path, w.raw, line);
+    return line;
+  }
+  // 事情：类别写 area；改名 = 笔记改名（事情的名字就是笔记名）
+  async function editProject(p, { title, area }) {
+    await L.setMeta(p.path, "area", area);
+    if (title === p.title) return p.path;
+    let to = `10 总部/项目/${L.safeTitle(title)}.md`;
+    for (let i = 2; L.fileOf(to); i++) to = `10 总部/项目/${L.safeTitle(title)} ${i}.md`;
+    await app.fileManager.renameFile(L.fileOf(p.path), to);
+    return to;
+  }
+  // 自己加的待办卡：改 # 标题那一行和日期（日期空着 = 随时）
+  async function editTodo(path, oldTitle, { title, date }) {
+    const f = L.fileOf(path);
+    if (!f) return;
+    await app.vault.process(f, (t) => t.replace(`\n# ${oldTitle}`, `\n# ${title}`));
+    await app.fileManager.processFrontMatter(f, (fm) => { if (date) fm.date = date; else delete fm.date; });
+  }
+
   // 新食谱：30 后勤部/食谱/<菜名>.md，食材写进 ingredients，做法写在正文
   async function addRecipe({ name, ingredients, steps = "" }) {
     const t = L.safeTitle(name);
@@ -34,9 +65,20 @@
     await L.appendLine(SHOP, `- [ ] ${f.name}`);
   }
   // 放进冰箱：插到「## 位置」那一节的最后。days 为空 = 不会过期
+  const foodLine = ({ name, qty, expires, place, kind }) =>
+    `- [ ] ${String(name).replace(/[\[\]]/g, "").trim()} [数量:: ${(qty || "").trim() || "1"}] [到期:: ${expires || "无"}] [位置:: ${place}]${kind ? ` [类别:: ${kind}]` : ""}`;
   async function addFood({ name, qty, days, place, kind }) {
     const exp = days === "" || days === undefined || days === null ? "无" : L.addDays(T, +days);
-    const line = `- [ ] ${name} [数量:: ${(qty || "").trim() || "1"}] [到期:: ${exp}] [位置:: ${place}]${kind ? ` [类别:: ${kind}]` : ""}`;
+    await insertFood(foodLine({ name, qty, expires: exp === "无" ? "" : exp, place, kind }), place);
+  }
+  // 改一样食物：位置没变就原地换那一行；换了位置就挪到那个位置的那一节
+  async function editFood(old, v) {
+    const line = foodLine(v);
+    if (v.place === old.place) await L.replaceLine(FOOD, old.raw, line);
+    else { await L.removeLine(FOOD, old.raw); await insertFood(line, v.place); }
+    return line;
+  }
+  async function insertFood(line, place) {
     const f = L.fileOf(FOOD);
     if (!f) { await app.vault.create(FOOD, `## ${place}\n\n${line}\n`); return; }
     await app.vault.process(f, (text) => {
@@ -229,6 +271,11 @@
   }
 
   // ---------- 钱 ----------
+  // 改一笔：从原来那个月的账本删掉原来那行，再按新的日期写进去（换了月份就进新月份的账本）
+  async function updateExpense(old, e) {
+    await L.removeLine(`20 财务部/账本/${old.date.slice(0, 7)}.md`, old.raw);
+    return addExpense(e);
+  }
   // 记一笔：写进 20 财务部/账本/<月份>.md；账本是新的在上，所以插在第一条日期不晚于它的行前面；新月份就新建文件
   async function addExpense(e) {
     const path = `20 财务部/账本/${e.date.slice(0, 7)}.md`, row = L.formatLedger(e), f = L.fileOf(path);
@@ -360,8 +407,8 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, updateEvent, editDeadline, editCard, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
-    food, shopping, eat, addFood, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, updateEvent, editDeadline, editCard, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, updateExpense, addProject, setProgress,
+    food, shopping, eat, addFood, editFood, editJob, editSub, editWord, editProject, editTodo, subLine, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setGoalHome, setHabit, bodyOf, notes, courses, things,
   };
 })

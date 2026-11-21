@@ -27,12 +27,12 @@ const addForm = (kind) => `<form class="addf" data-k="${kind}" hidden><input nam
 const box = (kind) => {
   const items = food.filter((f) => (f.kind || "生鲜") === kind);
   return `<div class="box" data-k="${kind}" style="background:${BG[kind]}"><div class="bh"><h3>${kind}</h3><span class="pill">${items.length} 项</span></div>
-    ${items.length ? `<ul>${items.map((f) => `<li data-l="${f.line}"><span class="pic">${foodIcon(f.name, 30)}</span><span class="t">${esc(f.name)}</span>${pill(f)}<button class="eat">吃完</button></li>`).join("")}</ul><button class="add">＋ 添加</button>`
+    ${items.length ? `<ul>${items.map((f) => `<li data-l="${f.line}"><span class="pic">${foodIcon(f.name, 30)}</span><span class="t editable" title="点一下修改">${esc(f.name)}</span>${pill(f)}<button class="eat">吃完</button></li>`).join("")}</ul><button class="add">＋ 添加</button>`
       : `<button class="empty" aria-label="添加">＋</button>`}${addForm(kind)}</div>`;
 };
 
 // 购物清单一行（按文字找回文件里那一行，不靠行号）
-const shopLi = (s) => `<li class="has-del ${s.done ? "done" : ""}" data-t="${esc(s.text)}"><button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(s.text.split(/\s/)[0], 40)}</span><span class="t">${esc(s.text)}</span>${L.delBtn(s.text)}</li>`;
+const shopLi = (s) => `<li class="has-del ${s.done ? "done" : ""}" data-t="${esc(s.text)}"><button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(s.text.split(/\s/)[0], 40)}</span><span class="t editable" title="点一下修改">${esc(s.text)}</span>${L.delBtn(s.text)}</li>`;
 const shopRaw = (li) => `- [${li.classList.contains("done") ? "x" : " "}] ${li.dataset.t}`;
 // 一道菜：标题、做法、食材（冰箱里有的绿色）、右上角删除
 const recipeCard = (r) => `<div class="recipe has-del">${L.delBtn(r.name, `data-p="${esc(r.path)}" data-n="${esc(r.name)}"`, "corner")}${L.link(r.path, `<h3>${esc(r.name)}</h3>`)}<p>${esc(r.text)}</p>${r.ingredients.map((g) => `<span class="chip ${inFridge(g) ? "" : "plain"}">${esc(g)}</span>`).join(" ")}</div>`;
@@ -116,6 +116,30 @@ root.querySelectorAll(".addf").forEach((form) => form.addEventListener("submit",
 const pagers = [...root.querySelectorAll(".box > ul")].map((ul) => L.pager(ul, 5));
 
 // 点「吃完」先变淡，等 4 秒（可以撤销），时间到了才打勾、进购物清单
+// 点食物名字 = 改名字、数量、到期、位置、类别（也能删）；改完刷新一下就排到新位置
+root.querySelectorAll(".box li").forEach((li) => li.querySelector(".t").addEventListener("click", () => {
+  const f = food.find((x) => x.line === +li.dataset.l);
+  if (!f || li.classList.contains("gone")) return;
+  L.editSheet(root, {
+    title: "改食物", values: { name: f.name, qty: f.qty, expires: f.expires || "", place: f.place, kind: f.kind || "" },
+    fields: [
+    { k: "name", label: "名字", wide: true, required: true },
+    { k: "qty", label: "数量", placeholder: "1 盒 / 500 g" },
+    { k: "expires", label: "到期（空着 = 不会坏）", type: "date" },
+    { k: "place", label: "放在哪", type: "select", options: ["冷藏", "冷冻", "常温"] },
+    { k: "kind", label: "类别", type: "select", options: [["", "（不分）"], ...L.FOOD_KINDS] },
+  ],
+    onSave: async (v) => {
+      f.raw = await D.editFood(f, v);
+      Object.assign(f, v, { expires: v.expires || null, left: v.expires ? L.daysLeft(v.expires, T) : null });
+      li.querySelector(".t").textContent = f.name;
+      li.querySelector(".pill")?.remove();
+      li.querySelector(".t").insertAdjacentHTML("afterend", pill(f));
+      L.notice(`${f.name} 改好了${v.place !== li.closest(".box")?.dataset.k ? "" : ""}`);
+    },
+    onDelete: () => L.removeWithUndo(root, li, `「${f.name}」删掉了`, () => L.removeLine(FOOD, f.raw)),
+  });
+}));
 root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEventListener("click", () => {
   const f = food.find((x) => x.line === +li.dataset.l);
   if (li.classList.contains("gone")) return;
@@ -134,6 +158,15 @@ root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEve
 root.querySelector(".shop .list").addEventListener("click", async (e) => {
   const li = e.target.closest("li[data-t]");
   if (!li) return;
+  if (e.target.closest(".t")) {
+    // 点文字 = 改名字
+    const before = shopRaw(li);
+    return L.editSheet(root, {
+      title: "改购物清单", values: { t: li.dataset.t }, fields: [{ k: "t", label: "要买什么", wide: true, required: true }],
+      onSave: async (v) => { li.dataset.t = v.t.replace(/\s+/g, " "); li.querySelector(".t").textContent = li.dataset.t; await L.replaceLine(SHOP, before, shopRaw(li)); },
+      onDelete: () => L.removeWithUndo(root, li, `「${li.dataset.t}」从购物清单删掉了`, () => L.removeLine(SHOP, before)),
+    });
+  }
   if (e.target.closest(".delb")) {
     const raw = shopRaw(li);
     L.removeWithUndo(root, li, `「${li.dataset.t}」从购物清单删掉了`, () => L.removeLine(SHOP, raw));

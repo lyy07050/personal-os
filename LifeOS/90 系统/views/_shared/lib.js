@@ -306,8 +306,9 @@
   // ---------- 记一笔 ----------
   const formatLedger = (e) => `- ${e.date} ${String(e.name).replace(/\s+/g, " ").trim()} [金额:: ${Number(e.amount).toFixed(2)}] [分类:: ${e.category}] [方式:: ${e.method}]`;
   const METHODS = [["现金", "现金"], ["ApplePay", "Apple Pay"], ["信用卡", "信用卡"], ["借记卡", "借记卡"], ["转账", "转账 / e-Transfer"]];
-  // 记一笔的小窗口（<dialog>，Esc 关）。save(entry) 负责写进账本；返回 open()
-  function moneySheet(root, save) {
+  // 记一笔 / 改一笔的小窗口（<dialog>，Esc 关）。返回 open(old?)：不给 old = 记新的一笔；给了 = 改这一笔（带「删除」）
+  // save(entry, old) 负责写进账本；onDelete(old) 负责删
+  function moneySheet(root, save, { onDelete } = {}) {
     const cats = ["待分类", "餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"];
     root.insertAdjacentHTML("beforeend", `<dialog class="money" aria-label="记一笔"><form class="mf">
       <h3>记一笔</h3>
@@ -316,25 +317,70 @@
       <div class="r"><select name="c" aria-label="分类">${cats.map((c) => `<option value="${c}">${c === "待分类" ? "分类：以后再整理" : c}</option>`).join("")}</select>
         <select name="m" aria-label="方式">${METHODS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select></div>
       <input name="d" type="date" aria-label="日期" required>
-      <div class="r"><button type="button" class="cancel">取消</button><button class="go">记下</button></div></form></dialog>`);
+      <div class="r"><button type="button" class="cancel">取消</button><button class="go">记下</button></div>
+      <button type="button" class="mdel" hidden>删掉这一笔</button></form></dialog>`);
     const all = root.querySelectorAll("dialog.money"), dlg = all[all.length - 1], f = dlg.querySelector("form");
+    let old = null;
     dlg.querySelector(".cancel").addEventListener("click", () => dlg.close());
+    dlg.querySelector(".mdel").addEventListener("click", () => { const o = old; dlg.close(); if (o && onDelete) onDelete(o); });
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
       const amt = parseFloat(f.a.value), name = f.n.value.trim();
       if (!(amt > 0) || !name) return;
       const entry = { date: f.d.value || today(), name, amount: amt, category: f.c.value, method: f.m.value };
-      await save(entry);
+      await save(entry, old);
       dlg.close();
-      notice(`记下了：${name} $${amt.toFixed(2)}`);
+      notice(old ? `改好了：${name} $${amt.toFixed(2)}` : `记下了：${name} $${amt.toFixed(2)}`);
     });
-    return () => { f.reset(); f.d.value = today(); dlg.showModal(); f.a.focus(); };
+    return (o = null) => {
+      old = o; f.reset();
+      dlg.querySelector("h3").textContent = o ? "改一笔" : "记一笔";
+      dlg.querySelector(".go").textContent = o ? "保存" : "记下";
+      dlg.querySelector(".mdel").hidden = !(o && onDelete);
+      if (o) {
+        f.a.value = Number(o.amount).toFixed(2); f.n.value = o.name; f.d.value = o.date;
+        f.c.value = [...f.c.options].some((x) => x.value === o.category) ? o.category : "待分类";
+        if (![...f.m.options].some((x) => x.value === o.method)) f.m.insertAdjacentHTML("beforeend", `<option value="${esc(o.method)}">${esc(o.method)}</option>`);
+        f.m.value = o.method;
+      } else f.d.value = today();
+      dlg.showModal(); f.a.focus();
+    };
   }
 
   function mount(dv, html, style = "") {
     const root = dv.container.createDiv({ cls: "dash" });
     root.innerHTML = (style ? `<style>${style}</style>` : "") + html;
     return root;
+  }
+
+  // ---------- 通用的编辑小窗口 ----------
+  // fields: [{k, label, type: "text"|"number"|"date"|"select", options: [值] 或 [[值, 显示]], wide, placeholder, required}]
+  // onSave(values) 写回去；onDelete() 有就显示「删除」；openPath 有就显示「打开笔记」
+  function editSheet(root, { title, fields, values = {}, onSave, onDelete, openPath }) {
+    root.querySelector("dialog.esh")?.remove();
+    const input = (f) => {
+      const v = values[f.k] ?? "", ph = f.placeholder ? ` placeholder="${esc(f.placeholder)}"` : "", req = f.required ? " required" : "";
+      if (f.type === "select") return `<select name="${f.k}">${f.options.map((o) => { const [val, lab] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(val)}" ${String(val) === String(v) ? "selected" : ""}>${esc(lab)}</option>`; }).join("")}</select>`;
+      return `<input name="${f.k}" type="${f.type || "text"}" value="${esc(v)}"${ph}${req}${f.type === "number" ? ' step="0.01" min="0" inputmode="decimal"' : ""} autocomplete="off">`;
+    };
+    root.insertAdjacentHTML("beforeend", `<dialog class="esh" aria-label="${esc(title)}"><form>
+      <h3>${esc(title)}</h3>
+      ${fields.map((f) => `<label class="${f.wide ? "w" : ""}">${esc(f.label)}${input(f)}</label>`).join("")}
+      <div class="ea">${onDelete ? '<button type="button" class="del">删除</button>' : ""}${openPath ? '<button type="button" class="open">打开笔记</button>' : ""}<span></span><button type="button" class="cancel">取消</button><button class="go">保存</button></div></form></dialog>`);
+    const dlg = root.querySelector("dialog.esh"), form = dlg.querySelector("form");
+    dlg.addEventListener("close", () => dlg.remove());
+    dlg.querySelector(".cancel").addEventListener("click", () => dlg.close());
+    dlg.querySelector(".del")?.addEventListener("click", () => { dlg.close(); onDelete(); });
+    dlg.querySelector(".open")?.addEventListener("click", () => { dlg.close(); open(openPath); });
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const v = Object.fromEntries(fields.map((f) => [f.k, String(form[f.k].value).trim()]));
+      if (fields.some((f) => f.required && !v[f.k])) return;
+      form.querySelector(".go").disabled = true;
+      try { await onSave(v); dlg.close(); } finally { form.querySelector(".go") && (form.querySelector(".go").disabled = false); }
+    });
+    dlg.showModal();
+    form.querySelector("input,select")?.focus();
   }
 
   // ---------- 闪卡复习（不用装插件，直接在面板上弹出）----------
@@ -461,7 +507,7 @@
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
     safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone, formatLedger, moneySheet, METHODS,
-    flashcards, subDue, notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile, goto, takeIntent,
+    editSheet, flashcards, subDue, notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile, goto, takeIntent,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],
     NOTE_CATEGORIES: ["生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职"],

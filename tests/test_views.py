@@ -451,3 +451,32 @@ def test_things_edit_dialog():
     js = (VIEWS / "things/view.js").read_text(encoding="utf-8")
     assert 'class="itd"' in js and "processFrontMatter" in js and "renameFile" in js
     assert "L.open(path)" not in js  # 添加物品不再跳去空白笔记
+
+
+def test_ledger_rows_editable():
+    fin = (VIEWS / "finance/view.js").read_text(encoding="utf-8")
+    assert "D.updateExpense(" in fin and "openMoney(r)" in fin
+    lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
+    assert "function moneySheet(root, save, { onDelete } = {})" in lib and "改一笔" in lib
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert "async function updateExpense(" in data
+
+
+def test_everything_editable():
+    lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
+    assert "function editSheet(" in lib
+    want = {"fridge": ["D.editFood(", "replaceLine(SHOP"], "home": ["D.editFood(", "D.editTodo(", "D.editProject("],
+            "career": ["D.editJob("], "finance": ["D.editSub("], "english": ["D.editWord("]}
+    for v, calls in want.items():
+        js = (VIEWS / f"{v}/view.js").read_text(encoding="utf-8")
+        assert "L.editSheet(" in js, v
+        for c in calls:
+            assert c in js, (v, c)
+
+
+def test_views_using_D_load_it():
+    import re as _re
+    for js in VIEWS.glob("*/view.js"):
+        text = js.read_text(encoding="utf-8")
+        if _re.search(r"\bD\.\w", text):
+            assert "const D = eval(" in text, js.parent.name

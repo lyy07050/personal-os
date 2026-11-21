@@ -5,6 +5,8 @@ const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const esc = L.esc;
 const T = L.today();
 const period = (input && input.period) || "month";
+// 账单一行的格子（改完一笔也用它重画）
+const rowCells = (e) => `<td>${L.md(e.date)}</td><td>${esc(e.name)}</td><td><span class="chip ${CHIP[e.category] || ""}">${e.category}</span></td><td>${esc(e.method.replace("ApplePay", "Apple Pay"))}</td><td class="amt">${L.money(e.amount)}</td><td class="dc">${L.delBtn(e.name)}</td>`;
 const CHIP = { 餐饮: "pink", 购物: "blue", 服饰: "purple", 美妆: "yellow", 日用: "beige", 居住: "beige", 学习: "apricot", 其他: "apricot", 待分类: "plain" };
 const PIE = { 餐饮: "#f3c7c0", 购物: "#cfe2f0", 交通: "#fbe5a3", 服饰: "#ddd3e8", 美妆: "#f9e0dc", 日用: "#e3ead9", 学习: "#d6e6dc", 娱乐: "#f6dccf", 居住: "#e9e2d6", 其他: "#eadfc5", 待分类: "#e8e8e8" };
 const GUESS = [[/kobo|indigo|chapters|coursera/i, "学习"], [/amzn|amazon|dollarama|walmart/i, "日用"], [/uber eats|doordash|tim|starbucks|pho|cafe|restaurant/i, "餐饮"], [/presto|ttc|uber|lyft|go transit/i, "交通"], [/sephora|shoppers/i, "美妆"], [/netflix|spotify|cineplex/i, "娱乐"]];
@@ -108,7 +110,7 @@ const html = L.banner(o) + `<div class="stack">
   <section class="card">
     <div class="head"><h2>账单流水</h2></div>
     <table><thead><tr><th>日期</th><th>项目</th><th>分类</th><th>方式</th><th style="text-align:right">金额</th><th></th></tr></thead>
-    <tbody>${rows.map((e, ri) => `<tr class="has-del ${e.category === "待分类" ? "pending" : ""}" data-r="${ri}"><td>${L.md(e.date)}</td><td>${esc(e.name)}</td><td><span class="chip ${CHIP[e.category] || ""}">${e.category}</span></td><td>${esc(e.method.replace("ApplePay", "Apple Pay"))}</td><td class="amt">${L.money(e.amount)}</td><td class="dc">${L.delBtn(e.name)}</td></tr>`).join("")}</tbody></table>
+    <tbody>${rows.map((e, ri) => `<tr class="has-del ${e.category === "待分类" ? "pending" : ""}" data-r="${ri}" tabindex="0" title="点一下修改">${rowCells(e)}</tr>`).join("")}</tbody></table>
   </section>
   <section class="card">
     ${pending.length ? `<div class="head" style="margin-bottom:4px"><h2>待分类</h2></div>
@@ -162,6 +164,7 @@ const STYLE = `
 .lifeos-dash .subf[hidden]{display:none}
 .lifeos-dash .subf input,.lifeos-dash .subf select{height:38px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:#fff;padding:0 12px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none}
 .lifeos-dash .subf .btn{grid-column:1/-1;height:38px;justify-content:center}
+.lifeos-dash .subs li[data-s]{cursor:pointer}
 .lifeos-dash .subs li{display:grid;grid-template-columns:30px 1fr auto 34px;align-items:center;font-size:16px;padding:13px 0}
 .lifeos-dash .fin-buttons{position:absolute;width:95px;height:397px;right:186px;bottom:-190px;transform:rotate(-90deg);pointer-events:none;filter:var(--sh-sticker);z-index:2}
 .is-mobile .lifeos-dash .cat-wrap{grid-template-columns:1fr;justify-items:center}
@@ -169,7 +172,15 @@ const STYLE = `
 .is-mobile .lifeos-dash .fin-buttons{display:none}`;
 
 const root = L.mount(dv, html, STYLE);
-const openMoney = L.moneySheet(root, (e) => D.addExpense(e)); // 记一笔的小窗口
+// 记一笔 / 改一笔的小窗口：点「＋ 记一笔」记新的，点账单流水的一行改那一笔
+const removeRow = (r, tr) => L.removeWithUndo(root, tr, `「${r.name} ${L.money(r.amount)}」删掉了`, () => L.removeLine(ledgerPath(r.month), r.raw));
+const openMoney = L.moneySheet(root, async (e, old) => {
+  if (!old) return D.addExpense(e);
+  await D.updateExpense(old, e);
+  Object.assign(old, e, { raw: L.formatLedger(e), month: e.date.slice(0, 7) });
+  const tr = root.querySelector(`tr[data-r="${rows.indexOf(old)}"]`);
+  if (tr) { tr.innerHTML = rowCells(old); tr.classList.toggle("pending", old.category === "待分类"); }
+}, { onDelete: (old) => { const tr = root.querySelector(`tr[data-r="${rows.indexOf(old)}"]`); if (tr) removeRow(old, tr); } });
 // 订阅「＋」：加一行进 订阅.md；到了扣款日就马上记进本月账本
 const subf = root.querySelector(".subf"), subPlus = root.querySelector('.plus[aria-label="加一个订阅"]');
 const toggleSub = (open) => { subf.hidden = !open; subPlus.setAttribute("aria-expanded", open); if (open) subf.n.focus(); };
@@ -190,18 +201,40 @@ subf.addEventListener("submit", async (e) => {
 // 删一个订阅：4 秒内可撤销；已经记进账本的那几笔不动
 root.querySelector(".subs").addEventListener("click", async (e) => {
   const b = e.target.closest(".delb");
-  if (!b) return;
+  if (!b) {
+    // 点一行 = 改这个订阅
+    const li = e.target.closest("li[data-s]"), s = li && subs[+li.dataset.s];
+    if (!s) return;
+    if (!s.raw) s.raw = (await D.subs()).find((x) => x.name === s.name)?.raw;
+    return L.editSheet(root, {
+      title: "改订阅", values: { name: s.name, amount: Number(s.amount).toFixed(2), cycle: s.cycle, day: s.day, category: s.category || "", method: s.method || "信用卡" },
+      fields: [{ k: "name", label: "名字", wide: true, required: true }, { k: "amount", label: "金额", type: "number", required: true },
+        { k: "cycle", label: "周期", type: "select", options: [["月", "每月"], ["年", "每年"]] }, { k: "day", label: "几号扣（年付写 11-15）", required: true },
+        { k: "category", label: "分类", type: "select", options: [["", "以后再整理"], ...L.CATEGORIES] }, { k: "method", label: "方式", type: "select", options: L.METHODS }],
+      onSave: async (v) => {
+        if (v.cycle === "年" && !/^\d{1,2}-\d{1,2}$/.test(v.day)) { L.notice("年付的扣款日写成 月-日，比如 11-15"); throw new Error("bad day"); }
+        const nv = { ...v, amount: parseFloat(v.amount) };
+        s.raw = await D.editSub(s, nv);
+        Object.assign(s, nv);
+        const box = document.createElement("ul"); box.innerHTML = subLi(s, +li.dataset.s); li.replaceWith(box.firstElementChild);
+        L.notice(`${s.name} 改好了`);
+      },
+    });
+  }
   const li = b.closest("li"), s = subs[+li.dataset.s];
   const raw = s.raw || (await D.subs()).find((x) => x.name === s.name)?.raw;
   L.removeWithUndo(root, li, `「${s.name}」订阅删掉了`, () => raw && L.removeLine(D.SUBS, raw));
 });
 // 删一笔：变淡 4 秒（可撤销），时间到了从那个月的账本里删掉这一行
+// 点一行（不是垃圾桶）= 改这一笔
 root.addEventListener("click", (e) => {
-  const b = e.target.closest("tr[data-r] .delb");
-  if (!b) return;
-  const r = rows[+b.closest("tr").dataset.r];
-  L.removeWithUndo(root, b.closest("tr"), `「${r.name} ${L.money(r.amount)}」删掉了`, () => L.removeLine(ledgerPath(r.month), r.raw));
+  const tr = e.target.closest("tr[data-r]");
+  if (!tr) return;
+  const r = rows[+tr.dataset.r];
+  if (e.target.closest(".delb")) removeRow(r, tr);
+  else openMoney(r);
 });
+root.addEventListener("keydown", (e) => { const tr = e.target.closest("tr[data-r]"); if (tr && e.key === "Enter") openMoney(rows[+tr.dataset.r]); });
 // 账单流水在卡片里上下滑（表头跟着停在上面）
 root.querySelectorAll("table").forEach((t) => { if (!t.querySelector("thead th")) return; const w = document.createElement("div"); w.className = "bills"; t.replaceWith(w); w.appendChild(t); L.scrolly(w); });
 L.wireBanner(root, o);

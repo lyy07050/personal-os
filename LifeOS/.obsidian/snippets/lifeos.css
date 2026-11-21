@@ -300,3 +300,28 @@
 .lifeos-dash .flash .no{background:#f6e3df;color:#8f3f31}
 .lifeos-dash .flash .yes{background:#e1ecd9;color:#2f4a3a}
 .lifeos-dash .flash kbd{font:inherit;font-size:11px;opacity:.6;margin-left:4px}
+
+/* ---------- 点一行就能改 ---------- */
+.lifeos-dash .mf .mdel{height:36px;border-radius:999px;background:none;color:#a2493a;font-size:14px}
+.lifeos-dash .mf .mdel[hidden]{display:none}
+.lifeos-dash tr[data-r]{cursor:pointer}
+.lifeos-dash tr[data-r]:hover td{background:rgba(62,91,75,.03)}
+.lifeos-dash tr[data-r]:focus-visible{outline:2px solid var(--green);outline-offset:-2px}
+
+/* ---------- 通用编辑小窗口 ---------- */
+.lifeos-dash dialog.esh{border:0;border-radius:22px;padding:22px 24px;width:min(440px,92vw);background:#fff;color:var(--ink);box-shadow:0 20px 60px rgba(37,45,41,.25)}
+.lifeos-dash dialog.esh::backdrop{background:rgba(37,45,41,.25)}
+.lifeos-dash .esh form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lifeos-dash .esh h3{grid-column:1/-1;font-family:var(--zcool);font-weight:400;font-size:24px;margin:0}
+.lifeos-dash .esh label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.lifeos-dash .esh label.w{grid-column:1/-1}
+.lifeos-dash .esh input,.lifeos-dash .esh select{height:40px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 12px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .esh .ea{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:6px}
+.lifeos-dash .esh .ea span{flex:1}
+.lifeos-dash .esh .ea button{height:40px;padding:0 16px;border-radius:999px;font-size:14px;border:0;box-shadow:none;cursor:pointer}
+.lifeos-dash .esh .cancel{background:var(--tile);color:var(--ink-2)}
+.lifeos-dash .esh .go{background:var(--green);color:#fff;font-weight:600}
+.lifeos-dash .esh .del{background:#f6e3df;color:#8f3f31}
+.lifeos-dash .esh .open{background:none;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;padding:0 6px}
+.lifeos-dash .editable{cursor:pointer}
+.lifeos-dash .editable:hover{text-decoration:underline;text-decoration-color:rgba(37,45,41,.25);text-underline-offset:3px}
