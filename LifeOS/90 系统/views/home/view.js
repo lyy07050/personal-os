@@ -119,7 +119,7 @@ const html = `
     <div class="top"><h2>本周日程</h2><button class="nav" aria-label="上一周">‹</button><span class="wl">${L.weekLabel(mon)}</span><button class="nav" aria-label="下一周">›</button><button class="back" hidden>回到本周</button><button class="add" aria-label="加日程" aria-expanded="false">＋</button></div>
     <form class="addf evf" hidden aria-label="加日程">
       <input name="d" type="date" aria-label="日期" required><input name="t" type="time" aria-label="时间（空着就是全天）">
-      <input name="n" placeholder="做什么" aria-label="事情" required><input name="p" placeholder="地点" aria-label="地点">
+      <input name="n" placeholder="做什么" aria-label="事情" required><select name="k" aria-label="类别">${EVENT_KINDS.map(([k]) => `<option value="${k}">类别：${k}</option>`).join("")}</select>
       <button class="go">加上</button></form>
     <div class="week">${weekCal(week)}</div>
   </section>
@@ -280,6 +280,7 @@ const STYLE = `
 .lifeos-dash .cal .top .add{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--sage);color:var(--green);font-size:20px;line-height:34px;text-align:center;transition:background .2s,color .2s}
 .lifeos-dash .cal .top .add:hover,.lifeos-dash .cal .top .add[aria-expanded="true"]{background:var(--green);color:#fff}
 .lifeos-dash .evf{display:grid;grid-template-columns:150px 110px 1fr 140px auto;gap:8px;margin:0 0 10px}
+.lifeos-dash .evf select{height:38px;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 10px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none;min-width:0}
 .lifeos-dash .evf input{height:38px;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 12px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none;min-width:0}
 .lifeos-dash .evf .go{height:38px;padding:0 18px;border-radius:999px;background:var(--green);color:#fff;font-size:14px;font-weight:600}
 .lifeos-dash .evf[hidden]{display:none}
@@ -457,7 +458,7 @@ evf.addEventListener("submit", async (e) => {
   e.preventDefault();
   const title = evf.n.value.trim(), date = evf.d.value;
   if (!title || !date) return;
-  await D.addEvent({ date, time: evf.t.value, title, place: evf.p.value.trim() });
+  await D.addEvent({ date, time: evf.t.value, title, kind: evf.k.value === "生活" ? "" : evf.k.value }); // 生活 = 默认黄色，不写
   myEvents = await D.events();
   evf.reset(); openEvf(false);
   offset = Math.round((Date.parse(L.mondayOf(date)) - Date.parse(mon)) / 864e5 / 7); // 跳到新日程所在的那一周
