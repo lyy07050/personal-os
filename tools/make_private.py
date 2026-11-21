@@ -13,47 +13,19 @@ from pathlib import Path
 
 FOLDER = "60 个人档案"
 
-_HEAD = '''---
+TEMPLATES = {
+    "个人档案.md": '''---
 cssclasses:
   - lifeos-dash
   - lifeos-desk
 ---
 ```dataviewjs
-await dv.view("90 系统/views/side", {{"page": "private"}})
-await dv.view("90 系统/views/profile", {{"page": "{page}"}})
+await dv.view("90 系统/views/side", {"page": "private"})
+await dv.view("90 系统/views/profile")
 ```
-'''
-
-TEMPLATES = {
-    "个人档案.md": _HEAD.format(page="profile") + '''
-## 身体数据
-
-| 项目 | 记录 | 什么时候 |
-|---|---|---|
-| 体重 |  |  |
-| 体检 |  |  |
-| 生理期 |  |  |
-
-## 尺码
-
-| 项目 | 尺码 | 备注 |
-|---|---|---|
-| 衣服 |  |  |
-| 裤子 |  |  |
-| 鞋 |  |  |
-| 戒指 |  |  |
-''',
-    "账号密码.md": _HEAD.format(page="accounts") + '''
-## 账号密码
-
-| 网站 / App | 账号 | 密码 | 备注 |
-|---|---|---|---|
-| 邮箱 |  |  |  |
-| 学校 |  |  |  |
-| 银行 |  |  |  |
-| 其他 |  |  |  |
 ''',
 }
+# 内容不写在这里：打开这篇笔记、设置密码后，页面把加密好的数据存进这篇笔记末尾的 %% lifeos-vault:… %% 注释里
 
 
 def place(folder: Path, name: str, text: str) -> str:
@@ -75,7 +47,7 @@ def main(argv: list[str]) -> int:
     folder.mkdir(exist_ok=True)
     for name, text in TEMPLATES.items():
         print(place(folder, name, text))
-    print("下一步：照「90 系统/个人档案使用说明」填好内容，再用 Meld Encrypt 加密。")
+    print("下一步：在 Obsidian 里打开「60 个人档案/个人档案」，点「设置密码，开始记录」。")
     return 0
 
 
