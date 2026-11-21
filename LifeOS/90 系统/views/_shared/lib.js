@@ -301,6 +301,34 @@
     }, 600);
   }
 
+  // ---------- 记一笔 ----------
+  const formatLedger = (e) => `- ${e.date} ${String(e.name).replace(/\s+/g, " ").trim()} [金额:: ${Number(e.amount).toFixed(2)}] [分类:: ${e.category}] [方式:: ${e.method}]`;
+  const METHODS = [["现金", "现金"], ["ApplePay", "Apple Pay"], ["信用卡", "信用卡"], ["借记卡", "借记卡"], ["转账", "转账 / e-Transfer"]];
+  // 记一笔的小窗口（<dialog>，Esc 关）。save(entry) 负责写进账本；返回 open()
+  function moneySheet(root, save) {
+    const cats = ["待分类", "餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"];
+    root.insertAdjacentHTML("beforeend", `<dialog class="money" aria-label="记一笔"><form class="mf">
+      <h3>记一笔</h3>
+      <label class="amt-in"><span>$</span><input name="a" type="number" step="0.01" min="0.01" inputmode="decimal" placeholder="0.00" aria-label="金额" required></label>
+      <input name="n" placeholder="买了什么（比如 煎饼果子）" aria-label="项目" required>
+      <div class="r"><select name="c" aria-label="分类">${cats.map((c) => `<option value="${c}">${c === "待分类" ? "分类：以后再整理" : c}</option>`).join("")}</select>
+        <select name="m" aria-label="方式">${METHODS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select></div>
+      <input name="d" type="date" aria-label="日期" required>
+      <div class="r"><button type="button" class="cancel">取消</button><button class="go">记下</button></div></form></dialog>`);
+    const all = root.querySelectorAll("dialog.money"), dlg = all[all.length - 1], f = dlg.querySelector("form");
+    dlg.querySelector(".cancel").addEventListener("click", () => dlg.close());
+    f.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const amt = parseFloat(f.a.value), name = f.n.value.trim();
+      if (!(amt > 0) || !name) return;
+      const entry = { date: f.d.value || today(), name, amount: amt, category: f.c.value, method: f.m.value };
+      await save(entry);
+      dlg.close();
+      notice(`记下了：${name} $${amt.toFixed(2)}`);
+    });
+    return () => { f.reset(); f.d.value = today(); dlg.showModal(); f.a.focus(); };
+  }
+
   function mount(dv, html, style = "") {
     const root = dv.container.createDiv({ cls: "dash" });
     root.innerHTML = (style ? `<style>${style}</style>` : "") + html;
@@ -314,7 +342,7 @@
     fields, parseLedger, parseFood, parseDeadline, daysLeft, addDays, weekday, mondayOf, md, isoWeek, weekMonday, leftLabel, money,
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
-    safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone,
+    safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone, formatLedger, moneySheet, METHODS,
     notice, link, stamp, banner, wireBanner, mount, open,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],

@@ -141,6 +141,24 @@
   }
 
   // ---------- 钱 ----------
+  // 记一笔：写进 20 财务部/账本/<月份>.md；账本是新的在上，所以插在第一条日期不晚于它的行前面；新月份就新建文件
+  async function addExpense(e) {
+    const path = `20 财务部/账本/${e.date.slice(0, 7)}.md`, row = L.formatLedger(e), f = L.fileOf(path);
+    if (!f) {
+      const [y, m] = e.date.split("-").map(Number);
+      await app.vault.create(path, `---\nmonth: ${e.date.slice(0, 7)}\nbudget: 1400\n---\n# ${y} 年 ${m} 月\n\n${row}\n`);
+      return path;
+    }
+    await app.vault.process(f, (text) => {
+      const ls = text.replace(/\n*$/, "").split("\n");
+      let at = ls.findIndex((l) => { const x = L.parseLedger(l); return x && x.date <= e.date; });
+      if (at < 0) at = ls.length;
+      ls.splice(at, 0, row);
+      return ls.join("\n") + "\n";
+    });
+    return path;
+  }
+
   async function weekSpend(day = T) {
     const mon = L.mondayOf(day), days = [...Array(7)].map((_, i) => L.addDays(mon, i));
     const months = [...new Set(days.map((d) => d.slice(0, 7)))];
@@ -241,7 +259,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense,
     food, shopping, eat, addFood, recipes, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

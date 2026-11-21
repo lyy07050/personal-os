@@ -1,6 +1,7 @@
 // 财务部。参数 {period: "month" | "week" | "year"}。布局照 demo/v4/desktop-finance.html。
 // 金额只读账本（20 财务部/账本/YYYY-MM.md），首页和复盘也读同一份。
 const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
+const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const esc = L.esc;
 const T = L.today();
 const period = (input && input.period) || "month";
@@ -79,7 +80,7 @@ const factsScope = period === "week" ? "本周" : period === "year" ? `${year} �
 const o = {
   page: "finance", eye: "20 · FINANCE · CAD", title: "财务部",
   facts: `${factsScope}已花 <b>${L.money(total)}</b> / 预算 ${L.money(budget).replace(".00", "")}${pending.length ? ` · ${pending.length} 笔待分类` : ""}`,
-  btns: [{ label: "＋ 记一笔", cls: "pri", href: ledgerPath(month).replace(/\.md$/, "") }, { label: "整理账本", onclick: copyAsk }, { label: `导出${period === "year" ? "今年" : "本月"}`, onclick: exportCsv }],
+  btns: [{ label: "＋ 记一笔", cls: "pri", onclick: () => openMoney() }, { label: "整理账本", onclick: copyAsk }, { label: `导出${period === "year" ? "今年" : "本月"}`, onclick: exportCsv }],
   arts: [{ file: "fin-stamps.png", style: "left:986px;top:-34px;width:226px" }],
 };
 const [ti, tf] = L.money(total).split(".");
@@ -150,6 +151,7 @@ const STYLE = `
 .is-mobile .lifeos-dash .fin-buttons{display:none}`;
 
 const root = L.mount(dv, html, STYLE);
+const openMoney = L.moneySheet(root, (e) => D.addExpense(e)); // 记一笔的小窗口
 // 账单流水在卡片里上下滑（表头跟着停在上面）
 root.querySelectorAll("table").forEach((t) => { if (!t.querySelector("thead th")) return; const w = document.createElement("div"); w.className = "bills"; t.replaceWith(w); w.appendChild(t); L.scrolly(w); });
 L.wireBanner(root, o);

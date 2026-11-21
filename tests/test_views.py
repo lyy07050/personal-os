@@ -284,3 +284,23 @@ def test_home_plus_for_fridge_and_activities():
     js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
     for s in ('aria-label="放进冰箱"', 'aria-label="加活动"', "D.addFood(", "D.addActivity("):
         assert s in js, s
+
+
+def test_lib_format_ledger_matches_python():
+    import sys
+    sys.path.insert(0, str(PROJECT / "tools"))
+    from datetime import date
+    from decimal import Decimal
+    from lifeos_formats import LedgerEntry, format_ledger
+    py = format_ledger(LedgerEntry(date(2026, 11, 21), "煎饼果子", Decimal("6.5"), "餐饮", "现金"))
+    js = _lib('L.formatLedger({date:"2026-11-21", name:"煎饼果子", amount:6.5, category:"餐饮", method:"现金"})')
+    assert js == py
+    assert _lib(f"L.parseLedger({json.dumps(py, ensure_ascii=False)}).method") == "现金"
+
+
+def test_money_sheet_used_on_home_and_finance():
+    for v in ("home", "finance"):
+        assert "L.moneySheet(" in (VIEWS / f"{v}/view.js").read_text(encoding="utf-8"), v
+    js = LIB.read_text(encoding="utf-8")
+    for s in ("现金", "ApplePay", "<dialog"):
+        assert s in js, s

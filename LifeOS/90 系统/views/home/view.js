@@ -116,7 +116,7 @@ const html = `
       <div class="stat tile" style="border-radius:0 0 18px 0;border-top:0;border-left:0"><small>Tasks left</small><span class="g">${left}</span></div>
       <div class="stat tile"><small>Day streak</small><span class="g">${streak}</span></div>
       <div class="stat tile"><small>In the fridge</small><span class="g">${cold.length}</span></div>
-      ${L.link(`20 财务部/账本/${T.slice(0, 7)}`, "记一笔", "rec")}
+      <button class="rec" aria-label="记一笔">记一笔</button>
     </div>
     <div class="spend tile" style="margin-left:0;border-radius:0 18px 0 0;border-left:0;border-bottom:0">
       <div><small>Spent this week</small><span class="g">${L.money(spent)}</span></div>
@@ -313,6 +313,9 @@ const root = L.mount(dv, html, STYLE);
 // 卡片里上下滑、Fridge 翻页
 ["todo .list", "prog .list", "acts", "rems"].forEach((sel) => L.scrolly(root.querySelector("." + sel)));
 const fridgePager = L.pager(root.querySelector(".fr .foods"), 4);
+// 记一笔：小窗口里填金额、项目、分类、方式（现金、Apple Pay…），写进当月账本
+const openMoney = L.moneySheet(root, (e) => D.addExpense(e));
+root.querySelector(".rec").addEventListener("click", openMoney);
 
 // ---------- 交互 ----------
 const form = root.querySelector("form.capture"), sw = form.querySelector(".sw");
