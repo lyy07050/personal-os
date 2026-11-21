@@ -11,9 +11,11 @@ const cards = dv.pages('"40 研发部/知识卡"').length;
 const sun = L.addDays(L.mondayOf(T), 6);
 const due = (await D.deadlines()).filter((d) => !d.done && d.due && d.due.slice(0, 10) >= T && d.due.slice(0, 10) <= sun).length;
 
+// 「每周复盘」直接打开本周那篇；本周还没写就打开周复盘面板（那里有「开始本周复盘」）
+const weekNote = L.fileOf(`10 总部/复盘/${L.isoWeek(T)}.md`) ? `10 总部/复盘/${L.isoWeek(T)}` : "10 总部/周复盘面板";
 const NAV = [
   ["h", "OVERVIEW"],
-  ["home", "首页", "10 总部/首页"], ["inbox", "随手记", "00 随手记/随手记"], ["review", "每周复盘", "10 总部/周复盘面板"],
+  ["home", "首页", "10 总部/首页"], ["inbox", "随手记", "00 随手记/随手记"], ["review", "每周复盘", weekNote],
   ["h", "DEPARTMENTS"],
   ["finance", "财务部", "20 财务部/财务面板"],
   ["x", "后勤部", ["fridge", "things"]],

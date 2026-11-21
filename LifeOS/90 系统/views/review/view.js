@@ -57,7 +57,7 @@ async function startWeek() {
   const w = L.isoWeek(T), path = `${DIR}/${w}.md`;
   if (!L.fileOf(path)) {
     const goal = "- [ ]  [来源:: 复盘]";
-    await app.vault.create(path, `---\nweek: ${w}\ncssclasses: [lifeos-dash, lifeos-review]\n---\n## 下周三件要事\n\n${goal}\n${goal}\n${goal}\n\n\`\`\`dataviewjs\nawait dv.view("90 系统/views/review")\n\`\`\`\n\n## 想说的话\n\n`);
+    await app.vault.create(path, `---\nweek: ${w}\ncssclasses: [lifeos-dash, lifeos-desk, lifeos-review]\n---\n## 下周三件要事\n\n${goal}\n${goal}\n${goal}\n\n\`\`\`dataviewjs\nawait dv.view("90 系统/views/side", {"page": "review"})\nawait dv.view("90 系统/views/review")\n\`\`\`\n\n## 想说的话\n\n`);
   }
   L.open(path);
 }
@@ -93,6 +93,7 @@ if (!week) {
   const o = {
     page: "review", eye: `WEEK ${n} · ${L.md(s.mon)} – ${L.md(s.sun)}`, title: "每周复盘",
     facts: ps && ps.total ? `上周完成度 ${Math.round(ps.done / ps.total * 100)}%` : "",
+    btns: [{ label: "打开全部复盘", cls: "pri", onclick: () => L.open("10 总部/周复盘面板") }],
     arts: [{ file: "review-fan.png", style: "left:798px;top:30px;width:376px" }],
   };
   const habitRows = HABITS.map((h, r) => {

@@ -137,6 +137,8 @@ let CURRENT = null;
     // 和 Obsidian 一样：frontmatter 的 cssclasses 加到阅读视图上；一个 dataviewjs 块 = 一个容器，块里的多个 dv.view 共用它
     const fm = /^---\n([\s\S]*?)\n---/.exec(text);
     if (fm) for (const c of fm[1].matchAll(/^\s*-\s*(lifeos-[\w-]+)/gm)) sizer.parentElement.classList.add(c[1]);
+    const inline = fm && /^cssclasses:\s*\[([^\]]*)\]/m.exec(fm[1]); // 也认 cssclasses: [a, b] 这种写法
+    if (inline) for (const c of inline[1].split(",").map((x) => x.trim()).filter((x) => x.startsWith("lifeos-"))) sizer.parentElement.classList.add(c);
     const block = /```dataviewjs\n([\s\S]*?)```/.exec(text);
     const box = document.createElement("div"); box.className = "block-language-dataviewjs"; sizer.appendChild(box);
     for (const m of block[1].matchAll(/dv\.view\("([^"]+)"(?:,\s*(\{.*\}))?\)/g)) {

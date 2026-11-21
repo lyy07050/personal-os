@@ -363,3 +363,12 @@ def test_fridge_shopping_and_recipes_editable():
 def test_undo_waits_four_seconds():
     lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
     assert "revert = () => {}, ms = 4000)" in lib
+
+
+def test_side_opens_this_week_review():
+    side = (VIEWS / "side/view.js").read_text(encoding="utf-8")
+    assert "10 总部/复盘/${L.isoWeek(T)}" in side
+    rv = (VIEWS / "review/view.js").read_text(encoding="utf-8")
+    assert "打开全部复盘" in rv
+    tpl = (VIEWS.parent / "模板/周复盘.md").read_text(encoding="utf-8")
+    assert 'dv.view("90 系统/views/side", {"page": "review"})' in tpl and "lifeos-desk" in tpl

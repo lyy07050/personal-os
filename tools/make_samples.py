@@ -305,9 +305,9 @@ REVIEWS = {  # 周 → (三件要事 [(文字, 做完没)], 放进首页没)
 def make_reviews(root: Path) -> None:
     for week, (goals, on_home) in REVIEWS.items():
         tasks = "\n".join(f"- [{'x' if done else ' '}] {text} [来源:: 复盘]" for text, done in goals)
-        meta = f"week: {week}\ncssclasses: [lifeos-dash, lifeos-review]\ngoals_on_home: {'true' if on_home else 'false'}"
+        meta = f"week: {week}\ncssclasses: [lifeos-dash, lifeos-desk, lifeos-review]\ngoals_on_home: {'true' if on_home else 'false'}"
         _w(root, f"10 总部/复盘/{week}.md",
-           f"## 下周三件要事\n\n{tasks}\n\n```dataviewjs\nawait dv.view(\"90 系统/views/review\")\n```\n\n## 想说的话\n\n", meta)
+           f"## 下周三件要事\n\n{tasks}\n\n```dataviewjs\nawait dv.view(\"90 系统/views/side\", {{\"page\": \"review\"}})\nawait dv.view(\"90 系统/views/review\")\n```\n\n## 想说的话\n\n", meta)
 
 
 def main(root: Path, today: date = date(2026, 11, 18)) -> None:
