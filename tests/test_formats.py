@@ -62,7 +62,7 @@ def test_constants():
     assert CATEGORIES == ("餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他", "待分类")
     assert ITEM_CATEGORIES == ("电子", "小玩意", "衣物", "化妆品", "厨房")
     assert NOTE_CATEGORIES == ("生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职")
-    assert INBOX_TYPES == ("活动", "备忘", "灵感", "链接", "清单")
+    assert INBOX_TYPES == ("活动", "备忘", "灵感", "链接", "清单", "待办")
     assert STAGES == ("想投", "已投递", "面试中", "Offer")
 
 
@@ -71,3 +71,29 @@ def test_food_kind_optional():
     assert f.kind == "水果"
     assert format_food(f) == "- [ ] 草莓 [数量:: 250 g] [到期:: 2026-11-22] [位置:: 冷藏] [类别:: 水果]"
     assert parse_food_line("- [ ] 牛奶 [数量:: 1 L] [到期:: 2026-11-19] [位置:: 冷藏]").kind == ""
+
+
+from lifeos_formats import Event, format_event, parse_event_line
+
+
+def test_parse_event_timed():
+    e = parse_event_line("- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen]")
+    assert e.date == date(2026, 11, 29) and e.time == "15:00" and e.title == "和朋友吃饭" and e.place == "Bahen"
+
+
+def test_parse_event_all_day():
+    e = parse_event_line("- 2026-11-29 和朋友吃饭")
+    assert e.time is None and e.place == "" and e.title == "和朋友吃饭"
+
+
+def test_parse_event_rejects():
+    for s in ("- 11-29 吃饭", "- 2026-11-29 25:00 吃饭", "- 2026-11-29"):
+        assert parse_event_line(s) is None, s
+
+
+def test_event_roundtrip_odd_text():
+    line = format_event(Event(date(2026, 11, 29), None, "买 [礼物]\n给妈妈", ""))
+    assert "\n" not in line
+    assert parse_event_line(line).title == "买 [礼物] 给妈妈"
+    s = "- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen]"
+    assert format_event(parse_event_line(s)) == s

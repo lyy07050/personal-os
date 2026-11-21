@@ -42,7 +42,7 @@ def test_lint_flags_bad_item_category(tmp_path):
 
 
 def test_lint_flags_inbox_type(tmp_path):
-    write(tmp_path, "00 随手记/买菜.md", "---\ntype: 待办\npinned: false\n---\n买菜\n")
+    write(tmp_path, "00 随手记/买菜.md", "---\ntype: 杂事\npinned: false\n---\n买菜\n")
     errors = lint_vault(tmp_path)
     assert len(errors) == 1 and "type" in errors[0].message
 
@@ -95,3 +95,25 @@ def test_samples_are_repeatable(tmp_path):
     assert files == sorted(p.relative_to(b) for p in b.rglob("*.md"))
     for f in files:
         assert (a / f).read_text(encoding="utf-8") == (b / f).read_text(encoding="utf-8")
+
+
+def test_lint_accepts_todo_card(tmp_path):
+    write(tmp_path, "00 随手记/买洗衣液.md", "---\ntype: 待办\ndone: false\ncreated: 2026-11-18\n---\n# 买洗衣液\n")
+    assert lint_vault(tmp_path) == []
+
+
+def test_lint_flags_todo_done_value(tmp_path):
+    write(tmp_path, "00 随手记/交房租.md", "---\ntype: 待办\ndone: 是\n---\n# 交房租\n")
+    errors = lint_vault(tmp_path)
+    assert len(errors) == 1 and "done" in errors[0].message
+
+
+def test_lint_flags_bad_event_line(tmp_path):
+    write(tmp_path, "10 总部/日程.md", "# 日程\n- 2026-13-01 吃饭\n- 2026-11-29 吃饭\n")
+    errors = lint_vault(tmp_path)
+    assert len(errors) == 1 and errors[0].line == 2 and "日程" in errors[0].message
+
+
+def test_lint_skips_quercus_markers(tmp_path):
+    write(tmp_path, "10 总部/日程.md", "# 日程\n\n- 2026-11-29 吃饭\n<!-- quercus:start -->\n- 2026-11-30 10:00 INF 1340 Lecture\n<!-- quercus:end -->\n")
+    assert lint_vault(tmp_path) == []

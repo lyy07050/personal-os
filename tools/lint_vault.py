@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from lifeos_formats import (CATEGORIES, FOOD_KINDS, INBOX_TYPES, ITEM_CATEGORIES, NOTE_CATEGORIES, PLACES, STAGES,
-                            fields, frontmatter, parse_day, parse_deadline_line, parse_food_line,
+                            EVENTS_PATH, fields, frontmatter, parse_day, parse_deadline_line, parse_event_line, parse_food_line,
                             parse_ledger_line)
 
 SKIP_DIRS = {"60 个人档案", "课件", ".obsidian", ".trash"}
@@ -88,7 +88,18 @@ def _check_inbox(path: Path, text: str) -> list[LintError]:
     meta = frontmatter(text) or {}
     if not errors and meta.get("date") and parse_day(meta["date"]) is None:
         errors.append(LintError(path, 1, "date 要写成 YYYY-MM-DD"))
+    if not errors and meta.get("type") == "待办":
+        if meta.get("done", "") not in ("true", "false"):
+            errors.append(LintError(path, 1, "待办的 done 只能是 true / false"))
+        if meta.get("done_on") and parse_day(meta["done_on"]) is None:
+            errors.append(LintError(path, 1, "done_on 要写成 YYYY-MM-DD"))
     return errors
+
+
+def _check_events(path: Path, lines: list[str]) -> list[LintError]:
+    """日程.md：每个 `- ` 开头的行都要是 `- YYYY-MM-DD[ HH:MM] 事情[ [地点:: …]]`。"""
+    return [LintError(path, i, "日程这一行要写成 - YYYY-MM-DD[ HH:MM] 事情")
+            for i, line in enumerate(lines, 1) if line.startswith("- ") and parse_event_line(line) is None]
 
 
 def lint_file(root: Path, path: Path) -> list[LintError]:
@@ -100,6 +111,8 @@ def lint_file(root: Path, path: Path) -> list[LintError]:
         return _check_ledger(path, lines)
     if rel == "30 后勤部/食物.md":
         return _check_food(path, lines)
+    if rel == EVENTS_PATH:
+        return _check_events(path, lines)
     if rel == "45 教务处/截止日期.md":
         return _check_deadlines(path, lines)
     if rel.startswith("30 后勤部/物品/"):

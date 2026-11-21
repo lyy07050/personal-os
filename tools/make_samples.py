@@ -274,6 +274,28 @@ def make_hq(root: Path, today: date, rng: random.Random) -> None:
         _w(root, f"10 总部/日记/{d.isoformat()}.md", f"# {d.month} 月 {d.day} 日\n", meta)
 
 
+TODOS = [  # (文件名, date, done_on)：没写 date = 随时；done_on = 今天打过勾
+    ("买洗衣液", "", ""),
+    ("交房租", "2026-11-18", ""),
+    ("回邮件", "", "2026-11-18"),
+]
+EVENTS = [  # 本周、下周、下下周
+    "- 2026-11-18 18:00 和 Mia 吃饭 [地点:: Kinton]",
+    "- 2026-11-20 牙医复查",
+    "- 2026-11-26 14:00 Coffee chat",
+    "- 2026-12-02 19:00 读书会",
+    "- 2026-12-03 交换礼物",
+]
+
+
+def make_plans(root: Path) -> None:
+    for name, day, done_on in TODOS:
+        meta = f"type: 待办\ndone: {'true' if done_on else 'false'}" + (f"\ndate: {day}" if day else "") \
+            + (f"\ndone_on: {done_on}" if done_on else "") + "\ncreated: 2026-11-17"
+        _w(root, f"00 随手记/{name}.md", f"# {name}\n", meta)
+    _w(root, "10 总部/日程.md", "# 日程\n\n" + "\n".join(EVENTS) + "\n")
+
+
 REVIEWS = {  # 周 → (三件要事 [(文字, 做完没)], 放进首页没)
     "2026-W46": ([("交 DATA 101 作业 3", True), ("投 2 份实习", True), ("整理冰箱", False)], True),
     "2026-W47": ([("交 INF 1340 Assignment 3", False), ("投 3 份实习", False), ("", False)], False),
@@ -297,6 +319,7 @@ def main(root: Path, today: date = date(2026, 11, 18)) -> None:
     make_school(root)
     make_career(root)
     make_hq(root, today, rng)
+    make_plans(root)
     make_reviews(root)
     (root / "60 个人档案").mkdir(parents=True, exist_ok=True)  # 只建空文件夹，不写任何内容
 

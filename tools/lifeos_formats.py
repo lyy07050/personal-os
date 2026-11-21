@@ -9,7 +9,8 @@ from decimal import Decimal, InvalidOperation
 CATEGORIES = ("餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他", "待分类")
 ITEM_CATEGORIES = ("电子", "小玩意", "衣物", "化妆品", "厨房")
 NOTE_CATEGORIES = ("生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职")
-INBOX_TYPES = ("活动", "备忘", "灵感", "链接", "清单")
+INBOX_TYPES = ("活动", "备忘", "灵感", "链接", "清单", "待办")
+EVENTS_PATH = "10 总部/日程.md"
 STAGES = ("想投", "已投递", "面试中", "Offer")
 PLACES = ("冷藏", "冷冻", "常温")
 FOOD_KINDS = ("生鲜", "水果", "调味料", "粉面速食", "药材", "零食")
@@ -110,6 +111,35 @@ def parse_deadline_line(line: str) -> Deadline | None:
         except ValueError:
             return None
     return Deadline(m.group(1) == "x", m.group(2).strip(), due, f["课程"])
+
+
+@dataclass(frozen=True)
+class Event:
+    date: date
+    time: str | None
+    title: str
+    place: str = ""
+
+
+_EVENT = re.compile(r"^- (\d{4}-\d{2}-\d{2})(?: ([0-2]\d:[0-5]\d))? (.+?)(?: \[地点::\s*([^\[\]]*?)\])?\s*$")
+
+
+def parse_event_line(line: str) -> Event | None:
+    """日程一行：`- 2026-11-29[ 15:00] 事情[ [地点:: 地点]]`。"""
+    m = _EVENT.match(line)
+    if not m:
+        return None
+    day = parse_day(m.group(1))
+    time = m.group(2)
+    if day is None or (time and int(time[:2]) > 23):
+        return None
+    title = m.group(3).strip()
+    return Event(day, time, title, (m.group(4) or "").strip()) if title else None
+
+
+def format_event(e: Event) -> str:
+    title = " ".join(e.title.split())
+    return f"- {e.date.isoformat()}{' ' + e.time if e.time else ''} {title}" + (f" [地点:: {e.place}]" if e.place else "")
 
 
 def format_deadline(d: Deadline) -> str:
