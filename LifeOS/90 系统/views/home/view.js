@@ -80,7 +80,8 @@ const dateLong = `${L.MONTH_EN[+T.slice(5, 7) - 1].slice(0, 3)} <span class="g">
 const left = todos.filter((t) => !t.done && t.kind !== "ev").length;
 // 事情进度一行；新事情的类别（存英文，首页待办右边显示）
 const AREAS = [["school", "学校"], ["career", "求职"], ["money", "钱"], ["english", "英语"], ["errands", "杂事"], ["life", "生活"]];
-const projRow = (p) => `<li>${L.link(p.path, esc(p.title))}<span class="bar"><span style="width:${p.progress}%"></span></span><span class="p ${p.progress ? "" : "muted"}">${p.progress ? p.progress + "%" : "未开始"}</span></li>`;
+const pctLabel = (n) => (n ? n + "%" : "未开始");
+const projRow = (p) => `<li data-path="${esc(p.path)}">${L.link(p.path, esc(p.title))}<span class="bar" role="slider" tabindex="0" aria-label="${esc(p.title)} 的进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}" title="点一下或按左右键调进度"><span style="width:${p.progress}%"></span></span><span class="p ${p.progress ? "" : "muted"}">${pctLabel(p.progress)}</span></li>`;
 // Fridge 一格
 function foodTile(f, i) {
   const n = f.expires ? L.daysLeft(f.expires, T) : null;
@@ -265,6 +266,9 @@ const STYLE = `
 .lifeos-dash .food .left .ck{width:20px;height:20px}
 .lifeos-dash .food .pic{position:absolute;right:16px;bottom:14px}
 .lifeos-dash .prog li{display:grid;grid-template-columns:170px 1fr 50px;gap:14px;align-items:center;font-size:15px;padding:9px 0;border:0}
+.lifeos-dash .prog .bar[role=slider],.lifeos-dash .prog li[data-path]{cursor:pointer}
+.lifeos-dash .prog li[data-path] a{cursor:pointer}
+.lifeos-dash .prog .bar[role=slider]:focus-visible{outline:2px solid var(--green,#5a8);outline-offset:2px}
 .lifeos-dash .prog .p{text-align:right;color:var(--ink-2);font-size:14px}
 .lifeos-dash .rcol{background:#fff;border-radius:22px;box-shadow:var(--sh-card);padding:16px;display:flex;flex-direction:column;gap:20px;position:relative}
 .lifeos-dash .mod{border-radius:18px;padding:16px}
@@ -457,6 +461,34 @@ projf.addEventListener("submit", async (e) => {
   projf.reset(); toggleProj(false);
   L.notice(`${title} 加进事情进度了`);
 });
+// 调进度：点进度条的位置（按 10% 取整），或选中后按 ← →；马上写回那篇笔记
+{
+  const list = root.querySelector(".prog .list");
+  const setTo = (bar, n) => {
+    n = Math.max(0, Math.min(100, n));
+    if (n === Number(bar.getAttribute("aria-valuenow"))) return;
+    bar.setAttribute("aria-valuenow", n);
+    bar.firstElementChild.style.width = n + "%";
+    const lab = bar.nextElementSibling; lab.textContent = pctLabel(n); lab.classList.toggle("muted", !n);
+    D.setProgress(bar.closest("li").dataset.path, n);
+  };
+  list.addEventListener("click", (e) => {
+    // 进度条只有 6px 高：点在那一行进度条上下的空白里也算
+    let bar = e.target.closest(".bar[role=slider]");
+    if (!bar && e.target.matches("li[data-path]")) bar = e.target.querySelector(".bar[role=slider]");
+    if (!bar) return;
+    const r = bar.getBoundingClientRect();
+    if (e.clientX < r.left - 4 || e.clientX > r.right + 4) return;
+    setTo(bar, Math.round(((e.clientX - r.left) / r.width) * 10) * 10);
+  });
+  list.addEventListener("keydown", (e) => {
+    const bar = e.target.closest(".bar[role=slider]");
+    const step = { ArrowRight: 10, ArrowUp: 10, ArrowLeft: -10, ArrowDown: -10 }[e.key];
+    if (!bar || !step) return;
+    e.preventDefault();
+    setTo(bar, Number(bar.getAttribute("aria-valuenow")) + step);
+  });
+}
 // 最近的活动「＋」：新建一张活动卡（随手记 type: 活动），按日期插进列表
 const actf = root.querySelector(".actf"), toggleAct = wirePlus(root.querySelector(".mod .plus"), actf), acts = root.querySelector(".acts");
 actf.addEventListener("submit", async (e) => {

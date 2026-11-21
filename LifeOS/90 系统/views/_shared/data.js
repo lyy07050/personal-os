@@ -140,6 +140,14 @@
     }
   }
 
+  // 调进度：0 = 未开始，100 = 完成，中间 = 进行中
+  async function setProgress(path, pct) {
+    const f = L.fileOf(path);
+    if (!f) return;
+    const p = Math.max(0, Math.min(100, Math.round(pct)));
+    await app.fileManager.processFrontMatter(f, (fm) => { fm.progress = p; fm.status = p >= 100 ? "完成" : p > 0 ? "进行中" : "未开始"; });
+  }
+
   // 新事情：10 总部/项目/<名字>.md，进度 0、未开始；area 是首页待办右边那个小标签（school、career…）
   async function addProject({ title, area = "" }) {
     const name = L.safeTitle(title);
@@ -268,7 +276,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense, addProject,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense, addProject, setProgress,
     food, shopping, eat, addFood, recipes, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

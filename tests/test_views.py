@@ -309,3 +309,10 @@ def test_money_sheet_used_on_home_and_finance():
 def test_home_plus_for_projects():
     js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
     assert 'aria-label="加一件事"' in js and "D.addProject(" in js
+
+
+def test_home_progress_adjustable():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert 'role="slider"' in js and "D.setProgress(" in js
+    assert "async function setProgress(" in data and "setProgress," in data
