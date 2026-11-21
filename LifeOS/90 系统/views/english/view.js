@@ -29,8 +29,11 @@ const o = {
   arts: [{ file: "notepaper.png", style: "left:865px;top:-91px;width:277px" }],
 };
 const dots = (n) => `<span class="mast" aria-label="掌握 ${n} / 5">${[...Array(5)].map((_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</span>`;
-const table = (list) => `<table><thead><tr><th>单词</th><th>释义</th><th>掌握</th></tr></thead><tbody>${list.map((w) => `<tr><td><b>${esc(w.front)}</b></td><td>${esc(w.back.split("·")[0].trim())}</td><td>${dots(w.mastery)}</td></tr>`).join("")}</tbody></table>`;
-const missList = (list) => `<ul class="list miss">${list.map((w) => `<li><span class="sq"></span>${esc(w.front)}<span>${esc(w.back.split("·")[0].replace(/^[a-z]+\.\s*/, "").trim())}</span></li>`).join("")}</ul>`;
+// 每个词记一个编号，删除时按编号找回那一行原文
+const reg = [], wid = (w) => reg.push(w) - 1;
+const delW = (w) => L.delBtn(w.front, `data-w="${wid(w)}"`);
+const table = (list) => `<table><thead><tr><th>单词</th><th>释义</th><th>掌握</th><th></th></tr></thead><tbody>${list.map((w) => `<tr class="has-del"><td><b>${esc(w.front)}</b></td><td>${esc(w.back.split("·")[0].trim())}</td><td>${dots(w.mastery)}</td><td class="dc">${delW(w)}</td></tr>`).join("")}</tbody></table>`;
+const missList = (list) => `<ul class="list miss">${list.map((w) => `<li class="has-del"><span class="sq"></span>${esc(w.front)}<span>${esc(w.back.split("·")[0].replace(/^[a-z]+\.\s*/, "").trim())}</span>${delW(w)}</li>`).join("")}</ul>`;
 const addForm = `<form class="addw" hidden><input name="f" placeholder="单词或表达" aria-label="单词" required><input name="b" placeholder="中文意思 · 例句" aria-label="意思"><label><input type="checkbox" name="m"> 也放进错词本</label><button class="btn pri">收进单词本</button></form>`;
 
 let body = "";
@@ -63,7 +66,7 @@ const STYLE = `
 .lifeos-dash .wod{height:212px;border-radius:14px;background:#e6ede2;box-shadow:var(--sh-lift);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:0 20px;text-align:center}
 .lifeos-dash .wod .g{font-size:56px}
 .lifeos-dash .wod p{font-size:16px;color:var(--ink-2)}
-.lifeos-dash .miss li{display:grid;grid-template-columns:26px 1fr auto;font-size:16px;padding:11px 0}
+.lifeos-dash .miss li{display:grid;grid-template-columns:26px 1fr auto 34px;align-items:center;font-size:16px;padding:11px 0}
 .lifeos-dash .miss .sq{width:14px;height:14px;border-radius:3px;background:var(--brown);align-self:center}
 .lifeos-dash .mast{display:flex;gap:4px}
 .lifeos-dash .mast i{width:9px;height:9px;border-radius:50%;background:#dfe5df}
@@ -82,6 +85,13 @@ const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE
 // 单词表、错词本在卡片里上下滑
 root.querySelectorAll(".stack table, .stack .miss").forEach((t) => { const w = document.createElement("div"); w.className = "wlist"; t.replaceWith(w); w.appendChild(t); L.scrolly(w); });
 L.wireBanner(root, o);
+// 删除一个词：变淡 4 秒（可撤销），时间到了从单词本 / 错词本里删掉那一行
+root.addEventListener("click", (e) => {
+  const b = e.target.closest(".delb[data-w]");
+  if (!b) return;
+  const w = reg[+b.dataset.w];
+  L.removeWithUndo(root, b.closest(".has-del"), `「${w.front}」删掉了`, () => L.removeLine(w.path, w.raw));
+});
 root.querySelector(".ban").insertAdjacentHTML("beforeend", addForm);
 const form = root.querySelector(".addw");
 form.addEventListener("submit", async (e) => {

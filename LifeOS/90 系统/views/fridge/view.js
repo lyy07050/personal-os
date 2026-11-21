@@ -96,15 +96,21 @@ root.querySelectorAll(".addf").forEach((form) => form.addEventListener("submit",
 
 // 吃完 → 打勾 + 进购物清单
 // 每个分类框一页 5 样，多了用 ‹ › 翻
-root.querySelectorAll(".box > ul").forEach((ul) => L.pager(ul, 5));
+const pagers = [...root.querySelectorAll(".box > ul")].map((ul) => L.pager(ul, 5));
 
-root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEventListener("click", async () => {
+// 点「吃完」先变淡，等 2 秒（可以撤销），时间到了才打勾、进购物清单
+root.querySelectorAll(".box li").forEach((li) => li.querySelector(".eat").addEventListener("click", () => {
   const f = food.find((x) => x.line === +li.dataset.l);
-  li.classList.add("gone"); li.querySelector(".eat").remove();
-  await D.eat(f);
-  const ul = root.querySelector(".shop .list"), n = document.createElement("li");
-  n.innerHTML = `<button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(f.name, 40)}</span><span class="t">${esc(f.name)}</span>`;
-  ul.insertBefore(n, ul.querySelector(":scope > li.done")); // 放在「还没买」的最后
+  if (li.classList.contains("gone")) return;
+  li.classList.add("gone");
+  L.undoable(root, `${f.name} 吃完了，会加进购物清单`, async () => {
+    const pg = pagers.find((p) => p.el.contains(li));
+    li.remove(); if (pg) pg.refresh();
+    await D.eat(f);
+    const ul = root.querySelector(".shop .list"), n = document.createElement("li");
+    n.innerHTML = `<button class="ck" aria-label="买到了" style="width:30px;height:30px">${L.CK}</button><span class="ic">${foodIcon(f.name, 40)}</span><span class="t">${esc(f.name)}</span>`;
+    ul.insertBefore(n, ul.querySelector(":scope > li.done")); // 放在「还没买」的最后
+  }, () => li.classList.remove("gone"));
 }));
 
 root.querySelectorAll(".shop li[data-i]").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {

@@ -199,7 +199,7 @@
       const sr = /<!--SR:!([\d-]+),(\d+),(\d+)-->/.exec(l);
       const [front, back] = l.replace(/<!--SR:.*?-->/, "").split("::");
       const interval = sr ? +sr[2] : 0;
-      return { front: front.trim(), back: (back || "").trim(), line: i, due: sr ? sr[1] : "",
+      return { front: front.trim(), back: (back || "").trim(), line: i, raw: l, path, due: sr ? sr[1] : "",
         mastery: interval >= 60 ? 5 : interval >= 21 ? 4 : interval >= 7 ? 3 : interval >= 3 ? 2 : interval >= 1 ? 1 : 0 };
     });
   }

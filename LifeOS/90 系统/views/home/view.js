@@ -10,7 +10,7 @@ const esc = L.esc;
 // ---------- 数据 ----------
 const DL_PATH = D.DL;
 const deadlines = await D.deadlines();
-const projects = D.projects();
+const projects = D.projects().filter((p) => p.status !== "完成" && p.progress < 100); // 做完的事情不再占位置（笔记还在，标成「完成」）
 const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path }));
 let myEvents = await D.events(); // 10 总部/日程.md
 const todos = L.doneLast(await D.todos()); // 没做的在前、做完的在后（只改显示顺序）
@@ -424,8 +424,11 @@ root.querySelector(".fr").addEventListener("click", async (e) => {
   const el = ck.closest(".food"), f = cold[+el.dataset.f];
   if (!f || el.classList.contains("gone")) return;
   el.classList.add("gone"); L.stamp(ck); ck.classList.add("on");
-  await D.eat(f);
-  L.notice(`${f.name} 吃完了，已加进购物清单`);
+  // 先等 2 秒给反悔的时间，时间到了才打勾、进购物清单、从冰箱里拿掉
+  L.undoable(root, `${f.name} 吃完了，会加进购物清单`, async () => {
+    el.remove(); fridgePager.refresh();
+    await D.eat(f);
+  }, () => { el.classList.remove("gone"); ck.classList.remove("on"); });
 });
 
 // 「＋」小表单：点开 / 再点或 Esc 收起
@@ -471,11 +474,19 @@ projf.addEventListener("submit", async (e) => {
   const list = root.querySelector(".prog .list");
   const setTo = (bar, n) => {
     n = Math.max(0, Math.min(100, n));
-    if (n === Number(bar.getAttribute("aria-valuenow"))) return;
+    const prev = Number(bar.getAttribute("aria-valuenow"));
+    if (n === prev) return;
     bar.setAttribute("aria-valuenow", n);
     bar.firstElementChild.style.width = n + "%";
     const lab = bar.nextElementSibling; lab.textContent = pctLabel(n); lab.classList.toggle("muted", !n);
-    D.setProgress(bar.closest("li").dataset.path, n);
+    const li = bar.closest("li");
+    D.setProgress(li.dataset.path, n);
+    // 到 100% = 做完了：2 秒后从列表里收起；点撤销回到原来的进度
+    if (n === 100) {
+      li.classList.add("leaving");
+      L.undoable(root, `${li.querySelector("a").textContent} 完成了，从事情进度里收起`, async () => li.remove(),
+        () => { li.classList.remove("leaving"); setTo(bar, prev); });
+    }
   };
   list.addEventListener("click", (e) => {
     // 进度条只有 6px 高：点在那一行进度条上下的空白里也算

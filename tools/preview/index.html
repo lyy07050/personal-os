@@ -107,6 +107,7 @@ window.app = {
     getAbstractFileByPath: (p) => (files.get(p) != null || ALL.some((x) => x.file.path === p) ? fileObj(p) : null),
     process: async (f, fn) => { const t = await load(f.path); files.set(f.path, fn(t)); log("改写 " + f.path); },
     create: async (p, t) => { files.set(p, t); log("新建 " + p); },
+    trash: async (f) => { log("放进废纸篓 " + f.path); },
   },
   fileManager: { processFrontMatter: async (f, fn) => { const fm = {}; fn(fm); log("属性 " + f.path + " " + JSON.stringify(fm)); } },
   workspace: { openLinkText: (p) => log("打开 " + p) },

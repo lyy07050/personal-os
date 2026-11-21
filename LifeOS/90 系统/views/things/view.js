@@ -33,7 +33,7 @@ const o = {
   arts: [{ file: "things-lantern.png", style: "left:698px;top:-92px;width:346px" }, { file: "things-snuff.png", style: "left:971px;top:39px;width:185px" }],
 };
 
-const card = (i) => `<article class="tile item">${L.link(i.path, `<div class="ph" style="background:${BG[i.category] || "var(--tile)"}"><span class="chip">${esc(i.category)}</span></div><h3>${esc(i.name)}</h3>`)}
+const card = (i) => `<article class="tile item has-del">${L.delBtn(i.name, `data-p="${esc(i.path)}" data-n="${esc(i.name)}"`, "corner")}${L.link(i.path, `<div class="ph" style="background:${BG[i.category] || "var(--tile)"}"><span class="chip">${esc(i.category)}</span></div><h3>${esc(i.name)}</h3>`)}
   <p class="where">${PIN}${esc(i.location)}</p><dl><dt>购入</dt><dd>${i.bought ? dot(i.bought) : "—"}${i.price !== undefined && i.price !== null && i.price !== "" ? ` · $${esc(i.price)}` : ""}</dd>${third(i)}</dl></article>`;
 
 let byPlace = false;
@@ -65,6 +65,14 @@ function render() {
   root.querySelectorAll(".dash-body .items").forEach((g) => L.pager(g, 6)); // 一页 6 张，多了用 ‹ › 翻
 }
 render();
+
+// 删除：变淡 4 秒（可撤销），时间到了整篇笔记放进系统废纸篓
+root.addEventListener("click", (e) => {
+  const b = e.target.closest(".delb[data-p]");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  L.removeWithUndo(root, b.closest(".has-del"), `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p));
+});
 
 // 添加物品：新建一篇物品笔记并打开
 async function addItem() {

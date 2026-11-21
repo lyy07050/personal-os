@@ -323,3 +323,30 @@ def test_inbox_cards_have_pin_toggle():
     assert 'class="pinb' in js and "aria-pressed" in js and 'L.setMeta(c.path, "pinned"' in js
     home = (VIEWS / "home/view.js").read_text(encoding="utf-8")
     assert "c.tasks.length ?" in home  # 没有勾选项的置顶卡也能显示
+
+
+def test_lib_has_undo_and_delete_helpers():
+    lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
+    for name in ("function undoable(", "function removeWithUndo(", "async function removeLine(", "async function trashFile(", "const delBtn"):
+        assert name in lib, name
+    css = (VIEWS.parent.parent / ".obsidian/snippets/lifeos.css").read_text(encoding="utf-8")
+    assert ".lifeos-dash .undo-bar" in css and ".lifeos-dash .delb" in css
+
+
+def test_eat_waits_for_undo():
+    for v in ("home", "fridge"):
+        js = (VIEWS / f"{v}/view.js").read_text(encoding="utf-8")
+        assert "L.undoable(" in js and "D.eat(f)" in js, v
+
+
+def test_finished_projects_leave_home():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    assert 'p.status !== "完成"' in js and "n === 100" in js
+
+
+def test_pages_have_delete_buttons():
+    want = {"inbox": "L.trashFile(", "things": "L.trashFile(", "notes": "L.trashFile(", "career": "L.trashFile(",
+            "finance": "L.removeLine(", "english": "L.removeLine("}
+    for v, call in want.items():
+        js = (VIEWS / f"{v}/view.js").read_text(encoding="utf-8")
+        assert "L.delBtn(" in js and "L.removeWithUndo(" in js and call in js, v

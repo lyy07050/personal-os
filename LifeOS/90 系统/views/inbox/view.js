@@ -13,7 +13,8 @@ function card(c, i) {
   const when = c.type === "活动" && c.date ? ` · ${L.md(c.date)} ${L.WEEK_CN[L.weekday(c.date)]}` : "";
   // 右上角：来源 + 钉子按钮。钉住 = 首页 Reminder 里显示这张（待办卡在今日待办里，不用钉）
   const pinb = c.type === "待办" ? "" : `<button class="pinb${c.pinned ? " on" : ""}" aria-pressed="${c.pinned}" aria-label="${c.pinned ? "从首页取下" : "钉到首页"}" title="${c.pinned ? "已钉到首页，点一下取下" : "钉到首页"}">${PIN}</button>`;
-  const right = `<span class="mr">${c.source ? `<span>${esc(c.source)}</span>` : ""}${pinb}</span>`;
+  const delb = L.delBtn(c.title, `data-p="${esc(c.path)}" data-n="${esc(c.title)}"`);
+  const right = `<span class="mr">${c.source ? `<span>${esc(c.source)}</span>` : ""}${pinb}${delb}</span>`;
   const tag = c.tags[0] || "";
   let body = "";
   if (c.type === "链接") {
@@ -29,7 +30,7 @@ function card(c, i) {
   const done = c.tasks.length - c.open;
   const count = c.tasks.length ? `${done} / ${c.tasks.length}${c.type === "清单" ? " 已完成" : ""}` : c.type === "链接" ? '<a class="go">打开链接 ↗</a>' : "";
   const foot = tag || count ? `<div class="foot"><span>${esc(tag)}</span><span>${count}</span></div>` : "";
-  return `<article class="note ${body.includes('class="say"') ? "big" : ""}" data-k="${c.type}" data-i="${i}" style="background:${bg}">
+  return `<article class="note has-del ${body.includes('class="say"') ? "big" : ""}" data-k="${c.type}" data-i="${i}" style="background:${bg}">
     <div class="meta"><span>${c.type}${when}</span>${right}</div>${L.link(c.path, `<h3>${esc(c.title)}</h3>`)}${body}${tasks}${foot}</article>`;
 }
 
@@ -83,7 +84,9 @@ const STYLE = `
 .lifeos-dash .note.big h3{font-size:24px}
 .lifeos-dash .note .say{font-family:var(--zcool);font-size:27px;line-height:1.55;color:#5c3f33}
 .lifeos-dash .note[hidden]{display:none}
-.lifeos-dash .note .mr{display:flex;align-items:center;gap:8px}
+.lifeos-dash .note .mr{display:flex;align-items:center;gap:4px}
+.lifeos-dash .note .mr>span{margin-right:4px}
+.lifeos-dash .dash .note .delb{margin:-6px -6px -6px 0}
 .lifeos-dash .dash .note .pinb{width:28px;height:28px;margin:-6px -6px -6px 0;padding:0;border-radius:8px;display:grid;place-items:center;background:none;box-shadow:none;opacity:.28;filter:grayscale(1);transition:opacity .15s,filter .15s,background .15s}
 .lifeos-dash .dash .note:hover .pinb{opacity:.55}
 .lifeos-dash .dash .note .pinb:hover{background:rgba(37,45,41,.06);opacity:.9}
@@ -126,6 +129,14 @@ root.querySelector(".wall").addEventListener("click", async (e) => {
   b.title = on ? "已钉到首页，点一下取下" : "钉到首页";
   await L.setMeta(c.path, "pinned", on);
   L.notice(on ? `${c.title} 钉到首页了` : `${c.title} 从首页取下了`);
+});
+
+// 删除：变淡 4 秒（可撤销），时间到了整篇笔记放进系统废纸篓
+root.querySelector(".wall").addEventListener("click", (e) => {
+  const b = e.target.closest(".delb[data-p]");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  L.removeWithUndo(root, b.closest(".has-del"), `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p));
 });
 
 // 筛选和搜索

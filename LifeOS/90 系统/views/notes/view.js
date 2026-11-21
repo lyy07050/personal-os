@@ -49,6 +49,7 @@ const o = {
   arts: [{ file: "notes-flower.png", style: "left:961px;top:37px;width:238px" }],
 };
 
+const delK = (k) => L.delBtn(k.name, `data-p="${esc(k.path)}" data-n="${esc(k.name)}"`, "corner");
 let body = "";
 if (section === "cards") {
   const tiles = L.NOTE_CATEGORIES.map((c) => {
@@ -57,11 +58,11 @@ if (section === "cards") {
   }).join("");
   body = `<section class="card" aria-label="分类"><div class="head"><h2>分类</h2></div><div class="cats">${tiles}</div></section>
     <section class="card" aria-label="知识卡"><div class="head"><h2>最近的知识卡</h2><button class="filter" hidden></button></div>
-    <div class="cards">${cards.map((k) => `<article class="tile k" data-c="${esc(k.category)}">${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body.slice(0, 90))}</p><div class="meta">${k.source ? `<span class="chip ${SRC_CHIP[k.source] ?? ""}">${esc(k.source)}</span>` : ""}${esc(k.category)}<span class="d">${when(k.date)}</span></div></article>`).join("")}</div></section>`;
+    <div class="cards">${cards.map((k) => `<article class="tile k has-del" data-c="${esc(k.category)}">${delK(k)}${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body.slice(0, 90))}</p><div class="meta">${k.source ? `<span class="chip ${SRC_CHIP[k.source] ?? ""}">${esc(k.source)}</span>` : ""}${esc(k.category)}<span class="d">${when(k.date)}</span></div></article>`).join("")}</div></section>`;
 } else if (section === "ideas") {
   const [first, ...rest] = ideas;
   body = (first ? `<section class="card idea">${L.link(first.path, `<div class="nh"><span>灵感 · ${esc(first.name)}</span><span>${when(first.date)}</span></div><p>${esc(first.body)}</p>`)}</section>` : "")
-    + `<section class="card"><div class="cards">${rest.map((k) => `<article class="tile k">${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body)}</p><div class="meta"><span class="d">${when(k.date)}</span></div></article>`).join("")}</div></section>`;
+    + `<section class="card"><div class="cards">${rest.map((k) => `<article class="tile k has-del">${delK(k)}${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body)}</p><div class="meta"><span class="d">${when(k.date)}</span></div></article>`).join("")}</div></section>`;
 } else {
   body = `<section class="card"><ul class="list th">${thoughts.map((k) => `<li>${L.link(k.path, `<span class="g">${L.md(k.date)}</span>`)}<p>${esc(k.body)}</p></li>`).join("")}</ul></section>`;
 }
@@ -94,6 +95,14 @@ const STYLE = `
 const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE);
 root.querySelectorAll(".stack .cards").forEach((g) => L.pager(g, 6)); // 一页两排共 6 张
 L.wireBanner(root, o);
+
+// 删除：变淡 4 秒（可撤销），时间到了整篇笔记放进系统废纸篓
+root.addEventListener("click", (e) => {
+  const b = e.target.closest(".delb[data-p]");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  L.removeWithUndo(root, b.closest(".has-del"), `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p));
+});
 
 // 分类方块：筛选这一类；再次点击或点 ✕ 取消筛选
 const F = root.querySelector(".filter");

@@ -42,7 +42,7 @@ if (section === "pipeline") {
   body = `<section class="group board" aria-label="求职流程">${STAGES.map((s) => {
     const mine = jobs.filter((j) => j.stage === s), show = s === "已投递" ? 3 : 2;
     return `<div class="col tile" data-s="${s}"><div class="ch"><h3 class="${s === "Offer" ? "g" : ""}">${s}</h3><span>${mine.length}</span></div>
-      ${mine.map((j, k) => `<div class="co" ${k >= show ? "hidden" : ""}>${L.link(j.path, `<b>${esc(j.company)}</b>`)}<small>${esc(j.role)}</small>${chip(j)}</div>`).join("")}
+      ${mine.map((j, k) => `<div class="co has-del" ${k >= show ? "hidden" : ""}>${L.delBtn(j.company, `data-p="${esc(j.path)}" data-n="${esc(j.company)}"`, "corner")}${L.link(j.path, `<b>${esc(j.company)}</b>`)}<small>${esc(j.role)}</small>${chip(j)}</div>`).join("")}
       ${mine.length > show ? `<button class="more">另外 ${mine.length - show} 家 →</button>` : ""}${mine.length ? "" : '<div class="slot" aria-hidden="true"></div>'}</div>`;
   }).join("")}</section>${ivCard(nextIv)}${tips[0] ? tipCard(tips[0]) : ""}`;
 } else if (section === "interviews") {
@@ -71,6 +71,13 @@ const STYLE = `
 const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE);
 L.wireBanner(root, o);
 root.querySelectorAll(".col .more").forEach((b) => b.addEventListener("click", () => { b.closest(".col").querySelectorAll(".co[hidden]").forEach((c) => { c.hidden = false; }); b.remove(); }));
+// 删除：变淡 4 秒（可撤销），时间到了整篇笔记放进系统废纸篓
+root.addEventListener("click", (e) => {
+  const b = e.target.closest(".delb[data-p]");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  L.removeWithUndo(root, b.closest(".has-del"), `「${b.dataset.n}」删掉了`, () => L.trashFile(b.dataset.p));
+});
 root.querySelectorAll("li[data-l] .ck").forEach((ck) => ck.addEventListener("click", async () => {
   const li = ck.closest("li");
   if (li.classList.toggle("done")) L.stamp(ck);

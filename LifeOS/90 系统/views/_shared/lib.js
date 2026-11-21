@@ -103,7 +103,7 @@
   }
 
   async function ledger(dv, month) { // month: "2026-11"
-    return (await lines(dv, `20 财务部/账本/${month}.md`)).map(parseLedger).filter(Boolean);
+    return (await lines(dv, `20 财务部/账本/${month}.md`)).map((l) => { const e = parseLedger(l); return e && { ...e, raw: l }; }).filter(Boolean);
   }
 
   // 把文件里的某一行换成新的一行（找不到就什么也不做）
@@ -336,6 +336,52 @@
     return root;
   }
 
+  // ---------- 删除和撤销 ----------
+  const DEL = '<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  // 删除按钮：label 给读屏用；attrs 是额外属性（data-p 等）；corner = 贴在卡片右上角
+  const delBtn = (label, attrs = "", cls = "") => `<button class="delb${cls ? " " + cls : ""}" ${attrs} aria-label="删除 ${esc(label)}" title="删除">${DEL}</button>`;
+
+  // 先给反悔的时间：底部出一条「…  撤销」，ms 毫秒后才真的执行 commit；点撤销就执行 revert
+  // 同一页面上一条还没执行完又来一条：先把上一条执行掉
+  // 撤销条挂在 body 上（面板里有 container 查询，fixed 会跟着面板滚走），外面包一层 .lifeos-dash 好让样式生效
+  function undoable(root, text, commit, revert = () => {}, ms = 2000) {
+    let host = document.body.querySelector(":scope > .lifeos-undo-host");
+    if (!host) {
+      document.body.insertAdjacentHTML("beforeend", '<div class="lifeos-dash lifeos-undo-host"><div class="undo-bar" role="status" aria-live="polite"><span class="ut"></span><button class="ub">撤销</button><i class="uc"></i></div></div>');
+      host = document.body.querySelector(":scope > .lifeos-undo-host");
+    }
+    const bar = host.firstElementChild;
+    root = host;
+    if (root._undoPending) root._undoPending();
+    bar.querySelector(".ut").textContent = text;
+    bar.style.setProperty("--ms", ms + "ms");
+    bar.classList.remove("show"); void bar.offsetWidth; bar.classList.add("show");
+    let settled = false;
+    const finish = () => { settled = true; clearTimeout(timer); bar.classList.remove("show"); root._undoPending = null; };
+    const fire = async () => { if (settled) return; finish(); await commit(); };
+    const timer = setTimeout(fire, ms);
+    root._undoPending = fire;
+    bar.querySelector(".ub").onclick = () => { if (settled) return; finish(); revert(); };
+  }
+  // 删一项：先变淡 + 撤销条（4 秒），时间到了才从页面拿掉并真的删
+  function removeWithUndo(root, el, text, commit, after = () => {}) {
+    el.classList.add("leaving");
+    undoable(root, text, async () => { el.remove(); after(); await commit(); }, () => el.classList.remove("leaving"), 4000);
+  }
+  // 删掉文件里和 raw 一模一样的第一行（按内容找，不按行号，前面删过别的也不会删错）
+  async function removeLine(path, raw) {
+    const f = fileOf(path);
+    if (!f) return false;
+    let hit = false;
+    await app.vault.process(f, (text) => text.split("\n").filter((l) => hit || l !== raw || !(hit = true)).join("\n"));
+    return hit;
+  }
+  // 整篇笔记放进系统废纸篓（不是永久删除，废纸篓里还能找回来）
+  async function trashFile(path) {
+    const f = fileOf(path);
+    if (f) await app.vault.trash(f, true);
+  }
+
   // 打开一个仓库里的笔记
   const open = (path) => hasApp && app.workspace.openLinkText(path, "", false);
 
@@ -344,7 +390,7 @@
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
     safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone, formatLedger, moneySheet, METHODS,
-    notice, link, stamp, banner, wireBanner, mount, open,
+    notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],
     NOTE_CATEGORIES: ["生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职"],

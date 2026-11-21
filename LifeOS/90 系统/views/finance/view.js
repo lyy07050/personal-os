@@ -104,8 +104,8 @@ const html = L.banner(o) + `<div class="stack">
   </section>
   <section class="card">
     <div class="head"><h2>账单流水</h2></div>
-    <table><thead><tr><th>日期</th><th>项目</th><th>分类</th><th>方式</th><th style="text-align:right">金额</th></tr></thead>
-    <tbody>${rows.map((e) => `<tr class="${e.category === "待分类" ? "pending" : ""}"><td>${L.md(e.date)}</td><td>${esc(e.name)}</td><td><span class="chip ${CHIP[e.category] || ""}">${e.category}</span></td><td>${esc(e.method.replace("ApplePay", "Apple Pay"))}</td><td class="amt">${L.money(e.amount)}</td></tr>`).join("")}</tbody></table>
+    <table><thead><tr><th>日期</th><th>项目</th><th>分类</th><th>方式</th><th style="text-align:right">金额</th><th></th></tr></thead>
+    <tbody>${rows.map((e, ri) => `<tr class="has-del ${e.category === "待分类" ? "pending" : ""}" data-r="${ri}"><td>${L.md(e.date)}</td><td>${esc(e.name)}</td><td><span class="chip ${CHIP[e.category] || ""}">${e.category}</span></td><td>${esc(e.method.replace("ApplePay", "Apple Pay"))}</td><td class="amt">${L.money(e.amount)}</td><td class="dc">${L.delBtn(e.name)}</td></tr>`).join("")}</tbody></table>
   </section>
   <section class="card">
     ${pending.length ? `<div class="head" style="margin-bottom:4px"><h2>待分类</h2></div>
@@ -152,6 +152,13 @@ const STYLE = `
 
 const root = L.mount(dv, html, STYLE);
 const openMoney = L.moneySheet(root, (e) => D.addExpense(e)); // 记一笔的小窗口
+// 删一笔：变淡 4 秒（可撤销），时间到了从那个月的账本里删掉这一行
+root.addEventListener("click", (e) => {
+  const b = e.target.closest("tr[data-r] .delb");
+  if (!b) return;
+  const r = rows[+b.closest("tr").dataset.r];
+  L.removeWithUndo(root, b.closest("tr"), `「${r.name} ${L.money(r.amount)}」删掉了`, () => L.removeLine(ledgerPath(r.month), r.raw));
+});
 // 账单流水在卡片里上下滑（表头跟着停在上面）
 root.querySelectorAll("table").forEach((t) => { if (!t.querySelector("thead th")) return; const w = document.createElement("div"); w.className = "bills"; t.replaceWith(w); w.appendChild(t); L.scrolly(w); });
 L.wireBanner(root, o);
