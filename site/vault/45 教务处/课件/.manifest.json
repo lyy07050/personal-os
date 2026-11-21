@@ -1,0 +1,33 @@
+{
+  "last_sync": "2026-11-18T08:00:00",
+  "files": {
+    "101": {
+      "path": "INF 2178 Experimental Design/Week 10 – Regression.pdf",
+      "course": "INF 2178",
+      "updated_at": "2026-11-18T07:40:00Z",
+      "downloaded_at": "2026-11-18T08:00:00",
+      "size": 1843200
+    },
+    "102": {
+      "path": "INF 1340 Programming for Data Science/Lecture 9 – Pandas II.pptx",
+      "course": "INF 1340",
+      "updated_at": "2026-11-17T15:00:00Z",
+      "downloaded_at": "2026-11-17T08:00:00",
+      "size": 5242880
+    },
+    "103": {
+      "path": "DATA 101 Intro to Data Analytics/A4 instructions.pdf",
+      "course": "DATA 101",
+      "updated_at": "2026-11-14T12:00:00Z",
+      "downloaded_at": "2026-11-14T08:00:00",
+      "size": 204800
+    },
+    "104": {
+      "path": "INF 1343 Data Modeling & Database/ER Diagram examples.pdf",
+      "course": "INF 1343",
+      "updated_at": "2026-11-12T12:00:00Z",
+      "downloaded_at": "2026-11-12T08:00:00",
+      "size": 921600
+    }
+  }
+}

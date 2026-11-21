@@ -206,3 +206,12 @@
 - **测试**：`tools/.venv/bin/pytest -q`（会检查每个页面用到的函数、格式解析和 Python 是否一致、个人档案的加密能解开、模板里没有数据、测试不读 60 文件夹）。
 - **数据检查**：`python3 tools/lint_vault.py LifeOS`。
 - **预览**（不开 Obsidian）：在仓库根目录 `python3 -m http.server 8766 --bind 127.0.0.1`，打开 `http://127.0.0.1:8766/tools/preview/index.html?note=10 总部/首页&today=2026-11-18`。预览读真实仓库，但所有写入只改内存、记在右下角日志里，不改硬盘上的文件。
+
+## 14. 网站（GitHub Pages）
+
+- 网址：<https://lyy07050.github.io/personal-os/>，打开就是能点的示例面板（`site/`），设计稿在 `demo/v4/`。
+- 网站跑的是**同一套面板代码**（直接读仓库里的 `LifeOS/90 系统/views` 和样式），数据全是 `make_samples.py` 生成的**示例**；不会带上真实仓库里的任何笔记，个人档案只有空模板。
+- 在网站上加、改、删都只改浏览器内存，刷新就恢复。
+- **网站不会自己更新**：改完面板后运行 `python3 tools/build_site.py`，再提交 `site/` 并推送（views 和样式本来就在仓库里，推送后网站就用新的）。
+- 仓库根目录有 `.nojekyll`（不然 GitHub Pages 会把 `_shared/`、`.obsidian/` 这种文件夹藏起来）。
+

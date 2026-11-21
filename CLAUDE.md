@@ -68,4 +68,5 @@
 
 - 测试：`tools/.venv/bin/pytest -q`
 - 示例数据：`python3 tools/make_samples.py LifeOS`（日期以 2026-11-18 为今天）
+- 网站（GitHub Pages）：改完面板后运行 `python3 tools/build_site.py`，提交 `site/` 再推送；网站只用示例数据，见 `docs/interactions.md` 第 14 节
 - 视觉依据：HTML 稿 `demo/v4/`

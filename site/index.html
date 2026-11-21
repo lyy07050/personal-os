@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<script>window.LIFEOS_SITE = { vault: "vault/", sys: "../LifeOS/" };</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my little os. · 示例</title>
+<!-- 在浏览器里模拟 Obsidian + Dataview，用来检查面板长相。不会写回任何文件。
+     用法：在 personal assistance/ 下运行 python3 -m http.server 8766 --bind 127.0.0.1
+     然后打开 http://127.0.0.1:8766/tools/preview/?note=10 总部/首页&today=2026-11-18（加 &mobile=1 看手机版） -->
+<!-- 网站模式（GitHub Pages，tools/build_site.py 生成 site/index.html）：页面里先设 window.LIFEOS_SITE = {vault, sys}
+     vault = 示例笔记 + manifest.json 所在的文件夹；sys = 仓库里的 LifeOS/（views、样式、插画从这里读） -->
+<script>{ const S = window.LIFEOS_SITE; const base = S ? S.sys : "../../LifeOS/";
+  for (const f of ["lifeos-fonts.css", "lifeos.css"]) document.write(`<link rel="stylesheet" href="${base}.obsidian/snippets/${f}${S ? "" : "?t=" + Date.now()}">`); }</script>
+<style>
+  body{margin:0;font-family:"PingFang SC",sans-serif}
+  .view{min-height:100vh}
+  .markdown-preview-sizer{max-width:var(--file-line-width);margin:0 auto;padding:24px 32px 64px}
+  .is-mobile .markdown-preview-sizer{max-width:390px;padding:16px}
+  #log{position:fixed;right:8px;bottom:8px;max-width:420px;max-height:30vh;overflow:auto;background:#252d29;color:#dfe8db;font:12px/1.4 ui-monospace,monospace;padding:8px 10px;border-radius:8px;opacity:.9;white-space:pre-wrap;z-index:99}
+  #log:empty{display:none}
+  .err{color:#b3261e;white-space:pre-wrap;font:13px ui-monospace,monospace;padding:12px;background:#fdecea;border-radius:8px}
+  #log{display:none!important} /* 网站上不显示写入日志 */
+</style>
+</head>
+<body>
+<div id="site-ribbon" style="position:fixed;left:12px;bottom:12px;z-index:100;max-width:calc(100vw - 24px);display:flex;gap:14px;align-items:center;
+  background:#2f3a33;color:#e1ecd9;font:13px/1.4 'PingFang SC',sans-serif;padding:8px 16px;border-radius:999px;box-shadow:0 6px 20px rgba(37,45,41,.2)">
+  <span>示例数据 · 可以随便加、改、删，只存在这个页面里，刷新就恢复</span>
+  <a href="../demo/v4/index.html" style="color:#a9c39a">设计稿 →</a>
+  <button onclick="this.parentElement.remove()" aria-label="关掉提示" style="background:none;border:0;color:#e1ecd9;cursor:pointer;font-size:14px">✕</button></div>
+<div class="view markdown-preview-view lifeos-dash"><div class="markdown-preview-sizer" id="sizer"></div></div>
+<div id="log"></div>
+<script>
+const Q = new URLSearchParams(location.search);
+const TODAY = Q.get("today") || "2026-11-18";
+const SITE = window.LIFEOS_SITE || null;
+const VAULT = SITE ? SITE.vault : "../../LifeOS/";
+const SYS = SITE ? SITE.sys : VAULT; // 系统文件（90 系统、.obsidian）在哪
+const urlOf = (path) => (/^(90 系统|\.obsidian)\//.test(path) ? SYS : VAULT) + path.split("/").map(encodeURIComponent).join("/");
+if (Q.get("mobile")) document.body.classList.add("is-mobile");
+const logEl = document.getElementById("log");
+const log = (m) => { logEl.textContent += m + "\n"; };
+const files = new Map(); // path -> text（内存里改，不写盘）
+
+async function listDir(dir) {
+  const r = await fetch(VAULT + dir.split("/").map(encodeURIComponent).join("/") + "/", { cache: "no-store" });
+  if (!r.ok) return [];
+  const html = await r.text();
+  const out = [];
+  for (const m of html.matchAll(/href="([^"]+)"/g)) {
+    const name = decodeURIComponent(m[1]);
+    if (name.startsWith(".") || name.startsWith("?")) continue;
+    const p = (dir ? dir + "/" : "") + name.replace(/\/$/, "");
+    if (name.endsWith("/")) { if (!/^(60 个人档案|课件)$/.test(name.slice(0, -1))) out.push(...await listDir(p)); }
+    else if (name.endsWith(".md")) out.push(p);
+  }
+  return out;
+}
+async function load(path) {
+  if (files.has(path)) return files.get(path);
+  const r = await fetch(urlOf(path), { cache: SITE ? "default" : "no-store" });
+  const t = r.ok ? await r.text() : null;
+  files.set(path, t);
+  return t;
+}
+
+// ---- 最小的 Luxon / DataArray / frontmatter ----
+const DT = (s) => ({ toISODate: () => s.slice(0, 10), toString: () => s, toMillis: () => Date.parse(s), valueOf: () => Date.parse(s) });
+function yamlValue(v) {
+  v = v.trim();
+  if (v === "true") return true; if (v === "false") return false;
+  if (v === "") return null;
+  if (/^-?\d+(\.\d+)?$/.test(v)) return Number(v);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return DT(v);
+  if (/^\[.*\]$/.test(v)) return v.slice(1, -1).split(",").map((x) => x.trim()).filter(Boolean);
+  return v;
+}
+function parse(path, text) {
+  const meta = {}; let bodyStart = 0;
+  if (text.startsWith("---\n")) {
+    const end = text.indexOf("\n---", 4);
+    text.slice(4, end).split("\n").forEach((l) => { const i = l.indexOf(":"); if (i > 0 && !l.startsWith(" ")) meta[l.slice(0, i).trim()] = yamlValue(l.slice(i + 1)); });
+    bodyStart = text.slice(0, end + 4).split("\n").length;
+  }
+  const lines = text.split("\n");
+  const tasks = [];
+  lines.forEach((l, i) => { const m = /^\s*- \[( |x)\] (.*)$/.exec(l); if (m && i >= bodyStart) tasks.push({ text: m[2], completed: m[1] === "x", line: i }); });
+  const parts = path.split("/");
+  const file = { path, name: parts.at(-1).replace(/\.md$/, ""), folder: parts.slice(0, -1).join("/"), tasks: DA(tasks), mtime: DT("2026-11-18T09:00:00"), ctime: DT("2026-11-01") };
+  return { ...meta, file };
+}
+function DA(arr) {
+  const base = [...arr], a = [...arr];
+  const wrap = (x) => DA(x);
+  return Object.assign(a, {
+    where: (f) => wrap(base.filter(f)), filter: (f) => wrap(base.filter(f)), map: (f) => wrap(base.map(f)),
+    sort: (key, dir) => wrap([...base].sort((x, y) => { const k1 = key(x), k2 = key(y); const c = k1 < k2 ? -1 : k1 > k2 ? 1 : 0; return dir === "desc" ? -c : c; })),
+    first: () => base[0], array: () => [...base], values: base, limit: (n) => wrap(base.slice(0, n)),
+  });
+}
+
+let ALL = [];
+async function index() {
+  // 网站上没有文件夹列表，改读生成网站时写好的 manifest.json
+  const paths = SITE ? await (await fetch(VAULT + "manifest.json")).json() : await listDir("");
+  ALL = [];
+  for (const p of paths) { const t = await load(p); if (t !== null) ALL.push(parse(p, t)); }
+}
+function pages(src) {
+  const m = /^"(.*)"$/.exec(src || "");
+  const folder = m ? m[1] : "";
+  return DA(ALL.filter((p) => !folder || p.file.path.startsWith(folder + "/")));
+}
+
+// ---- Obsidian app 替身（写操作只改内存并记日志） ----
+const fileObj = (path) => ({ path });
+window.app = {
+  vault: {
+    adapter: { getResourcePath: (p) => urlOf(p) },
+    getAbstractFileByPath: (p) => (files.get(p) != null || ALL.some((x) => x.file.path === p) ? fileObj(p) : null),
+    process: async (f, fn) => { const t = await load(f.path); files.set(f.path, fn(t)); log("改写 " + f.path); },
+    create: async (p, t) => { files.set(p, t); log("新建 " + p); },
+    trash: async (f) => { log("放进废纸篓 " + f.path); },
+  },
+  fileManager: { processFrontMatter: async (f, fn) => { const fm = {}; fn(fm); log("属性 " + f.path + " " + JSON.stringify(fm)); },
+    renameFile: async (f, to) => { log("改名 " + f.path + " → " + to); files.set(to, (await load(f.path)) || ""); } },
+  workspace: { openLinkText: (p) => log("打开 " + p) },
+};
+window.moment = () => ({ format: () => TODAY });
+window.Notice = function (m) { log("提示：" + m); };
+HTMLElement.prototype.createDiv = function (o = {}) { const d = document.createElement("div"); if (o.cls) d.className = o.cls; this.appendChild(d); return d; };
+document.addEventListener("click", (e) => { const a = e.target.closest("a.internal-link"); if (a) { e.preventDefault(); location.search = `?note=${encodeURIComponent(a.dataset.href)}&today=${TODAY}${Q.get("mobile") ? "&mobile=1" : ""}`; } });
+
+async function runView(name, input, container) {
+  const code = await load(name + "/view.js");
+  if (code == null) throw new Error("找不到 view " + name);
+  const dv = { container, io: { load }, pages, current: () => CURRENT, page: (p) => ALL.find((x) => x.file.path === p || x.file.path === p + ".md") };
+  const fn = new Function("dv", "input", "app", "moment", "Notice", "return (async () => {\n" + code + "\n})()");
+  await fn(dv, input, window.app, window.moment, window.Notice);
+}
+let CURRENT = null;
+(async () => {
+  const sizer = document.getElementById("sizer");
+  try {
+    await index();
+    const note = Q.get("note") || "10 总部/首页";
+    const text = await load(note + ".md");
+    if (text == null) throw new Error("找不到笔记 " + note);
+    CURRENT = parse(note + ".md", text);
+    document.title = note;
+    // 和 Obsidian 一样：frontmatter 的 cssclasses 加到阅读视图上；一个 dataviewjs 块 = 一个容器，块里的多个 dv.view 共用它
+    const fm = /^---\n([\s\S]*?)\n---/.exec(text);
+    if (fm) for (const c of fm[1].matchAll(/^\s*-\s*(lifeos-[\w-]+)/gm)) sizer.parentElement.classList.add(c[1]);
+    const inline = fm && /^cssclasses:\s*\[([^\]]*)\]/m.exec(fm[1]); // 也认 cssclasses: [a, b] 这种写法
+    if (inline) for (const c of inline[1].split(",").map((x) => x.trim()).filter((x) => x.startsWith("lifeos-"))) sizer.parentElement.classList.add(c);
+    const block = /```dataviewjs\n([\s\S]*?)```/.exec(text);
+    const box = document.createElement("div"); box.className = "block-language-dataviewjs"; sizer.appendChild(box);
+    for (const m of block[1].matchAll(/dv\.view\("([^"]+)"(?:,\s*(\{.*\}))?\)/g)) {
+      await runView(m[1], m[2] ? JSON.parse(m[2]) : {}, box);
+    }
+  } catch (e) { sizer.innerHTML = `<pre class="err">${e.stack || e}</pre>`; console.error(e); }
+})();
+</script>
+</body>
+</html>

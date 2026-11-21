@@ -7,7 +7,10 @@
 <!-- 在浏览器里模拟 Obsidian + Dataview，用来检查面板长相。不会写回任何文件。
      用法：在 personal assistance/ 下运行 python3 -m http.server 8766 --bind 127.0.0.1
      然后打开 http://127.0.0.1:8766/tools/preview/?note=10 总部/首页&today=2026-11-18（加 &mobile=1 看手机版） -->
-<script>for (const f of ["lifeos-fonts.css", "lifeos.css"]) document.write(`<link rel="stylesheet" href="../../LifeOS/.obsidian/snippets/${f}?t=${Date.now()}">`);</script>
+<!-- 网站模式（GitHub Pages，tools/build_site.py 生成 site/index.html）：页面里先设 window.LIFEOS_SITE = {vault, sys}
+     vault = 示例笔记 + manifest.json 所在的文件夹；sys = 仓库里的 LifeOS/（views、样式、插画从这里读） -->
+<script>{ const S = window.LIFEOS_SITE; const base = S ? S.sys : "../../LifeOS/";
+  for (const f of ["lifeos-fonts.css", "lifeos.css"]) document.write(`<link rel="stylesheet" href="${base}.obsidian/snippets/${f}${S ? "" : "?t=" + Date.now()}">`); }</script>
 <style>
   body{margin:0;font-family:"PingFang SC",sans-serif}
   .view{min-height:100vh}
@@ -24,7 +27,10 @@
 <script>
 const Q = new URLSearchParams(location.search);
 const TODAY = Q.get("today") || "2026-11-18";
-const VAULT = "../../LifeOS/";
+const SITE = window.LIFEOS_SITE || null;
+const VAULT = SITE ? SITE.vault : "../../LifeOS/";
+const SYS = SITE ? SITE.sys : VAULT; // 系统文件（90 系统、.obsidian）在哪
+const urlOf = (path) => (/^(90 系统|\.obsidian)\//.test(path) ? SYS : VAULT) + path.split("/").map(encodeURIComponent).join("/");
 if (Q.get("mobile")) document.body.classList.add("is-mobile");
 const logEl = document.getElementById("log");
 const log = (m) => { logEl.textContent += m + "\n"; };
@@ -46,7 +52,7 @@ async function listDir(dir) {
 }
 async function load(path) {
   if (files.has(path)) return files.get(path);
-  const r = await fetch(VAULT + path.split("/").map(encodeURIComponent).join("/"), { cache: "no-store" });
+  const r = await fetch(urlOf(path), { cache: SITE ? "default" : "no-store" });
   const t = r.ok ? await r.text() : null;
   files.set(path, t);
   return t;
@@ -89,7 +95,8 @@ function DA(arr) {
 
 let ALL = [];
 async function index() {
-  const paths = await listDir("");
+  // 网站上没有文件夹列表，改读生成网站时写好的 manifest.json
+  const paths = SITE ? await (await fetch(VAULT + "manifest.json")).json() : await listDir("");
   ALL = [];
   for (const p of paths) { const t = await load(p); if (t !== null) ALL.push(parse(p, t)); }
 }
@@ -103,7 +110,7 @@ function pages(src) {
 const fileObj = (path) => ({ path });
 window.app = {
   vault: {
-    adapter: { getResourcePath: (p) => VAULT + p.split("/").map(encodeURIComponent).join("/") },
+    adapter: { getResourcePath: (p) => urlOf(p) },
     getAbstractFileByPath: (p) => (files.get(p) != null || ALL.some((x) => x.file.path === p) ? fileObj(p) : null),
     process: async (f, fn) => { const t = await load(f.path); files.set(f.path, fn(t)); log("改写 " + f.path); },
     create: async (p, t) => { files.set(p, t); log("新建 " + p); },
