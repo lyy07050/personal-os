@@ -11,8 +11,8 @@ const esc = L.esc;
 const DL_PATH = D.DL;
 const deadlines = await D.deadlines();
 const projects = D.projects();
-const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path }))
-  .filter((i) => i.when.slice(0, 10) >= mon && i.when.slice(0, 10) <= week[6]);
+const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path }));
+let myEvents = await D.events(); // 10 总部/日程.md
 const todos = await D.todos();
 
 const { perDay: weekSpend, spent } = await D.weekSpend();
@@ -34,27 +34,36 @@ const rem = L.reminders(allCards);
 const courses = dv.pages('"45 教务处/课程"').where((p) => p.next_class).array()
   .map((p) => ({ code: p.course || p.file.folder.split("/").pop(), when: String(p.next_class) }));
 
-// ---------- 本周日程（仿苹果日历周视图） ----------
-function weekCal() {
-  const allDay = week.map(() => []);
+// ---------- 日程（仿苹果日历周视图，可以翻周） ----------
+let offset = 0; // 0 = 本周；只记在内存里，重新打开回到本周
+const daysOf = (off) => [...Array(7)].map((_, i) => L.addDays(mon, off * 7 + i));
+const hm2h = (hm) => +hm.slice(0, 2) + +hm.slice(3, 5) / 60;
+function weekCal(days) {
+  const allDay = days.map(() => []);
   const timed = [];
-  deadlines.filter((d) => d.due && week.includes(d.due.slice(0, 10)))
-    .forEach((d) => allDay[week.indexOf(d.due.slice(0, 10))].push({ c: "r1", t: `${d.title.replace(d.course, "").trim() || d.title} 截止` }));
-  allCards.filter((c) => c.type === "活动" && week.includes(c.date)).forEach((c) => allDay[week.indexOf(c.date)].push({ c: "g1", t: c.title }));
-  allDay[6].push({ c: "p1", t: "周复盘" });
+  const at = (d) => days.indexOf(d);
+  deadlines.filter((d) => d.due && days.includes(d.due.slice(0, 10)))
+    .forEach((d) => allDay[at(d.due.slice(0, 10))].push({ c: "r1", t: `${d.title.replace(d.course, "").trim() || d.title} 截止` }));
+  allCards.filter((c) => c.type === "活动" && days.includes(c.date)).forEach((c) => allDay[at(c.date)].push({ c: "g1", t: c.title }));
+  myEvents.filter((e) => days.includes(e.date)).forEach((e) => {
+    if (e.time) timed.push({ d: at(e.date), h: hm2h(e.time), c: "y1 mine", t: `${esc(e.title)}<br>${e.time}` });
+    else allDay[at(e.date)].push({ c: "y1 mine", t: e.title });
+  });
+  if (days.includes(T)) allDay[6].push({ c: "p1", t: "周复盘" });
   courses.forEach((c) => {
     const m = /周([一二三四五六日])\s*(\d{1,2}):(\d{2})/.exec(c.when);
-    if (m) timed.push({ d: "一二三四五六日".indexOf(m[1]), h: +m[2] + +m[3] / 60, c: "b1", t: `${c.code}<br>${m[2]}:${m[3]}` });
+    if (m) timed.push({ d: "一二三四五六日".indexOf(m[1]), h: +m[2] + +m[3] / 60, c: "b1", t: `${esc(c.code)}<br>${m[2]}:${m[3]}` });
   });
   interviews.forEach((i) => {
-    const d = week.indexOf(i.when.slice(0, 10)), hm = i.when.slice(11, 16);
-    if (d >= 0 && hm) timed.push({ d, h: +hm.slice(0, 2) + +hm.slice(3) / 60, c: "r1", t: `面试<br>${hm}` });
+    const d = at(i.when.slice(0, 10)), hm = i.when.slice(11, 16);
+    if (d >= 0 && hm) timed.push({ d, h: hm2h(hm), c: "r1", t: `面试<br>${hm}` });
   });
-  const ti = week.indexOf(T);
-  let h = "<div></div>" + week.map((d, i) => `<div class="dh ${i === ti ? "today" : ""} ${i > 4 ? "wkend" : ""}">${L.WEEK_CN[i]}${i === ti ? " · Today" : ""}<b>${+d.slice(8)}</b></div>`).join("");
+  const ti = at(T);
+  let h = "<div></div>" + days.map((d, i) => `<div class="dh ${i === ti ? "today" : ""} ${i > 4 ? "wkend" : ""}">${L.WEEK_CN[i]}${i === ti ? " · Today" : ""}<b>${+d.slice(8)}</b></div>`).join("");
   h += `<div class="allday"><span class="lb">全天</span>${allDay.map((evs) => `<div>${evs.map((e) => `<span class="ev ${e.c}">${esc(e.t)}</span>`).join("")}</div>`).join("")}</div>`;
   h += `<div class="hours">${["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"].map((t) => `<span class="hl">${t}</span>` + '<span class="cell"></span>'.repeat(7)).join("")}`;
-  h += timed.filter((e) => e.h >= 9 && e.h < 21).map((e) => `<span class="ev ${e.c}" style="left:calc(40px + (100% - 40px) / 7 * ${e.d} + 3px);width:calc((100% - 40px) / 7 - 6px);top:${(e.h - 9) / 2 * 36}px;height:38px;margin:0">${e.t}</span>`).join("");
+  // 9 点前、21 点后的放在最上 / 最下一格，不让它消失
+  h += timed.map((e) => `<span class="ev ${e.c}" style="left:calc(40px + (100% - 40px) / 7 * ${e.d} + 3px);width:calc((100% - 40px) / 7 - 6px);top:${(Math.min(Math.max(e.h, 9), 20) - 9) / 2 * 36}px;height:38px;margin:0">${e.t}</span>`).join("");
   return h + "</div>";
 }
 
@@ -87,8 +96,12 @@ const html = `
     <form class="addtodo" hidden><input placeholder="加一条待办…" aria-label="待办内容" enterkeyhint="done"></form>
   </section>
   <section class="card cal" aria-label="本周日程">
-    <div class="top"><h2>本周日程</h2><span>${mon.slice(0, 4)}年${+mon.slice(5, 7)}月 · ${+mon.slice(8)}–${+week[6].slice(8)}日</span></div>
-    <div class="week">${weekCal()}</div>
+    <div class="top"><h2>本周日程</h2><button class="nav" aria-label="上一周">‹</button><span class="wl">${L.weekLabel(mon)}</span><button class="nav" aria-label="下一周">›</button><button class="back" hidden>回到本周</button><button class="add" aria-label="加日程" aria-expanded="false">＋</button></div>
+    <form class="addf evf" hidden aria-label="加日程">
+      <input name="d" type="date" aria-label="日期" required><input name="t" type="time" aria-label="时间（空着就是全天）">
+      <input name="n" placeholder="做什么" aria-label="事情" required><input name="p" placeholder="地点" aria-label="地点">
+      <button class="go">加上</button></form>
+    <div class="week">${weekCal(week)}</div>
   </section>
 </div>
 <section class="ov" aria-label="今日概览">
@@ -179,6 +192,18 @@ const STYLE = `
 .lifeos-dash .hours .hl{font-size:12px;color:var(--muted);transform:translateY(-6px)}
 .lifeos-dash .hours .cell{border-top:1px solid rgba(37,45,41,.06);border-left:1px solid rgba(37,45,41,.04)}
 .lifeos-dash .hours .ev{position:absolute;white-space:normal}
+.lifeos-dash .ev.y1{background:#fbf3dc;border-color:#c9a24a;color:#6f5420}
+.lifeos-dash .ev.mine{cursor:pointer}
+.lifeos-dash .cal .top .nav{width:28px;height:28px;border-radius:50%;font-size:18px;line-height:26px;color:var(--ink-2);transition:background .2s}
+.lifeos-dash .cal .top .nav:hover{background:var(--sage)}
+.lifeos-dash .cal .top .wl{min-width:150px;text-align:center}
+.lifeos-dash .cal .top .back{height:26px;padding:0 10px;border-radius:13px;background:var(--sage);color:var(--green);font-size:12.5px}
+.lifeos-dash .cal .top .add{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--sage);color:var(--green);font-size:20px;line-height:34px;text-align:center;transition:background .2s,color .2s}
+.lifeos-dash .cal .top .add:hover,.lifeos-dash .cal .top .add[aria-expanded="true"]{background:var(--green);color:#fff}
+.lifeos-dash .evf{display:grid;grid-template-columns:150px 110px 1fr 140px auto;gap:8px;margin:0 0 10px}
+.lifeos-dash .evf input{height:38px;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 12px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none;min-width:0}
+.lifeos-dash .evf .go{height:38px;padding:0 18px;border-radius:999px;background:var(--green);color:#fff;font-size:14px;font-weight:600}
+.lifeos-dash .evf[hidden]{display:none}
 .lifeos-dash .ov{display:grid;grid-template-columns:1fr 300px;gap:24px;margin-bottom:24px}
 .lifeos-dash .ov .left{background:#fff;border-radius:22px;box-shadow:var(--sh-card);display:grid;grid-template-rows:auto 1fr;overflow:hidden}
 .lifeos-dash .stats{display:flex;gap:12px;align-items:center;padding:0 12px 0 0}
@@ -308,6 +333,40 @@ addForm.addEventListener("submit", async (e) => {
   input.value = "";
   addRow(text, await D.addTodo(text));
 });
+
+// 日程：翻周、回到本周、「＋」加日程、点自己加的日程打开 日程.md
+const cal = root.querySelector(".cal"), evf = cal.querySelector(".evf"), evAdd = cal.querySelector(".top .add");
+function redraw() {
+  const days = daysOf(offset);
+  cal.querySelector(".top h2").textContent = offset ? "日程" : "本周日程";
+  cal.querySelector(".top .wl").textContent = L.weekLabel(days[0]);
+  cal.querySelector(".top .back").hidden = offset === 0;
+  cal.querySelector(".week").innerHTML = weekCal(days);
+}
+cal.querySelector('[aria-label="上一周"]').addEventListener("click", () => { offset--; redraw(); });
+cal.querySelector('[aria-label="下一周"]').addEventListener("click", () => { offset++; redraw(); });
+cal.querySelector(".top .back").addEventListener("click", () => { offset = 0; redraw(); });
+const openEvf = (open) => {
+  evf.hidden = !open; evAdd.setAttribute("aria-expanded", open);
+  if (!open) return;
+  const days = daysOf(offset);
+  evf.d.value = days.includes(T) ? T : days[0];
+  evf.n.focus();
+};
+evAdd.addEventListener("click", () => openEvf(evf.hidden));
+evf.addEventListener("keydown", (e) => { if (e.key === "Escape") openEvf(false); });
+evf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = evf.n.value.trim(), date = evf.d.value;
+  if (!title || !date) return;
+  await D.addEvent({ date, time: evf.t.value, title, place: evf.p.value.trim() });
+  myEvents = await D.events();
+  evf.reset(); openEvf(false);
+  offset = Math.round((Date.parse(L.mondayOf(date)) - Date.parse(mon)) / 864e5 / 7); // 跳到新日程所在的那一周
+  redraw();
+  L.notice(`${title} 加进日程了`);
+});
+cal.querySelector(".week").addEventListener("click", (e) => { if (e.target.closest(".ev.mine")) L.open(D.EVENTS); });
 
 // 冰箱：勾上 = 吃完 → 这行打勾，名字进购物清单
 root.querySelectorAll(".food").forEach((el) => el.querySelector(".ck").addEventListener("click", async () => {

@@ -235,3 +235,9 @@ def test_home_has_todo_add_and_capture_switch():
     js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
     for s in ('aria-label="加一条待办"', "D.addTodo(", "aria-pressed", 'kind === "ev"'):
         assert s in js, s
+
+
+def test_home_calendar_week_nav():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    for s in ('aria-label="上一周"', 'aria-label="下一周"', "回到本周", 'aria-label="加日程"', "D.addEvent(", "L.weekLabel("):
+        assert s in js, s
