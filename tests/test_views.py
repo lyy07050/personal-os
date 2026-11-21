@@ -37,6 +37,8 @@ def test_dashboard_notes_exist_and_are_marked():
 
 def test_every_dashboard_calls_existing_view():
     for note in VAULT.rglob("*.md"):
+        if "60 个人档案" in note.parts or "课件" in note.parts:  # 个人档案、课件：测试也不读
+            continue
         text = note.read_text(encoding="utf-8")
         if "lifeos-dash" not in text:
             continue
