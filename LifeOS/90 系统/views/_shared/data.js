@@ -140,6 +140,15 @@
     }
   }
 
+  // 新事情：10 总部/项目/<名字>.md，进度 0、未开始；area 是首页待办右边那个小标签（school、career…）
+  async function addProject({ title, area = "" }) {
+    const name = L.safeTitle(title);
+    let path = `10 总部/项目/${name}.md`;
+    for (let i = 2; L.fileOf(path); i++) path = `10 总部/项目/${name} ${i}.md`;
+    await app.vault.create(path, `---\nprogress: 0\nstatus: 未开始\narea: ${area}\n---\n# ${title.replace(/\s+/g, " ").trim()}\n`);
+    return path;
+  }
+
   // ---------- 钱 ----------
   // 记一笔：写进 20 财务部/账本/<月份>.md；账本是新的在上，所以插在第一条日期不晚于它的行前面；新月份就新建文件
   async function addExpense(e) {
@@ -259,7 +268,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense, addProject,
     food, shopping, eat, addFood, recipes, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

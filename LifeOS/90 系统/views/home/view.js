@@ -78,6 +78,9 @@ function spark() {
 
 const dateLong = `${L.MONTH_EN[+T.slice(5, 7) - 1].slice(0, 3)} <span class="g">${+T.slice(8)}</span> · ${["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][L.weekday(T)]}`;
 const left = todos.filter((t) => !t.done && t.kind !== "ev").length;
+// 事情进度一行；新事情的类别（存英文，首页待办右边显示）
+const AREAS = [["school", "学校"], ["career", "求职"], ["money", "钱"], ["english", "英语"], ["errands", "杂事"], ["life", "生活"]];
+const projRow = (p) => `<li>${L.link(p.path, esc(p.title))}<span class="bar"><span style="width:${p.progress}%"></span></span><span class="p ${p.progress ? "" : "muted"}">${p.progress ? p.progress + "%" : "未开始"}</span></li>`;
 // Fridge 一格
 function foodTile(f, i) {
   const n = f.expires ? L.daysLeft(f.expires, T) : null;
@@ -139,8 +142,11 @@ const html = `
       <div class="foods">${cold.map(foodTile).join("")}</div>
     </section>
     <section class="card prog" style="padding:22px 22px 18px">
-      <div class="head" style="margin-bottom:8px"><h2 style="font-size:26px">事情进度</h2></div>
-      <ul class="list">${projects.map((p) => `<li>${L.link(p.path, esc(p.title))}<span class="bar"><span style="width:${p.progress}%"></span></span><span class="p ${p.progress ? "" : "muted"}">${p.progress ? p.progress + "%" : "未开始"}</span></li>`).join("")}</ul>
+      <div class="head" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><h2 style="font-size:26px">事情进度</h2><button class="plus" aria-label="加一件事" aria-expanded="false">＋</button></div>
+      <form class="mini projf" hidden aria-label="加一件事">
+        <input name="t" placeholder="要推进的事（比如 写完 INF 1340 报告）" aria-label="事情" required>
+        <select name="a" aria-label="类别">${AREAS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select><button class="go">加上</button></form>
+      <ul class="list">${projects.map(projRow).join("")}</ul>
     </section>
   </div>
   <aside class="rcol">
@@ -183,6 +189,7 @@ const STYLE = `
 .lifeos-dash .mini{display:grid;gap:8px;margin:0 0 12px}
 .lifeos-dash .foodf{grid-template-columns:1.4fr 1fr 1fr 1fr 1fr auto}
 .lifeos-dash .actf{grid-template-columns:1fr 1fr}
+.lifeos-dash .projf{grid-template-columns:1fr 110px auto}
 .lifeos-dash .actf .go{grid-column:1/-1}
 .lifeos-dash .mini[hidden]{display:none}
 .lifeos-dash .mini input,.lifeos-dash .mini select{height:38px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:#fff;padding:0 12px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none}
@@ -436,6 +443,19 @@ foodf.addEventListener("submit", async (e) => {
   }
   foodf.reset(); toggleFood(false);
   L.notice(`${name} 放进${place}了`);
+});
+// 事情进度「＋」：新建一篇事情笔记，马上出现在列表最后
+const projf = root.querySelector(".projf"), toggleProj = wirePlus(root.querySelector(".prog .plus"), projf);
+projf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = projf.t.value.trim();
+  if (!title) return;
+  const path = await D.addProject({ title, area: projf.a.value });
+  const list = root.querySelector(".prog .list");
+  list.insertAdjacentHTML("beforeend", projRow({ path, title, progress: 0 }));
+  list.scrollTop = list.scrollHeight;
+  projf.reset(); toggleProj(false);
+  L.notice(`${title} 加进事情进度了`);
 });
 // 最近的活动「＋」：新建一张活动卡（随手记 type: 活动），按日期插进列表
 const actf = root.querySelector(".actf"), toggleAct = wirePlus(root.querySelector(".mod .plus"), actf), acts = root.querySelector(".acts");

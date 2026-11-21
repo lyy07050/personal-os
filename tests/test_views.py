@@ -304,3 +304,8 @@ def test_money_sheet_used_on_home_and_finance():
     js = LIB.read_text(encoding="utf-8")
     for s in ("现金", "ApplePay", "<dialog"):
         assert s in js, s
+
+
+def test_home_plus_for_projects():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    assert 'aria-label="加一件事"' in js and "D.addProject(" in js
