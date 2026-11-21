@@ -256,3 +256,10 @@ def test_lib_has_scroll_helpers():
     js = LIB.read_text(encoding="utf-8")
     for s in ("function pager", "function scrolly", "function sinkDone"):
         assert s in js, s
+
+
+def test_home_uses_scroll_and_pager():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    for s in ("L.scrolly(", "L.pager(", "L.sinkDone(", "L.doneLast("):
+        assert s in js, s
+    assert "还有 ${" not in js

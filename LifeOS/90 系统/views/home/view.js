@@ -13,7 +13,7 @@ const deadlines = await D.deadlines();
 const projects = D.projects();
 const interviews = D.interviews().map((i) => ({ title: i.title, when: i.date, path: i.path }));
 let myEvents = await D.events(); // 10 总部/日程.md
-const todos = await D.todos();
+const todos = L.doneLast(await D.todos()); // 没做的在前、做完的在后（只改显示顺序）
 
 const { perDay: weekSpend, spent } = await D.weekSpend();
 
@@ -28,7 +28,7 @@ const words = (await D.wordCards(D.WORDS)).map((w) => [w.front, w.back]);
 const word = words.length ? D.wordOfDay(words) : null;
 
 const allCards = await L.cards(dv);
-const events = L.upcomingEvents(allCards, T);
+const events = allCards.filter((c) => c.type === "活动" && c.date && c.date >= T).sort((a, b) => a.date.localeCompare(b.date)); // 全部未来活动，卡片里滑着看
 const rem = L.reminders(allCards);
 
 const courses = dv.pages('"45 教务处/课程"').where((p) => p.next_class).array()
@@ -92,7 +92,7 @@ const html = `
 <div class="r1">
   <section class="card todo" style="padding:22px 22px 18px">
     <div class="head" style="margin-bottom:6px"><h2 style="font-size:26px">今日待办</h2><button class="add" aria-label="加一条待办" aria-expanded="false">＋</button></div>
-    <ul class="list">${todos.slice(0, 8).map(todoLi).join("")}</ul>
+    <ul class="list">${todos.map(todoLi).join("")}</ul>
     <form class="addtodo" hidden><input placeholder="加一条待办…" aria-label="待办内容" enterkeyhint="done"></form>
   </section>
   <section class="card cal" aria-label="本周日程">
@@ -126,7 +126,7 @@ const html = `
   <div class="stack">
     <section class="group fr" style="padding:18px 16px 16px">
       <div class="tabs2">${L.link("30 后勤部/食物墙", '<span class="on">Fridge</span>')}</div>
-      <div class="foods">${cold.slice(0, 4).map((f, i) => {
+      <div class="foods">${cold.map((f, i) => {
         const n = f.expires ? L.daysLeft(f.expires, T) : null;
         return `<div class="tile food" data-f="${i}"><h3>${esc(f.name)}</h3><small>${esc(f.qty)}</small><div class="left"><button class="ck" aria-label="吃完" title="吃完" ${n !== null && n <= 1 ? 'style="border-color:var(--warn)"' : ""}>${L.CK}</button><span class="${n !== null && n <= 1 ? "warn" : ""}">${n === null ? "—" : L.leftLabel(n)}</span></div><div class="pic">${foodIcon(f.name, 96)}</div></div>`;
       }).join("")}</div>
@@ -139,18 +139,18 @@ const html = `
   <aside class="rcol">
     <section class="mod" style="background:#fef7de">
       <div class="mh"><span>最近的活动</span></div>
-      ${events.map((e) => `<div class="act">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div></div>`).join("")}
+      <div class="acts">${events.map((e) => `<div class="act">${L.link(e.path, `<div class="date date-stamp"><span class="g">${L.md(e.date)}</span><small>${L.WEEK_CN[L.weekday(e.date)]}</small></div>`)}<div><b>${esc(e.title)}</b><span>${esc([e.source, (e.body.split("\n")[0] || "").split("·")[0].trim()].filter(Boolean).join(" · "))}</span></div></div>`).join("")}</div>
     </section>
     <section class="mod" style="background:#f4f8fe;flex:1;position:relative">
       <div class="mh"><span>Reminder</span></div>
-      ${rem.map((c, ci) => {
-        const done = c.tasks.length - c.open, shown = c.tasks.slice(0, 3);
+      <div class="rems">${rem.map((c, ci) => {
+        const done = c.tasks.length - c.open, shown = L.doneLast(c.tasks.map((t, ti) => ({ ...t, ti })));
         return `<div class="rg" ${ci ? 'style="margin-top:20px"' : ""}>
           <div class="rt"><b>${esc(c.title)}</b><small>${done} / ${c.tasks.length}</small></div>
           <div class="bar"><span style="width:${Math.round(done / c.tasks.length * 100)}%"></span></div>
-          <ul>${shown.map((t, ti) => `<li class="${t.done ? "done" : ""}" data-c="${ci}" data-t="${ti}"><button class="ck" aria-label="完成">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}</ul>
-          ${c.tasks.length > 3 ? L.link(c.path, `还有 ${c.tasks.length - 3} 项 →`, "more") : ""}</div>`;
-      }).join("")}
+          <ul>${shown.map((t) => `<li class="${t.done ? "done" : ""}" data-c="${ci}" data-t="${t.ti}"><button class="ck" aria-label="完成">${L.CK}</button><span class="t">${esc(t.text)}</span></li>`).join("")}</ul>
+          </div>`;
+      }).join("")}</div>
     </section>
     <img class="cloth" src="${L.art("home-sticker.png")}" alt="">
   </aside>
@@ -166,6 +166,10 @@ const STYLE = `
 .lifeos-dash .hero .art{position:absolute;pointer-events:none;filter:var(--sh-sticker);transition:translate .5s cubic-bezier(.2,.8,.2,1),rotate .5s cubic-bezier(.2,.8,.2,1)}
 .lifeos-dash .hero:hover .art{translate:0 -5px;rotate:-1.5deg}
 .lifeos-dash .r1{display:grid;grid-template-columns:383px 1fr;gap:24px;margin-bottom:24px}
+.lifeos-dash .todo .list{max-height:372px;margin-right:-8px;padding-right:8px}
+.lifeos-dash .prog .list{max-height:262px;margin-right:-8px;padding-right:8px}
+.lifeos-dash .acts{max-height:300px}
+.lifeos-dash .rems{max-height:440px;margin-right:-6px;padding-right:6px}
 .lifeos-dash .todo .list li{font-size:16px;padding:11px 0;gap:12px}
 .lifeos-dash .todo .list li .t{flex:1}
 .lifeos-dash .todo .list li small{font-size:14px;color:var(--muted)}
@@ -285,6 +289,9 @@ const STYLE = `
 .is-mobile .lifeos-dash .week{min-width:520px}`;
 
 const root = L.mount(dv, html, STYLE);
+// 卡片里上下滑、Fridge 翻页
+["todo .list", "prog .list", "acts", "rems"].forEach((sel) => L.scrolly(root.querySelector("." + sel)));
+L.pager(root.querySelector(".fr .foods"), 4);
 
 // ---------- 交互 ----------
 const form = root.querySelector("form.capture"), sw = form.querySelector(".sw");
@@ -313,12 +320,15 @@ todoList.addEventListener("click", async (e) => {
   if (!t || t.kind === "ev") return;
   const done = li.classList.toggle("done");
   if (done) L.stamp(ck);
+  L.sinkDone(li);
   await D.toggleTodo(t, done);
 });
 function addRow(text, path) {
   const t = { kind: "card", text, tag: "", done: false, path };
   todos.push(t);
-  todoList.insertAdjacentHTML("beforeend", todoLi(t, todos.length - 1));
+  const firstDone = todoList.querySelector(":scope > li.done"); // 新加的放在「没做的」最后
+  if (firstDone) firstDone.insertAdjacentHTML("beforebegin", todoLi(t, todos.length - 1));
+  else todoList.insertAdjacentHTML("beforeend", todoLi(t, todos.length - 1));
 }
 const toggleAdd = (open) => {
   addForm.hidden = !open; addBtn.setAttribute("aria-expanded", open);
@@ -379,5 +389,6 @@ root.querySelectorAll(".food").forEach((el) => el.querySelector(".ck").addEventL
 root.querySelectorAll(".rg li").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
   const c = rem[+li.dataset.c], t = c.tasks[+li.dataset.t];
   if (li.classList.toggle("done")) L.stamp(li.querySelector(".ck"));
+  L.sinkDone(li);
   await L.toggleTaskAt(c.path, t.line);
 }));
