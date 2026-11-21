@@ -415,3 +415,10 @@ def test_calendar_click_to_add_edit_delete():
     assert "data-slot" in js  # 点空格子加日程
     data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
     assert "async function updateEvent(" in data and "raw: x.raw" in data
+
+
+def test_goals_toggle_each_to_home():
+    rv = (VIEWS / "review/view.js").read_text(encoding="utf-8")
+    assert "to-home" not in rv and 'class="home-sw' in rv and "D.setGoalHome(" in rv and "aria-pressed" in rv
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert "async function setGoalHome(" in data and "首页::" in data

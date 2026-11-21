@@ -71,11 +71,17 @@
   const projects = () => dv.pages('"10 总部/项目"').where((p) => p.progress !== undefined).array()
     .map((p) => ({ path: p.file.path, title: p.file.name, progress: Number(p.progress) || 0, status: p.status || "", area: p.area || "" }));
   // 复盘「下周三件要事」：最近一篇点过「放进首页待办」的复盘里的那几行
+  // 首页待办里的「三件要事」：最近一篇有勾选「放进首页」的复盘里，带 [首页:: 是] 的那几条
+  // （旧笔记 goals_on_home: true 且没有逐条标记 = 三条都算）
+  const homeRe = /\[首页::\s*是\]/;
+  const goalText = (t) => t.replace(/\[来源::[^\]]*\]/, "").replace(/\[首页::[^\]]*\]/, "").trim();
   function homeGoals() {
-    const r = dv.pages('"10 总部/复盘"').where((p) => p.goals_on_home === true).sort((p) => p.file.name, "desc").first();
-    return r ? r.file.tasks.where((t) => goalRe.test(t.text)).array()
-      .map((t) => ({ path: r.file.path, line: t.line, text: t.text.replace(/\[来源::[^\]]*\]/, "").trim(), done: t.completed }))
-      .filter((g) => g.text) : [];
+    const pick = (p) => {
+      const ts = p.file.tasks.where((t) => goalRe.test(t.text)).array();
+      return ts.some((t) => homeRe.test(t.text)) ? ts.filter((t) => homeRe.test(t.text)) : p.goals_on_home === true ? ts : [];
+    };
+    const r = dv.pages('"10 总部/复盘"').sort((p) => p.file.name, "desc").array().find((p) => pick(p).length);
+    return r ? pick(r).map((t) => ({ path: r.file.path, line: t.line, text: goalText(t.text), done: t.completed })).filter((g) => g.text) : [];
   }
   const interviews = () => dv.pages('"50 人事部/面试"').array().map((p) => ({
     path: p.file.path, name: p.file.name, company: String(p.company || ""), role: String(p.role || ""), format: String(p.format || ""),
@@ -285,8 +291,21 @@
     await app.vault.process(f, (body) => {
       const ls = body.split("\n");
       const idx = ls.map((l, k) => (goalRe.test(l) && /^- \[[ x]\]/.test(l) ? k : -1)).filter((k) => k >= 0);
-      if (idx[i] !== undefined) ls[idx[i]] = ls[idx[i]].replace(/^(- \[[ x]\]).*$/, `$1 ${text} [来源:: 复盘]`);
+      if (idx[i] !== undefined) ls[idx[i]] = ls[idx[i]].replace(/^(- \[[ x]\]).*$/, `$1 ${text} [来源:: 复盘]${homeRe.test(ls[idx[i]]) ? " [首页:: 是]" : ""}`);
       else ls.splice((idx.length ? idx[idx.length - 1] + 1 : ls.indexOf("## 下周三件要事") + 2), 0, `- [ ] ${text} [来源:: 复盘]`);
+      return ls.join("\n");
+    });
+  }
+  // 第 i 件要事放进 / 拿出首页待办：在那一行末尾加上 / 去掉 [首页:: 是]
+  async function setGoalHome(path, i, on) {
+    const f = L.fileOf(path);
+    if (!f) return;
+    await app.vault.process(f, (body) => {
+      const ls = body.split("\n");
+      const idx = ls.map((l, k) => (goalRe.test(l) && /^- \[[ x]\]/.test(l) ? k : -1)).filter((k) => k >= 0);
+      if (idx[i] === undefined) return body;
+      const base = ls[idx[i]].replace(/\s*\[首页::[^\]]*\]/, "");
+      ls[idx[i]] = on ? `${base} [首页:: 是]` : base;
       return ls.join("\n");
     });
   }
@@ -328,6 +347,6 @@
   return {
     T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, updateEvent, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
     food, shopping, eat, addFood, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
-    weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
+    weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setGoalHome, setHabit, bodyOf, notes, courses, things,
   };
 })

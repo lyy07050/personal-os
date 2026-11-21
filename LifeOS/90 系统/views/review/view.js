@@ -37,9 +37,12 @@ const STYLE = `
 .lifeos-dash .three input{flex:1;border:0;background:none;box-shadow:none;font:inherit;font-size:20px;color:var(--ink);outline:none;caret-color:var(--green);min-height:36px;padding:0}
 .lifeos-dash .three li:focus-within{border-color:var(--green)}
 .lifeos-dash .three li::before{content:"";position:absolute;left:-12px;top:50%;width:44px;height:18px;translate:0 -50%;rotate:-8deg;scale:0;opacity:.85;background:#f8dcd8;border-radius:2px;transition:scale .35s cubic-bezier(.2,.8,.2,1)}
-.lifeos-dash .three.pinned li::before{scale:1}
-.lifeos-dash .three.pinned li:nth-child(2)::before{transition-delay:.12s;rotate:6deg;background-color:#fef7e0}
-.lifeos-dash .three.pinned li:nth-child(3)::before{transition-delay:.24s;background-color:#dfe8db}
+.lifeos-dash .three li.pinned::before{scale:1}
+.lifeos-dash .three li:nth-child(2)::before{rotate:6deg;background-color:#fef7e0}
+.lifeos-dash .three li:nth-child(3)::before{background-color:#dfe8db}
+.lifeos-dash .dash .three .home-sw{flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(37,45,41,.14);background:#fff;color:var(--ink-2);font-size:14px;white-space:nowrap;box-shadow:none;transition:background .2s,color .2s,border-color .2s}
+.lifeos-dash .dash .three .home-sw:hover{border-color:var(--green);color:var(--green)}
+.lifeos-dash .dash .three .home-sw.on{background:var(--green);border-color:var(--green);color:#fff}
 .lifeos-dash .kn{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .lifeos-dash .kn a{padding:18px 20px;font-family:var(--zcool);font-size:20px;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 .lifeos-dash .kn a:hover{transform:translateY(-2px)}
@@ -86,7 +89,9 @@ if (!week) {
   const ps = prev ? await stats(prevW) : null;
   const path = current && current.file ? current.file.path : `${DIR}/${week}.md`;
   const goalTasks = current && current.file ? current.file.tasks.where((t) => /\[来源::\s*复盘\]/.test(t.text)).array().slice(0, 3) : [];
-  const onHome = current && current.goals_on_home === true;
+  // 哪几条在首页：逐条标 [首页:: 是]；旧笔记 goals_on_home: true 且没逐条标 = 三条都在
+  let anyMarked = goalTasks.some((t) => /\[首页::\s*是\]/.test(t.text));
+  const isHome = (t) => !!t && (anyMarked ? /\[首页::\s*是\]/.test(t.text) : current && current.goals_on_home === true);
   const n = +week.slice(6);
 
   const nav = `<nav class="tabs" aria-label="分页">${prev ? L.link(prev.file.path, `Week ${n - 1}`, "lat") : `<a class="lat" aria-disabled="true">Week ${n - 1}</a>`}<a class="lat on" aria-current="page">Week ${n}</a>${L.link("10 总部/周复盘面板", "全部", "cjk")}</nav>`;
@@ -101,13 +106,15 @@ if (!week) {
     return `<span class="nm">${h}</span>${marks.map((on, i) => `<button class="dot ${on ? "on" : ""}" aria-label="${h} ${L.WEEK_CN[i]}" data-h="${h}" data-d="${s.days[i]}">${L.CK}</button>`).join("")}<span class="n">${marks.filter(Boolean).length} / 7</span>`;
   }).join("");
   const cats = Object.entries(s.byCat).sort((a, b) => b[1] - a[1]);
+  const swBtn = (on, i) => `<button class="home-sw${on ? " on" : ""}" data-i="${i}" aria-pressed="${on}" title="${on ? "已在首页待办，点一下拿出来" : "放进首页待办"}">${on ? "✓ 在首页" : "放进首页"}</button>`;
   const html = nav + L.banner(o) + `<div class="stack">
     <section class="card plan" aria-label="下周三件要事">
-      <div class="head"><h2>下周三件要事</h2><button class="btn pri to-home" ${onHome ? "disabled" : ""}>${onHome ? "已放进首页待办" : "放进首页待办"}</button></div>
-      <ol class="three ${onHome ? "pinned" : ""}">${[0, 1, 2].map((i) => {
+      <div class="head"><h2>下周三件要事</h2><span class="note">每一条右边可以单独放进首页待办</span></div>
+      <ol class="three">${[0, 1, 2].map((i) => {
         const t = goalTasks[i];
-        const text = t ? t.text.replace(/\[来源::[^\]]*\]/, "").trim() : "";
-        return `<li><span class="n g">${i + 1}</span><input value="${esc(text)}" aria-label="第 ${i + 1} 件" data-i="${i}"></li>`;
+        const text = t ? t.text.replace(/\[来源::[^\]]*\]/, "").replace(/\[首页::[^\]]*\]/, "").trim() : "";
+        const on = isHome(t) && !!text;
+        return `<li class="${on ? "pinned" : ""}"><span class="n g">${i + 1}</span><input value="${esc(text)}" aria-label="第 ${i + 1} 件" data-i="${i}">${swBtn(on, i)}</li>`;
       }).join("")}</ol>
     </section>
     <section class="card" aria-label="本周新知识">
@@ -134,12 +141,23 @@ if (!week) {
 
   // 三件要事：改输入框 → 改笔记里对应那一行
   root.querySelectorAll(".three input").forEach((inp) => inp.addEventListener("change", () => D.setGoal(path, +inp.dataset.i, inp.value.trim())));
-  root.querySelector(".to-home").addEventListener("click", async (e) => {
-    const b = e.currentTarget;
-    await L.setMeta(path, "goals_on_home", true);
-    b.textContent = "已放进首页待办"; b.disabled = true;
-    root.querySelector(".three").classList.add("pinned");
-  });
+  // 每一条右边的开关：点一下放进首页待办，再点一下拿出来
+  root.querySelectorAll(".three .home-sw").forEach((b) => b.addEventListener("click", async () => {
+    const li = b.closest("li"), i = +b.dataset.i, text = li.querySelector("input").value.trim();
+    if (!text) { L.notice("先写上这件事，再放进首页"); li.querySelector("input").focus(); return; }
+    const on = b.getAttribute("aria-pressed") !== "true";
+    // 旧笔记（goals_on_home: true、没逐条标）第一次逐条改：先把另外在首页的几条也标上，再关掉旧开关
+    if (!anyMarked && current && current.goals_on_home === true) {
+      for (const other of root.querySelectorAll(".three .home-sw.on")) if (other !== b) await D.setGoalHome(path, +other.dataset.i, true);
+      await L.setMeta(path, "goals_on_home", false);
+      anyMarked = true;
+    }
+    await D.setGoalHome(path, i, on);
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+    b.textContent = on ? "✓ 在首页" : "放进首页"; b.title = on ? "已在首页待办，点一下拿出来" : "放进首页待办";
+    li.classList.toggle("pinned", on);
+    L.notice(on ? `「${text}」放进首页待办了` : `「${text}」从首页待办拿出来了`);
+  }));
   // 习惯打卡：点圆点 → 改那天日记的属性（没有日记就新建一篇）
   root.querySelectorAll(".dot").forEach((d) => d.addEventListener("click", async () => {
     const on = d.classList.toggle("on");
