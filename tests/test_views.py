@@ -185,3 +185,47 @@ def test_mobile_plus_menu():
     text = (VIEWS / "_shared/m.js").read_text(encoding="utf-8")
     assert "shortcuts://run-shortcut?name=" in text and "记一笔" in text
     assert "10 总部/手机/冰箱" in text
+
+
+EVENT_LINES = ["- 2026-11-29 15:00 和朋友吃饭 [地点:: Bahen]", "- 2026-11-29 和朋友吃饭", "- 11-29 吃饭", "- 2026-11-29 25:00 吃饭", "- 2026-11-29"]
+
+
+def test_lib_event_matches_python():
+    import sys
+    sys.path.insert(0, str(PROJECT / "tools"))
+    from lifeos_formats import parse_event_line
+    js = _lib(f"{json.dumps(EVENT_LINES, ensure_ascii=False)}.map(s => L.parseEvent(s))")
+    for line, j in zip(EVENT_LINES, js):
+        p = parse_event_line(line)
+        if p is None:
+            assert j is None, line
+        else:
+            assert j == {"date": p.date.isoformat(), "time": p.time or "", "title": p.title, "place": p.place}, line
+    assert _lib(f'L.formatEvent(L.parseEvent({json.dumps(EVENT_LINES[0], ensure_ascii=False)}))') == EVENT_LINES[0]
+
+
+def test_safe_title():
+    assert _lib('L.safeTitle("a/b:c?\\n#d")') == "a b c d"
+    assert _lib('L.safeTitle("   ")') == "随手记"
+    assert _lib('L.safeTitle("x".repeat(60)).length') <= 40
+
+
+def test_todo_cards_filter():
+    cards = """[
+      {name:"any", type:"待办", done:false, date:"", doneOn:""},
+      {name:"today", type:"待办", done:false, date:"2026-11-18", doneOn:""},
+      {name:"tomorrow", type:"待办", done:false, date:"2026-11-19", doneOn:""},
+      {name:"doneToday", type:"待办", done:true, date:"", doneOn:"2026-11-18"},
+      {name:"doneBefore", type:"待办", done:true, date:"", doneOn:"2026-11-17"},
+      {name:"memo", type:"备忘", done:false, date:"", doneOn:""}
+    ]"""
+    assert _lib(f'L.todoCards({cards}, "2026-11-18").map(c => c.name)') == ["any", "today", "doneToday"]
+
+
+def test_week_label():
+    assert _lib('L.weekLabel("2026-11-16")') == "2026年11月 · 16–22日"
+    assert _lib('L.weekLabel("2026-11-30")') == "2026年11月30日–12月6日"
+
+
+def test_week_label_cross_year():
+    assert _lib('L.weekLabel("2026-12-28")') == "2026年12月28日–2027年1月3日"

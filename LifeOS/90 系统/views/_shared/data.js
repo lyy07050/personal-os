@@ -5,6 +5,7 @@
   const T = L.today();
   const FOOD = "30 后勤部/食物.md", SHOP = "30 后勤部/购物清单.md", DL = "45 教务处/截止日期.md";
   const WORDS = "40 研发部/英语/单词本.md", MISTAKES = "40 研发部/英语/错词本.md";
+  const EVENTS = "10 总部/日程.md";
   const HABITS = ["早起", "喝水", "运动", "背词", "早睡"];
   const goalRe = /\[来源::\s*复盘\]/;
 
@@ -75,12 +76,50 @@
     path: p.file.path, company: String(p.company || p.file.name), role: String(p.role || ""), stage: String(p.stage), when: String(p.when || ""),
   })).sort((a, b) => b.when.localeCompare(a.when));
 
-  // 今日待办：今天截止的作业、今天的面试、复盘定的三件事、没做完的事情（同名只留一条）
+  // ---------- 日程 ----------
+  // 10 总部/日程.md：手写的行 + 以后 Quercus 写在标记段里的行；文件不在就是没有日程
+  async function events() {
+    return (await L.lines(dv, EVENTS)).map((l, i) => ({ e: L.parseEvent(l), line: i })).filter((x) => x.e).map((x) => ({ ...x.e, line: x.line }));
+  }
+  // 加一条：插在标记段外、按「日期 时间」排好的位置；文件不在就新建
+  async function addEvent(e) {
+    const row = L.formatEvent(e), key = (x) => `${x.date} ${x.time || "00:00"}`;
+    const f = L.fileOf(EVENTS);
+    if (!f) { await app.vault.create(EVENTS, `# 日程\n\n${row}\n`); return; }
+    await app.vault.process(f, (text) => {
+      const ls = text.replace(/\n*$/, "").split("\n");
+      let inQ = false, firstQ = -1, lastMine = -1, at = -1;
+      ls.forEach((l, i) => {
+        if (l.includes("<!-- quercus:start -->")) { inQ = true; if (firstQ < 0) firstQ = i; return; }
+        if (l.includes("<!-- quercus:end -->")) { inQ = false; return; }
+        const x = !inQ && L.parseEvent(l);
+        if (!x) return;
+        lastMine = i;
+        if (at < 0 && key(x) > key(e)) at = i;
+      });
+      if (at < 0) at = lastMine >= 0 ? lastMine + 1 : firstQ >= 0 ? firstQ : ls.length;
+      ls.splice(at, 0, row);
+      return ls.join("\n") + "\n";
+    });
+  }
+
+  // ---------- 待办卡（随手记里 type: 待办） ----------
+  const addTodo = (text, date = "") => L.newCard(text, "待办", date ? { date } : {});
+
+  // 今日待办：有时间的（面试、今天的日程）→ 全天日程 → 今天截止的作业 → 待办卡 → 复盘三件要事 → 事情（同名只留一条）
+  // 日程（kind "ev"）没有 done，界面上用圆点、不能勾；每周固定的课不进来
   async function todos() {
-    const dls = await deadlines(), projs = projects();
-    const list = [
-      ...dls.filter((d) => !d.done && d.due && d.due.slice(0, 10) === T).map((d) => ({ kind: "dl", text: d.title, tag: d.due.slice(11), warn: true, path: DL, line: d.line })),
+    const dls = await deadlines(), projs = projects(), cards = await L.cards(dv), evs = (await events()).filter((e) => e.date === T);
+    const timed = [
       ...interviews().filter((i) => i.date.slice(0, 10) === T).map((i) => ({ kind: "iv", text: i.title, tag: i.date.slice(11), warn: true, path: i.path })),
+      ...evs.filter((e) => e.time).map((e) => ({ kind: "ev", text: e.title, tag: e.time, path: EVENTS, line: e.line })),
+    ].sort((a, b) => (a.tag || "99").localeCompare(b.tag || "99"));
+    const list = [
+      ...timed,
+      ...evs.filter((e) => !e.time).map((e) => ({ kind: "ev", text: e.title, tag: "今天", path: EVENTS, line: e.line })),
+      ...cards.filter((c) => c.type === "活动" && c.date === T).map((c) => ({ kind: "ev", text: c.title, tag: "今天", path: c.path })),
+      ...dls.filter((d) => !d.done && d.due && d.due.slice(0, 10) === T).map((d) => ({ kind: "dl", text: d.title, tag: d.due.slice(11), warn: true, path: DL, line: d.line })),
+      ...L.todoCards(cards, T).map((c) => ({ kind: "card", text: c.title, tag: c.date && c.date !== T ? L.md(c.date) : "", done: c.done, path: c.path })),
       ...homeGoals().map((g) => ({ kind: "goal", text: g.text, tag: "本周", done: g.done, path: g.path, line: g.line })),
       ...projs.filter((p) => p.status !== "完成").map((p) => ({ kind: "proj", text: p.title, tag: p.area, path: p.path })),
       ...projs.filter((p) => p.status === "完成").map((p) => ({ kind: "proj", text: p.title, tag: p.area, path: p.path, done: true })),
@@ -88,8 +127,12 @@
     return list.filter((t, i) => list.findIndex((x) => x.text === t.text) === i);
   }
   async function toggleTodo(t, done) {
+    if (t.kind === "ev") return;
     if (t.kind === "dl" || t.kind === "goal") await L.toggleTaskAt(t.path, t.line);
-    else if (t.kind === "proj") {
+    else if (t.kind === "card") {
+      const f = L.fileOf(t.path);
+      if (f) await app.fileManager.processFrontMatter(f, (fm) => { fm.done = !!done; if (done) fm.done_on = T; else delete fm.done_on; });
+    } else if (t.kind === "proj") {
       await L.setMeta(t.path, "status", done ? "完成" : "进行中");
       if (done) await L.setMeta(t.path, "progress", 100);
     }
@@ -196,7 +239,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo,
     food, shopping, eat, addFood, recipes, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

@@ -159,17 +159,24 @@
       const tags = (text.match(/(^|\s)#([^\s#]+)/g) || []).map((t) => t.trim()).filter((t) => !t.startsWith("# "));
       out.push({ path: p.file.path, name: p.file.name, title, type: p.type, pinned: p.pinned === true, source: p.source || "",
         date: iso(p.date), created: iso(p.created) || iso(p.file.mtime), mtime: p.file.mtime.toMillis(),
-        tasks, open: tasks.filter((t) => !t.done).length, body, tags });
+        tasks, open: tasks.filter((t) => !t.done).length, body, tags, done: p.done === true, doneOn: iso(p.done_on) });
     }
     return out;
   }
 
   // 新建一张随手记卡片，返回路径
-  async function newCard(text, type = "备忘") {
-    const title = text.replace(/[\\/:*?"<>|#^[\]]/g, " ").trim().slice(0, 40) || "随手记";
+  // 卡片标题 = 文件名：去掉文件名不允许的字符，连续空白合成一个，最长 40
+  const safeTitle = (text) => String(text).replace(/[\\/:*?"<>|#^[\]\n\r]/g, " ").replace(/\s+/g, " ").trim().slice(0, 40).trim() || "随手记";
+  // type 是「待办」时 frontmatter 写 done / date，其他类型照旧写 pinned / source
+  async function newCard(text, type = "备忘", meta = {}) {
+    const title = safeTitle(text);
     let path = `00 随手记/${title}.md`;
     for (let i = 2; fileOf(path); i++) path = `00 随手记/${title} ${i}.md`;
-    const body = `---\ntype: ${type}\npinned: false\nsource: \ncreated: ${today()}\n---\n# ${title}\n\n${text}\n`;
+    const head = type === "待办"
+      ? `type: 待办\ndone: false\n${meta.date ? `date: ${meta.date}\n` : ""}created: ${today()}`
+      : `type: ${type}\npinned: false\nsource: \ncreated: ${today()}`;
+    const rest = String(text).trim() === title ? "" : `\n${text}\n`;
+    const body = `---\n${head}\n---\n# ${title}\n${rest}`;
     await app.vault.create(path, body);
     return path;
   }
@@ -204,6 +211,27 @@
   }
 
   // 在 dv.container 里放一个 .dash 根节点
+  // ---------- 日程（10 总部/日程.md 一行一条） ----------
+  const EVENT_RE = /^- (\d{4}-\d{2}-\d{2})(?: ([0-2]\d:[0-5]\d))? (.+?)(?: \[地点::\s*([^\[\]]*?)\])?\s*$/;
+  function parseEvent(line) {
+    const m = EVENT_RE.exec(line);
+    if (!m || isNaN(Date.parse(m[1])) || new Date(m[1]).toISOString().slice(0, 10) !== m[1]) return null;
+    if (m[2] && +m[2].slice(0, 2) > 23) return null;
+    const title = m[3].trim();
+    return title ? { date: m[1], time: m[2] || "", title, place: (m[4] || "").trim() } : null;
+  }
+  const formatEvent = (e) => `- ${e.date}${e.time ? " " + e.time : ""} ${String(e.title).split(/\s+/).filter(Boolean).join(" ")}${e.place ? ` [地点:: ${e.place}]` : ""}`;
+
+  // 今日待办里的待办卡：没做完且（没写日期或日期 ≤ 今天），加上今天勾掉的
+  const todoCards = (cards, day) => cards.filter((c) => c.type === "待办" && ((!c.done && (!c.date || c.date <= day)) || c.doneOn === day));
+
+  // 一周的标题：同月「2026年11月 · 16–22日」，跨月「2026年11月30日–12月6日」，跨年带上第二个年份
+  function weekLabel(mon) {
+    const sun = addDays(mon, 6), [y1, m1, d1] = mon.split("-").map(Number), [y2, m2, d2] = sun.split("-").map(Number);
+    if (m1 === m2) return `${y1}年${m1}月 · ${d1}–${d2}日`;
+    return `${y1}年${m1}月${d1}日–${y2 !== y1 ? `${y2}年` : ""}${m2}月${d2}日`;
+  }
+
   function mount(dv, html, style = "") {
     const root = dv.container.createDiv({ cls: "dash" });
     root.innerHTML = (style ? `<style>${style}</style>` : "") + html;
@@ -217,6 +245,7 @@
     fields, parseLedger, parseFood, parseDeadline, daysLeft, addDays, weekday, mondayOf, md, isoWeek, weekMonday, leftLabel, money,
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
+    safeTitle, parseEvent, formatEvent, todoCards, weekLabel,
     notice, link, stamp, banner, wireBanner, mount, open,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],
