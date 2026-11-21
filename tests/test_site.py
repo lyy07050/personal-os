@@ -31,10 +31,12 @@ def test_site_uses_sample_data_only(tmp_path):
     assert not (vault / "90 系统").exists()
     profile = (vault / "60 个人档案/个人档案.md").read_text(encoding="utf-8")
     assert "lifeos-vault" not in profile  # 空模板，没有任何加密数据
+    bundle = json.loads((vault / "notes.json").read_text(encoding="utf-8"))
+    assert sorted(bundle) == sorted(manifest)  # 打包的就是清单里的那些，没有多的
 
 
 def test_site_entry_page():
     html = (PROJECT / "tools/preview/index.html").read_text(encoding="utf-8")
-    assert "LIFEOS_SITE" in html and "manifest.json" in html
+    assert "LIFEOS_SITE" in html and "notes.json" in html
     root = (PROJECT / "index.html").read_text(encoding="utf-8")
     assert "site/" in root

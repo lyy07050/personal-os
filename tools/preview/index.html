@@ -95,8 +95,12 @@ function DA(arr) {
 
 let ALL = [];
 async function index() {
-  // 网站上没有文件夹列表，改读生成网站时写好的 manifest.json
-  const paths = SITE ? await (await fetch(VAULT + "manifest.json")).json() : await listDir("");
+  // 网站上没有文件夹列表：一次读回所有笔记（notes.json，生成网站时打好的包）
+  if (SITE) {
+    const bundle = await (await fetch(VAULT + "notes.json")).json();
+    for (const [p, text] of Object.entries(bundle)) files.set(p, text);
+  }
+  const paths = SITE ? [...files.keys()].filter((p) => p.endsWith(".md")) : await listDir("");
   ALL = [];
   for (const p of paths) { const t = await load(p); if (t !== null) ALL.push(parse(p, t)); }
 }

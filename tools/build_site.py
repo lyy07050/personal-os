@@ -61,6 +61,10 @@ def build(out: Path) -> Path:
 
     notes = sorted(p.relative_to(vault).as_posix() for p in vault.rglob("*.md"))
     (vault / "manifest.json").write_text(json.dumps(notes + sorted(system_notes), ensure_ascii=False, indent=0), encoding="utf-8")
+    # 所有笔记打成一个包：网站打开时只要一次请求（一篇一篇下载要十几秒）
+    bundle = {r: (vault / r).read_text(encoding="utf-8") for r in notes}
+    bundle.update({r: (PROJECT / "LifeOS" / r).read_text(encoding="utf-8") for r in system_notes})
+    (vault / "notes.json").write_text(json.dumps(bundle, ensure_ascii=False), encoding="utf-8")
 
     html = (PROJECT / "tools/preview/index.html").read_text(encoding="utf-8")
     html = html.replace("<title>LifeOS 面板预览</title>", "<title>my little os. · 示例</title>", 1)
