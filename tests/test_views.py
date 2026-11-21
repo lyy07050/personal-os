@@ -241,3 +241,18 @@ def test_home_calendar_week_nav():
     js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
     for s in ('aria-label="上一周"', 'aria-label="下一周"', "回到本周", 'aria-label="加日程"', "D.addEvent(", "L.weekLabel("):
         assert s in js, s
+
+
+def test_done_last():
+    assert _lib('L.doneLast([{n:1,done:true},{n:2},{n:3,done:true},{n:4}]).map(x => x.n)') == [2, 4, 1, 3]
+
+
+def test_chunk():
+    assert _lib("L.chunk([1,2,3,4,5], 2)") == [[1, 2], [3, 4], [5]]
+    assert _lib("L.chunk([], 4)") == []
+
+
+def test_lib_has_scroll_helpers():
+    js = LIB.read_text(encoding="utf-8")
+    for s in ("function pager", "function scrolly", "function sinkDone"):
+        assert s in js, s

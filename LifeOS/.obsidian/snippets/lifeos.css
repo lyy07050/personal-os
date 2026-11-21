@@ -235,3 +235,17 @@
   --link-unresolved-color:currentColor; --link-unresolved-opacity:1; --link-unresolved-decoration-style:none; --link-unresolved-decoration-color:transparent;
 }
 .lifeos-dash .dash a.internal-link{text-decoration:none}
+
+/* ---------- 卡片里滑动、格子翻页（lib.js 的 scrolly / pager） ---------- */
+.lifeos-dash .scrolly{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(37,45,41,.18) transparent}
+.lifeos-dash .scrolly:not(.at-end){-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent)}
+.lifeos-dash .pager{position:relative}
+.lifeos-dash .pages{display:grid;grid-auto-flow:column;grid-auto-columns:100%;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
+.lifeos-dash .pages::-webkit-scrollbar{display:none}
+.lifeos-dash .pages>.page{scroll-snap-align:start;min-width:0;margin:0}
+.lifeos-dash .pg-btn{position:absolute;top:50%;translate:0 -50%;width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:var(--sh-lift);font-size:20px;line-height:32px;text-align:center;color:var(--ink-2);z-index:2;transition:opacity .2s,background .2s}
+.lifeos-dash .pg-btn:hover{background:var(--sage)}
+.lifeos-dash .pg-btn:disabled{opacity:0;pointer-events:none}
+.lifeos-dash .pg-btn.prev{left:-12px}
+.lifeos-dash .pg-btn.next{right:-12px}
+.lifeos-dash .pg-n{display:block;text-align:right;font-size:12px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}

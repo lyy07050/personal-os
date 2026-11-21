@@ -234,6 +234,70 @@
     return `${y1}年${m1}月${d1}日–${y2 !== y1 ? `${y2}年` : ""}${m2}月${d2}日`;
   }
 
+  // ---------- 卡片里滑动、格子翻页、勾完排后面 ----------
+  // 做完的排后面（稳定排序：同一组里保持原来的先后）
+  const doneLast = (items) => [...items.filter((x) => !x.done), ...items.filter((x) => x.done)];
+  const chunk = (arr, n) => { const out = []; for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n)); return out; };
+  const calm = () => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 卡片里上下滑：高度由调用的地方的样式定；没滑到底时底部淡出，提示下面还有
+  function scrolly(el) {
+    el.classList.add("scrolly");
+    const upd = () => el.classList.toggle("at-end", el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
+    el.addEventListener("scroll", upd, { passive: true });
+    if (typeof ResizeObserver !== "undefined") new ResizeObserver(upd).observe(el);
+    upd();
+    return el;
+  }
+
+  // 格子翻页：el 的子元素每 per 个一页，放进横向轨道（箭头、触控板左右滑都能翻）。
+  // el 本身被换成 .pager；每一页沿用 el 原来的标签和 class，所以原来的格子样式照样生效。返回 {refresh, add, el}
+  function pager(el, per) {
+    const tag = el.tagName, cls = el.className;
+    const wrap = document.createElement("div");
+    wrap.className = "pager";
+    el.replaceWith(wrap);
+    function render(list) {
+      const keep = wrap.querySelector(".pages") ? Math.round(wrap.querySelector(".pages").scrollLeft / Math.max(1, wrap.querySelector(".pages").clientWidth)) : 0;
+      wrap.textContent = "";
+      const track = document.createElement("div");
+      track.className = "pages";
+      const pages = chunk(list, per);
+      (pages.length ? pages : [[]]).forEach((items) => {
+        const pg = document.createElement(tag);
+        pg.className = `${cls} page`;
+        items.forEach((n) => pg.appendChild(n));
+        track.appendChild(pg);
+      });
+      wrap.appendChild(track);
+      if (pages.length < 2) return;
+      wrap.insertAdjacentHTML("beforeend", `<button class="pg-btn prev" aria-label="上一页">‹</button><button class="pg-btn next" aria-label="下一页">›</button><span class="pg-n"></span>`);
+      const prev = wrap.querySelector(".prev"), next = wrap.querySelector(".next"), num = wrap.querySelector(".pg-n");
+      const at = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      const upd = () => { const i = at(); num.textContent = `${i + 1} / ${pages.length}`; prev.disabled = i === 0; next.disabled = i === pages.length - 1; };
+      const go = (d) => track.scrollTo({ left: (at() + d) * track.clientWidth, behavior: calm() ? "auto" : "smooth" });
+      prev.addEventListener("click", () => go(-1));
+      next.addEventListener("click", () => go(1));
+      track.addEventListener("scroll", upd, { passive: true });
+      track.scrollLeft = Math.min(keep, pages.length - 1) * track.clientWidth;
+      upd();
+    }
+    const current = () => [...wrap.querySelectorAll(":scope > .pages > .page > *")];
+    render([...el.children]);
+    return { el: wrap, refresh: () => render(current()), add: (node, at = current().length) => { const l = current(); l.splice(at, 0, node); render(l); } };
+  }
+
+  // 勾完排后面：0.6 秒（盖章动画之后）把这一行挪到列表最后；取消勾就挪回「没做的」那一组的最后
+  function sinkDone(li) {
+    setTimeout(() => {
+      const list = li.parentElement;
+      if (!list) return;
+      if (li.classList.contains("done")) list.appendChild(li);
+      else list.insertBefore(li, [...list.children].find((n) => n !== li && n.classList.contains("done")) || null);
+      if (!calm() && li.animate) li.animate([{ opacity: 0, transform: "translateY(-6px)" }, { opacity: 1, transform: "none" }], { duration: 260, easing: "ease-out" });
+    }, 600);
+  }
+
   function mount(dv, html, style = "") {
     const root = dv.container.createDiv({ cls: "dash" });
     root.innerHTML = (style ? `<style>${style}</style>` : "") + html;
@@ -247,7 +311,7 @@
     fields, parseLedger, parseFood, parseDeadline, daysLeft, addDays, weekday, mondayOf, md, isoWeek, weekMonday, leftLabel, money,
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
-    safeTitle, parseEvent, formatEvent, todoCards, weekLabel,
+    safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone,
     notice, link, stamp, banner, wireBanner, mount, open,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],
