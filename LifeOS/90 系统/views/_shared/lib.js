@@ -175,8 +175,10 @@
     const head = type === "待办"
       ? `type: 待办\ndone: false\n${meta.date ? `date: ${meta.date}\n` : ""}created: ${today()}`
       : `type: ${type}\npinned: false\nsource: \ncreated: ${today()}`;
-    const rest = String(text).trim() === title ? "" : `\n${text}\n`;
-    const body = `---\n${head}\n---\n# ${title}\n${rest}`;
+    // 标题照原文（一行）；文件名才需要去掉 / : 这些字符；多行的原文放在标题下面
+    const line = String(text).replace(/\s+/g, " ").trim().slice(0, 80) || title;
+    const rest = /\n/.test(String(text).trim()) ? `\n${text}\n` : "";
+    const body = `---\n${head}\n---\n# ${line}\n${rest}`;
     await app.vault.create(path, body);
     return path;
   }

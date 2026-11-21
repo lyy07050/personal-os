@@ -68,10 +68,12 @@ function spark() {
 }
 
 const dateLong = `${L.MONTH_EN[+T.slice(5, 7) - 1].slice(0, 3)} <span class="g">${+T.slice(8)}</span> · ${["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][L.weekday(T)]}`;
-const left = todos.filter((t) => !t.done).length;
+const left = todos.filter((t) => !t.done && t.kind !== "ev").length;
+// 一行待办；日程（kind === "ev"）用圆点，不能勾
+const todoLi = (t, i) => `<li data-i="${i}" class="${t.done ? "done" : ""}${t.kind === "ev" ? " ev-row" : ""}">${t.kind === "ev" ? '<span class="dot" aria-hidden="true"></span>' : `<button class="ck" aria-label="完成">${L.CK}</button>`}<span class="t">${esc(t.text)}</span><small class="${t.warn ? "warn" : ""}">${esc(t.tag)}</small></li>`;
 
 const html = `
-<div class="topbar"><span></span><form class="find capture"><input placeholder="我想记…" aria-label="记进随手记"><span class="ok">已存进随手记</span></form></div>
+<div class="topbar"><span></span><form class="find capture"><button type="button" class="sw" aria-pressed="false" title="打开后存成今日待办">待办</button><input placeholder="我想记…" aria-label="记进随手记"><span class="ok">已存进随手记</span></form></div>
 <section class="hero" aria-label="今天">
   <img class="art" src="${L.art("home-flowercat-trim.png")}" alt="" style="left:0;top:-80px;width:149px">
   <img class="art" src="${L.art("home-lantern-trim.png")}" alt="" style="right:0;top:-58px;width:184px">
@@ -80,8 +82,9 @@ const html = `
 </section>
 <div class="r1">
   <section class="card todo" style="padding:22px 22px 18px">
-    <div class="head" style="margin-bottom:6px"><h2 style="font-size:26px">今日待办</h2></div>
-    <ul class="list">${todos.slice(0, 7).map((t, i) => `<li data-i="${i}" class="${t.done ? "done" : ""}"><button class="ck" aria-label="完成">${L.CK}</button><span class="t">${esc(t.text)}</span><small class="${t.warn ? "warn" : ""}">${esc(t.tag)}</small></li>`).join("")}</ul>
+    <div class="head" style="margin-bottom:6px"><h2 style="font-size:26px">今日待办</h2><button class="add" aria-label="加一条待办" aria-expanded="false">＋</button></div>
+    <ul class="list">${todos.slice(0, 8).map(todoLi).join("")}</ul>
+    <form class="addtodo" hidden><input placeholder="加一条待办…" aria-label="待办内容" enterkeyhint="done"></form>
   </section>
   <section class="card cal" aria-label="本周日程">
     <div class="top"><h2>本周日程</h2><span>${mon.slice(0, 4)}年${+mon.slice(5, 7)}月 · ${+mon.slice(8)}–${+week[6].slice(8)}日</span></div>
@@ -226,6 +229,16 @@ const STYLE = `
 .lifeos-dash .rg li .ck svg{width:9px}
 .lifeos-dash .rg .more{font-size:12px;color:var(--muted)}
 .lifeos-dash .cloth{position:absolute;right:-20px;bottom:-28px;width:200px;pointer-events:none;filter:var(--sh-sticker)}
+.lifeos-dash .todo .head{display:flex;align-items:center;justify-content:space-between}
+.lifeos-dash .todo .add{width:34px;height:34px;border-radius:50%;background:var(--sage);color:var(--green);font-size:20px;line-height:34px;text-align:center;transition:background .2s,color .2s}
+.lifeos-dash .todo .add:hover,.lifeos-dash .todo .add[aria-expanded="true"]{background:var(--green);color:#fff}
+.lifeos-dash .addtodo{margin-top:10px}
+.lifeos-dash .addtodo input{width:100%;height:42px;border-radius:14px;border:1px solid rgba(37,45,41,.12);background:var(--tile);padding:0 14px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .addtodo input:focus{outline:2px solid var(--green);outline-offset:1px}
+.lifeos-dash .todo .dot{width:22px;flex:none;display:flex;justify-content:center}
+.lifeos-dash .todo .dot::before{content:"";width:8px;height:8px;border-radius:50%;background:#c9a24a}
+.lifeos-dash .capture .sw{flex:none;height:28px;padding:0 10px;border-radius:14px;border:1px solid rgba(37,45,41,.14);font-size:13px;color:var(--muted);transition:background .2s,color .2s}
+.lifeos-dash .capture .sw[aria-pressed="true"]{background:var(--sage);border-color:transparent;color:var(--green);font-weight:600}
 .lifeos-dash .capture input{flex:1;border:0;outline:none;background:none;font:inherit;font-size:16px;color:var(--ink);caret-color:var(--green);box-shadow:none;padding:0}
 .lifeos-dash .capture .ok{display:none;font-size:13px;color:var(--green);white-space:nowrap}
 .lifeos-dash .capture.saved input{display:none}
@@ -249,22 +262,52 @@ const STYLE = `
 const root = L.mount(dv, html, STYLE);
 
 // ---------- 交互 ----------
-const form = root.querySelector("form.capture");
+const form = root.querySelector("form.capture"), sw = form.querySelector(".sw");
+sw.addEventListener("click", () => {
+  const on = sw.getAttribute("aria-pressed") !== "true";
+  sw.setAttribute("aria-pressed", on);
+  form.querySelector("input").placeholder = on ? "要做的事…" : "我想记…";
+  form.querySelector("input").focus();
+});
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const input = form.querySelector("input"), text = input.value.trim();
   if (!text) return;
-  await L.newCard(text);
+  const asTodo = sw.getAttribute("aria-pressed") === "true";
+  if (asTodo) addRow(text, await D.addTodo(text)); else await L.newCard(text);
+  form.querySelector(".ok").textContent = asTodo ? "已存进今日待办" : "已存进随手记";
   input.value = ""; form.classList.add("saved");
   setTimeout(() => form.classList.remove("saved"), 1400);
 });
 
-root.querySelectorAll(".todo li").forEach((li) => li.querySelector(".ck").addEventListener("click", async () => {
-  const t = todos[+li.dataset.i];
+// 今日待办：勾选（用事件委托，新加的行也能勾）、「＋」加一条
+const todoList = root.querySelector(".todo .list"), addBtn = root.querySelector(".todo .add"), addForm = root.querySelector(".addtodo");
+todoList.addEventListener("click", async (e) => {
+  const ck = e.target.closest(".ck"); if (!ck) return;
+  const li = ck.closest("li"), t = todos[+li.dataset.i];
+  if (!t || t.kind === "ev") return;
   const done = li.classList.toggle("done");
-  if (done) L.stamp(li.querySelector(".ck"));
+  if (done) L.stamp(ck);
   await D.toggleTodo(t, done);
-}));
+});
+function addRow(text, path) {
+  const t = { kind: "card", text, tag: "", done: false, path };
+  todos.push(t);
+  todoList.insertAdjacentHTML("beforeend", todoLi(t, todos.length - 1));
+}
+const toggleAdd = (open) => {
+  addForm.hidden = !open; addBtn.setAttribute("aria-expanded", open);
+  if (open) addForm.querySelector("input").focus();
+};
+addBtn.addEventListener("click", () => toggleAdd(addForm.hidden));
+addForm.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleAdd(false); });
+addForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = addForm.querySelector("input"), text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  addRow(text, await D.addTodo(text));
+});
 
 // 冰箱：勾上 = 吃完 → 这行打勾，名字进购物清单
 root.querySelectorAll(".food").forEach((el) => el.querySelector(".ck").addEventListener("click", async () => {

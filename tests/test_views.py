@@ -229,3 +229,9 @@ def test_week_label():
 
 def test_week_label_cross_year():
     assert _lib('L.weekLabel("2026-12-28")') == "2026年12月28日–2027年1月3日"
+
+
+def test_home_has_todo_add_and_capture_switch():
+    js = (VIEWS / "home/view.js").read_text(encoding="utf-8")
+    for s in ('aria-label="加一条待办"', "D.addTodo(", "aria-pressed", 'kind === "ev"'):
+        assert s in js, s
