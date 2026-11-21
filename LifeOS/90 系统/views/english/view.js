@@ -20,7 +20,18 @@ const week = [...Array(7)].map((_, i) => diaries.get(L.addDays(mon, i)) === true
 const last14 = [...Array(14)].map((_, i) => diaries.get(L.addDays(T, i - 13)) === true);
 const dueToday = words.filter((w) => w.due && w.due <= T).length;
 
-const startReview = () => D.startReview(WORDS);
+// 开始学习：一轮 10 个词，今天该复习的先来，然后是掌握最少的；不记得的进错词本，学完给今天的「背词」打勾
+function startReview() {
+  const deck = [...words].sort((a, b) => ((a.due && a.due <= T) ? 0 : 1) - ((b.due && b.due <= T) ? 0 : 1) || a.mastery - b.mastery || Math.random() - 0.5).slice(0, 10)
+    .map((w) => ({ front: w.front, back: w.back, w }));
+  L.flashcards(root, deck, {
+    title: "背单词", hint: "不记得的已经放进错词本",
+    onForget: async (c) => {
+      if (!mistakes.some((m) => m.front === c.front)) { await L.appendLine(MISTAKES, `${c.front}::${c.back}`); mistakes.push(c.w); }
+    },
+    onDone: () => D.setHabit(T, "背词", true),
+  });
+}
 
 const o = {
   page: "english", eye: "41 · ENGLISH", title: { today: "多邻国", words: "单词本", mistakes: "错词本" }[section],

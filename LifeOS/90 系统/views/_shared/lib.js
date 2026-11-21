@@ -336,6 +336,67 @@
     return root;
   }
 
+  // ---------- 闪卡复习（不用装插件，直接在面板上弹出）----------
+  // deck: [{front, back}]；先看正面，「看答案」翻面，再选「记得 / 不记得」
+  // onForget(card) 每张不记得的卡调用一次；onDone({total, known}) 一轮结束时调用
+  function flashcards(root, deck, { title = "复习", hint = "不记得的下次再看", onForget = () => {}, onDone = () => {} } = {}) {
+    if (!deck.length) { notice("还没有可以复习的卡片"); return; }
+    root.querySelector("dialog.flash")?.remove();
+    root.insertAdjacentHTML("beforeend", `<dialog class="flash" aria-label="${esc(title)}"><div class="fh"><span class="fn"></span><button class="fx" aria-label="关闭">✕</button></div>
+      <div class="fc"><p class="ff"></p><p class="fb" hidden></p></div>
+      <div class="fa"><button class="show">看答案 <kbd>空格</kbd></button><button class="no" hidden>不记得 <kbd>1</kbd></button><button class="yes" hidden>记得 <kbd>2</kbd></button><button class="end" hidden>完成</button></div></dialog>`);
+    const dlg = root.querySelector("dialog.flash"), $ = (s) => dlg.querySelector(s);
+    let i = 0, known = 0, finished = false;
+    const show = () => {
+      const c = deck[i];
+      $(".fn").textContent = `${title} · ${i + 1} / ${deck.length}`;
+      $(".ff").textContent = c.front; $(".fb").textContent = c.back || "（没有写背面）";
+      $(".fb").hidden = true; $(".show").hidden = false; $(".no").hidden = $(".yes").hidden = true;
+    };
+    const flip = () => { $(".fb").hidden = false; $(".show").hidden = true; $(".no").hidden = $(".yes").hidden = false; $(".yes").focus(); };
+    const next = async (ok) => {
+      if (ok) known++; else await onForget(deck[i]);
+      if (++i < deck.length) return show();
+      finished = true;
+      $(".fn").textContent = title;
+      $(".ff").textContent = `这一轮 ${deck.length} 张，记得 ${known} 张`;
+      $(".fb").hidden = false; $(".fb").textContent = known === deck.length ? "全部记得，真棒！" : hint;
+      $(".no").hidden = $(".yes").hidden = true; $(".end").hidden = false; $(".end").focus();
+      await onDone({ total: deck.length, known });
+    };
+    $(".show").addEventListener("click", flip);
+    $(".no").addEventListener("click", () => next(false));
+    $(".yes").addEventListener("click", () => next(true));
+    $(".end").addEventListener("click", () => dlg.close());
+    $(".fx").addEventListener("click", () => dlg.close());
+    dlg.addEventListener("keydown", (e) => {
+      if (finished) return;
+      if (e.key === " " && !$(".show").hidden) { e.preventDefault(); flip(); }
+      else if (e.key === "1" && !$(".no").hidden) next(false);
+      else if (e.key === "2" && !$(".yes").hidden) next(true);
+    });
+    show(); dlg.showModal(); $(".show").focus();
+  }
+
+  // ---------- 订阅 ----------
+  // 这个订阅本月该记账的日期（YYYY-MM-DD）；还没到扣款日、本月已经记过、或今年不在这个月扣 → null
+  // 月付：day 是几号（大于当月天数就取月底）；年付：day 写 "MM-DD"
+  function subDue(s, T) {
+    if (!(+s.amount > 0)) return null;
+    const ym = T.slice(0, 7), pad = (n) => String(n).padStart(2, "0");
+    const dim = (y, m) => new Date(Date.UTC(+y, +m, 0)).getUTCDate();
+    let date;
+    if ((s.cycle || "月") === "年") {
+      const m = /^(\d{1,2})-(\d{1,2})$/.exec(String(s.day || "").trim());
+      if (!m || pad(m[1]) !== ym.slice(5)) return null;
+      date = `${ym}-${pad(Math.min(+m[2], dim(T.slice(0, 4), m[1])))}`;
+    } else {
+      date = `${ym}-${pad(Math.min(Math.max(1, parseInt(s.day, 10) || 1), dim(T.slice(0, 4), ym.slice(5))))}`;
+    }
+    if (date > T || (s.charged && String(s.charged) >= ym)) return null;
+    return date;
+  }
+
   // ---------- 删除和撤销 ----------
   const DEL = '<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   // 删除按钮：label 给读屏用；attrs 是额外属性（data-p 等）；corner = 贴在卡片右上角
@@ -390,7 +451,7 @@
     upcomingEvents, reminders, esc, CK, WEEK_CN, WEEK_EN, MONTH_EN, MONTH_CN,
     today, resource, art, fileOf, lines, ledger, replaceLine, appendLine, setMeta, toggleTaskLine, toggleTaskAt, iso, cards, newCard,
     safeTitle, parseEvent, formatEvent, todoCards, weekLabel, doneLast, chunk, scrolly, pager, sinkDone, formatLedger, moneySheet, METHODS,
-    notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile,
+    flashcards, subDue, notice, link, stamp, banner, wireBanner, mount, open, DEL, delBtn, undoable, removeWithUndo, removeLine, trashFile,
     CATEGORIES: ["餐饮", "交通", "购物", "服饰", "日用", "美妆", "娱乐", "学习", "居住", "其他"],
     ITEM_CATEGORIES: ["电子", "小玩意", "衣物", "化妆品", "厨房"],
     NOTE_CATEGORIES: ["生活小知识", "体态", "变美", "多伦多生活", "回国吃喝玩乐", "学习", "求职"],

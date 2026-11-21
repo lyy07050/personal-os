@@ -166,6 +166,41 @@
     return path;
   }
 
+  // ---------- 订阅 ----------
+  // 20 财务部/订阅.md 一行一个：- Spotify 学生 [金额:: 6.49] [周期:: 月] [扣款日:: 3] [分类:: 娱乐] [方式:: 信用卡] [记到:: 2026-11]
+  // 「记到」= 已经自动记进账本的最后一个月，防止重复记
+  const SUBS = "20 财务部/订阅.md";
+  async function subs() {
+    return (await L.lines(dv, SUBS)).filter((l) => l.startsWith("- ") && l.includes("[金额::")).map((raw) => {
+      const f = L.fields(raw);
+      return { raw, name: raw.slice(2, raw.indexOf("[")).trim(), amount: +f["金额"] || 0, cycle: f["周期"] || "月", day: f["扣款日"] || "1",
+        category: f["分类"] || "", method: f["方式"] || "", charged: f["记到"] || "" };
+    });
+  }
+  const subLine = (s) => `- ${s.name.replace(/[\[\]]/g, "").replace(/\s+/g, " ").trim()} [金额:: ${Number(s.amount).toFixed(2)}] [周期:: ${s.cycle || "月"}] [扣款日:: ${s.day}]`
+    + `${s.category ? ` [分类:: ${s.category}]` : ""}${s.method ? ` [方式:: ${s.method}]` : ""}${s.charged ? ` [记到:: ${s.charged}]` : ""}`;
+  async function addSub(s) {
+    const f = L.fileOf(SUBS);
+    if (!f) await app.vault.create(SUBS, `# 订阅\n\n${subLine(s)}\n`);
+    else await L.appendLine(SUBS, subLine(s));
+  }
+  // 到了扣款日的订阅：写一笔进当月账本（这个月已经手记过同名同金额的就不再写），再在订阅那行记下「记到」这个月
+  async function chargeSubs() {
+    const done = [];
+    for (const s of await subs()) {
+      const date = L.subDue(s, T);
+      if (!date) continue;
+      const already = (await L.ledger(dv, date.slice(0, 7))).some((e) => e.name === s.name && Math.abs(e.amount - s.amount) < 0.005);
+      if (!already) {
+        await addExpense({ date, name: s.name, amount: s.amount, category: s.category || "待分类", method: s.method || "信用卡" });
+        done.push(s.name);
+      }
+      await L.replaceLine(SUBS, s.raw, subLine({ ...s, charged: date.slice(0, 7) }));
+    }
+    if (done.length) L.notice(`订阅自动记账：${done.join("、")}`);
+    return done;
+  }
+
   // ---------- 钱 ----------
   // 记一笔：写进 20 财务部/账本/<月份>.md；账本是新的在上，所以插在第一条日期不晚于它的行前面；新月份就新建文件
   async function addExpense(e) {
@@ -285,7 +320,7 @@
   })).sort((a, b) => b.bought.localeCompare(a.bought));
 
   return {
-    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, addTodo, addActivity, addExpense, addProject, setProgress,
+    T, FOOD, SHOP, DL, WORDS, MISTAKES, HABITS, EVENTS, events, addEvent, SUBS, subs, addSub, chargeSubs, addTodo, addActivity, addExpense, addProject, setProgress,
     food, shopping, eat, addFood, recipes, addRecipe, deadlines, projects, homeGoals, interviews, jobs, todos, toggleTodo,
     weekSpend, diaries, streak, wordCards, wordOfDay, startReview, reviews, reviewStats, setGoal, setHabit, bodyOf, notes, courses, things,
   };

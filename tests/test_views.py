@@ -372,3 +372,38 @@ def test_side_opens_this_week_review():
     assert "打开全部复盘" in rv
     tpl = (VIEWS.parent / "模板/周复盘.md").read_text(encoding="utf-8")
     assert 'dv.view("90 系统/views/side", {"page": "review"})' in tpl and "lifeos-desk" in tpl
+
+
+def test_sub_due():
+    base = '{name:"Spotify", amount:6.49, cycle:"月", day:"3"}'
+    assert _lib(f"L.subDue({base}, '2026-11-18')") == "2026-11-03"
+    assert _lib(f"L.subDue({base}, '2026-11-02')") is None           # 还没到扣款日
+    assert _lib(f"L.subDue({{...{base}, charged:'2026-11'}}, '2026-11-18')") is None  # 本月记过了
+    assert _lib(f"L.subDue({{...{base}, charged:'2026-10'}}, '2026-11-18')") == "2026-11-03"
+    assert _lib(f"L.subDue({{...{base}, day:'31'}}, '2026-02-28')") == "2026-02-28"  # 小月取月底
+    assert _lib("L.subDue({name:'Prime', amount:99, cycle:'年', day:'03-15'}, '2026-11-18')") is None
+    assert _lib("L.subDue({name:'Prime', amount:99, cycle:'年', day:'11-15'}, '2026-11-18')") == "2026-11-15"
+
+
+def test_subscriptions_editable_and_charged():
+    fin = (VIEWS / "finance/view.js").read_text(encoding="utf-8")
+    assert 'aria-label="加一个订阅"' in fin and "D.addSub(" in fin and "L.removeLine(D.SUBS" in fin
+    data = (VIEWS / "_shared/data.js").read_text(encoding="utf-8")
+    assert "async function chargeSubs(" in data and "async function addSub(" in data
+    for v in ("finance", "home"):
+        assert "await D.chargeSubs()" in (VIEWS / f"{v}/view.js").read_text(encoding="utf-8"), v
+
+
+def test_notes_save_form():
+    js = (VIEWS / "notes/view.js").read_text(encoding="utf-8")
+    assert 'class="addk"' in js and 'aria-label="存一条知识卡"' in js and "app.vault.create(" in js
+    assert 'class="addi"' in js  # 灵感也直接在面板上记
+
+
+def test_flashcards_in_panel():
+    lib = (VIEWS / "_shared/lib.js").read_text(encoding="utf-8")
+    assert "function flashcards(" in lib and 'class="flash"' in lib
+    en = (VIEWS / "english/view.js").read_text(encoding="utf-8")
+    assert "L.flashcards(" in en and 'D.setHabit(T, "背词", true)' in en and "MISTAKES" in en
+    notes = (VIEWS / "notes/view.js").read_text(encoding="utf-8")
+    assert "L.flashcards(" in notes

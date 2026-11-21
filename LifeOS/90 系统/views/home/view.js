@@ -3,6 +3,7 @@ const L = eval(await dv.io.load("90 系统/views/_shared/lib.js"));
 const D = eval(await dv.io.load("90 系统/views/_shared/data.js"))(L, dv);
 const { foodIcon } = eval(await dv.io.load("90 系统/views/_shared/food.js"));
 const T = L.today();
+await D.chargeSubs(); // 到了扣款日的订阅自动记进本月账本
 const mon = L.mondayOf(T);
 const week = [...Array(7)].map((_, i) => L.addDays(mon, i));
 const esc = L.esc;

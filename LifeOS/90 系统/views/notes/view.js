@@ -27,29 +27,35 @@ const thoughts = await load("40 研发部/胡思乱想", "date");
 const mon = L.mondayOf(T);
 const newThisWeek = cards.filter((c) => c.date >= mon).length;
 
-async function newNote(folder, name, meta) {
-  let path = `${folder}/${name}.md`;
-  for (let n = 2; L.fileOf(path); n++) path = `${folder}/${name} ${n}.md`;
-  await app.vault.create(path, `---\n${meta}\n---\n# ${name}\n\n`);
-  L.open(path);
-}
+// 开始复习：随机 10 张知识卡，正面是标题，背面是内容
 function review() {
-  const cmd = "obsidian-spaced-repetition:srs-review-flashcards";
-  if (app.commands && app.commands.commands && app.commands.commands[cmd]) app.commands.executeCommandById(cmd);
-  else if (cards.length) L.open(cards[Math.floor(Math.random() * cards.length)].path);
+  const deck = [...cards].sort(() => Math.random() - 0.5).slice(0, 10).map((k) => ({ front: k.name, back: k.body }));
+  L.flashcards(root, deck, { title: "复习知识卡" });
 }
 
 const o = {
   page: "notes", eye: "40 · NOTES", title: { cards: "知识库", ideas: "灵感", thoughts: "胡思乱想" }[section],
   facts: section === "cards" ? `${cards.length} 张知识卡 · 本周新增 ${newThisWeek} 张`
     : section === "ideas" ? `${ideas.length} 个灵感` : `${thoughts.length} 篇`,
-  btns: section === "cards" ? [{ label: "开始复习", cls: "pri", onclick: review }, { label: "＋ 存一条", onclick: () => newNote("40 研发部/知识卡", "新知识卡", `category: 生活小知识\nsource: \ncreated: ${T}`) }]
-    : section === "ideas" ? [{ label: "＋ 记一个灵感", cls: "pri", onclick: () => newNote("40 研发部/灵感", "新灵感", `created: ${T}`) }]
+  btns: section === "cards" ? [{ label: "开始复习", cls: "pri", onclick: review }, { label: "＋ 存一条", onclick: () => openForm(".addk") }]
+    : section === "ideas" ? [{ label: "＋ 记一个灵感", cls: "pri", onclick: () => openForm(".addi") }]
     : [{ label: "＋ 写一篇", cls: "pri", onclick: async () => { const p = `40 研发部/胡思乱想/${T}.md`; if (!L.fileOf(p)) await app.vault.create(p, `---\ndate: ${T}\n---\n`); L.open(p); } }],
   arts: [{ file: "notes-flower.png", style: "left:961px;top:37px;width:238px" }],
 };
 
 const delK = (k) => L.delBtn(k.name, `data-p="${esc(k.path)}" data-n="${esc(k.name)}"`, "corner");
+const kCard = (k) => `<article class="tile k has-del" data-c="${esc(k.category)}">${delK(k)}${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body.slice(0, 90))}</p><div class="meta">${k.source ? `<span class="chip ${SRC_CHIP[k.source] ?? ""}">${esc(k.source)}</span>` : ""}${esc(k.category)}<span class="d">${when(k.date)}</span></div></article>`;
+const iCard = (k) => `<article class="tile k has-del">${delK(k)}${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body)}</p><div class="meta"><span class="d">${when(k.date)}</span></div></article>`;
+// 「存一条」「记一个灵感」的小表单：填完直接存，不用跳去空白笔记
+const addK = `<form class="addk" hidden aria-label="存一条知识卡">
+  <input name="t" placeholder="标题（比如 冬天护手）" aria-label="标题" required>
+  <textarea name="b" rows="3" placeholder="想记住的内容…" aria-label="内容"></textarea>
+  <select name="c" aria-label="分类">${L.NOTE_CATEGORIES.map((c) => `<option>${c}</option>`).join("")}</select>
+  <select name="s" aria-label="来源"><option value="">来源（可不选）</option>${Object.keys(SRC_CHIP).map((x) => `<option>${x}</option>`).join("")}</select>
+  <div class="r"><button type="button" class="btn sec cancel">取消</button><button class="btn pri">存下</button></div></form>`;
+const addI = `<form class="addi" hidden aria-label="记一个灵感">
+  <textarea name="b" rows="3" placeholder="第一行当标题，下面随便写…" aria-label="灵感" required></textarea>
+  <div class="r"><button type="button" class="btn sec cancel">取消</button><button class="btn pri">记下</button></div></form>`;
 let body = "";
 if (section === "cards") {
   const tiles = L.NOTE_CATEGORIES.map((c) => {
@@ -58,16 +64,22 @@ if (section === "cards") {
   }).join("");
   body = `<section class="card" aria-label="分类"><div class="head"><h2>分类</h2></div><div class="cats">${tiles}</div></section>
     <section class="card" aria-label="知识卡"><div class="head"><h2>最近的知识卡</h2><button class="filter" hidden></button></div>
-    <div class="cards">${cards.map((k) => `<article class="tile k has-del" data-c="${esc(k.category)}">${delK(k)}${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body.slice(0, 90))}</p><div class="meta">${k.source ? `<span class="chip ${SRC_CHIP[k.source] ?? ""}">${esc(k.source)}</span>` : ""}${esc(k.category)}<span class="d">${when(k.date)}</span></div></article>`).join("")}</div></section>`;
+    ${addK}<div class="cards">${cards.map(kCard).join("")}</div></section>`;
 } else if (section === "ideas") {
   const [first, ...rest] = ideas;
   body = (first ? `<section class="card idea">${L.link(first.path, `<div class="nh"><span>灵感 · ${esc(first.name)}</span><span>${when(first.date)}</span></div><p>${esc(first.body)}</p>`)}</section>` : "")
-    + `<section class="card"><div class="cards">${rest.map((k) => `<article class="tile k has-del">${delK(k)}${L.link(k.path, `<h3>${esc(k.name)}</h3>`)}<p>${esc(k.body)}</p><div class="meta"><span class="d">${when(k.date)}</span></div></article>`).join("")}</div></section>`;
+    + `<section class="card">${addI}<div class="cards">${rest.map(iCard).join("")}</div></section>`;
 } else {
   body = `<section class="card"><ul class="list th">${thoughts.map((k) => `<li>${L.link(k.path, `<span class="g">${L.md(k.date)}</span>`)}<p>${esc(k.body)}</p></li>`).join("")}</ul></section>`;
 }
 
 const STYLE = `
+.lifeos-dash .addk,.lifeos-dash .addi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 18px;padding:16px;border-radius:16px;background:var(--tile)}
+.lifeos-dash .addk[hidden],.lifeos-dash .addi[hidden]{display:none}
+.lifeos-dash .addk input,.lifeos-dash .addk select,.lifeos-dash .addk textarea,.lifeos-dash .addi textarea{min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:#fff;padding:9px 12px;font:inherit;font-size:15px;color:var(--ink);box-shadow:none}
+.lifeos-dash .addk input,.lifeos-dash .addk textarea,.lifeos-dash .addi textarea{grid-column:1/-1}
+.lifeos-dash .addk textarea,.lifeos-dash .addi textarea{resize:vertical;line-height:1.6}
+.lifeos-dash .addk .r,.lifeos-dash .addi .r{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
 .lifeos-dash .idea .nh{display:flex;justify-content:space-between;font-size:15px;color:var(--ink-2);padding-bottom:14px;border-bottom:1px solid rgba(37,45,41,.1);margin-bottom:20px}
 .lifeos-dash .idea p{font-family:var(--zcool);font-size:27px;line-height:1.5;color:var(--ink)}
 .lifeos-dash .cats{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
@@ -93,8 +105,53 @@ const STYLE = `
 .is-mobile .lifeos-dash .cards{grid-template-columns:1fr}`;
 
 const root = L.mount(dv, L.banner(o) + `<div class="stack">${body}</div>`, STYLE);
-root.querySelectorAll(".stack .cards").forEach((g) => L.pager(g, 6)); // 一页两排共 6 张
+const cardPagers = [...root.querySelectorAll(".stack .cards")].map((g) => L.pager(g, 6)); // 一页两排共 6 张
 L.wireBanner(root, o);
+
+// 小表单：打开 / 取消 / 存下（新卡放到最前面）
+function openForm(sel) {
+  const f = root.querySelector(sel);
+  if (!f) return;
+  f.hidden = false; f.scrollIntoView({ behavior: "smooth", block: "center" }); f.querySelector("input,textarea").focus();
+}
+async function saveNote(folder, title, meta, text) {
+  const name = L.safeTitle(title);
+  let path = `${folder}/${name}.md`;
+  for (let n = 2; L.fileOf(path); n++) path = `${folder}/${name} ${n}.md`;
+  await app.vault.create(path, `---\n${meta}\n---\n# ${title}\n\n${text}\n`);
+  return path;
+}
+const cardsPager = cardPagers[cardPagers.length - 1];
+root.querySelectorAll(".addk, .addi").forEach((f) => {
+  f.querySelector(".cancel").addEventListener("click", () => { f.reset(); f.hidden = true; });
+  f.addEventListener("keydown", (e) => { if (e.key === "Escape") { f.reset(); f.hidden = true; } });
+});
+const addKf = root.querySelector(".addk");
+if (addKf) addKf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = addKf.t.value.replace(/\s+/g, " ").trim(), text = addKf.b.value.trim(), category = addKf.c.value, source = addKf.s.value;
+  if (!title) return;
+  const path = await saveNote("40 研发部/知识卡", title, `category: ${category}\nsource: ${source}\ncreated: ${T}`, text);
+  const box = document.createElement("div");
+  box.innerHTML = kCard({ path, name: path.split("/").pop().replace(/\.md$/, ""), category, source, date: T, body: text });
+  if (cardsPager) cardsPager.add(box.firstElementChild, 0);
+  addKf.reset(); addKf.hidden = true;
+  L.notice(`「${title}」存进知识库了`);
+});
+const addIf = root.querySelector(".addi");
+if (addIf) addIf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const [first, ...rest] = addIf.b.value.trim().split("\n");
+  const title = (first || "").trim().slice(0, 40);
+  if (!title) return;
+  const text = rest.join("\n").trim();
+  const path = await saveNote("40 研发部/灵感", title, `created: ${T}`, text);
+  const box = document.createElement("div");
+  box.innerHTML = iCard({ path, name: path.split("/").pop().replace(/\.md$/, ""), date: T, body: text });
+  if (cardsPager) cardsPager.add(box.firstElementChild, 0);
+  addIf.reset(); addIf.hidden = true;
+  L.notice(`「${title}」记下了`);
+});
 
 // 删除：变淡 4 秒（可撤销），时间到了整篇笔记放进系统废纸篓
 root.addEventListener("click", (e) => {

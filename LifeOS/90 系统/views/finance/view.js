@@ -15,6 +15,7 @@ const monthsBack = (n) => [...Array(n)].map((_, i) => { const d = new Date(Date.
 
 // 读账本：一年的 12 个月（年视图）或最近 3 个月（周、月视图要画近 8 周）
 const months = period === "year" ? [...Array(12)].map((_, i) => `${year}-${String(i + 1).padStart(2, "0")}`) : monthsBack(3);
+await D.chargeSubs(); // 到了扣款日的订阅先自动记进账本，下面的总额就包含它
 const raw = {};
 for (const m of months) raw[m] = await L.lines(dv, ledgerPath(m));
 const all = Object.entries(raw).flatMap(([m, ls]) => ls.map((l, i) => ({ ...L.parseLedger(l), raw: l, line: i, month: m })).filter((e) => e.date));
@@ -36,7 +37,9 @@ const cats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
 // 分类规则：商户名包含关键词 → 分类
 const rules = (await L.lines(dv, "20 财务部/分类规则.md")).map((l) => /^- (.+?) → (.+)$/.exec(l)).filter(Boolean).map((m) => [m[1].trim(), m[2].trim()]);
 const guess = (name) => (rules.find(([k]) => name.toLowerCase().includes(k.toLowerCase())) || GUESS.find(([re]) => re.test(name)) || [null, "其他"])[1];
-const subs = (await L.lines(dv, "20 财务部/订阅.md")).filter((l) => l.startsWith("- ")).map((l) => ({ name: l.slice(2, l.indexOf("[")).trim(), ...L.fields(l) }));
+const subs = await D.subs();
+const subDay = (s) => s.cycle === "年" ? s.day.replace("-", "月") + "日" : `每月 ${s.day} 号`;
+const subLi = (s, i) => `<li class="has-del" data-s="${i}"><span class="sw" style="background:${["var(--green)", "#a66b53", "#e8dccb", "#b9a6cc"][i % 4]}"></span><span>${esc(s.name)}<small class="sd">${subDay(s)}扣款</small></span><span class="mono">${L.money(s.amount)}/${s.cycle}</span>${L.delBtn(s.name)}</li>`;
 
 // ---------- 图 ----------
 function pie() {
@@ -110,8 +113,16 @@ const html = L.banner(o) + `<div class="stack">
   <section class="card">
     ${pending.length ? `<div class="head" style="margin-bottom:4px"><h2>待分类</h2></div>
     ${pending.map((e, i) => `<div class="guess" data-i="${i}"><div><b>${esc(e.name)}</b><small class="mono">${L.money(e.amount)}</small></div><div class="pick"><button class="btn pri ok">${guess(e.name)} ✓</button><select class="btn sec chg" aria-label="改分类"><option value="">改</option>${L.CATEGORIES.map((c) => `<option>${c}</option>`).join("")}</select></div></div>`).join("")}` : ""}
-    <div class="head" style="margin:${pending.length ? 26 : 0}px 0 4px"><h2>订阅</h2></div>
-    <ul class="list subs">${subs.map((s, i) => `<li><span class="sw" style="background:${["var(--green)", "#a66b53", "#e8dccb", "#b9a6cc"][i % 4]}"></span>${esc(s.name)}<span class="mono">${L.money(+s["金额"] || 0)}/${s["周期"] || "月"}</span></li>`).join("")}</ul>
+    <div class="head" style="margin:${pending.length ? 26 : 0}px 0 4px"><h2>订阅</h2><button class="plus" aria-label="加一个订阅" aria-expanded="false">＋</button></div>
+    <form class="subf" hidden aria-label="加一个订阅">
+      <input name="n" placeholder="名字（比如 Netflix）" aria-label="名字" required>
+      <input name="a" type="number" step="0.01" min="0.01" placeholder="金额" aria-label="金额" required>
+      <select name="c" aria-label="周期"><option value="月">每月</option><option value="年">每年</option></select>
+      <input name="d" placeholder="几号扣（年付写 11-15）" aria-label="扣款日" required>
+      <select name="k" aria-label="分类"><option value="">分类：以后再整理</option>${L.CATEGORIES.map((c) => `<option ${c === "娱乐" ? "selected" : ""}>${c}</option>`).join("")}</select>
+      <select name="m" aria-label="方式">${L.METHODS.map(([v, l]) => `<option value="${v}" ${v === "信用卡" ? "selected" : ""}>${l}</option>`).join("")}</select>
+      <button class="btn pri">加上</button></form>
+    <ul class="list subs">${subs.map(subLi).join("")}</ul>
   </section>
 </div>`;
 
@@ -144,7 +155,14 @@ const STYLE = `
 .lifeos-dash .pick .btn{height:40px;font-size:15px}
 .lifeos-dash select.chg{appearance:none;-webkit-appearance:none;border:0;font:inherit;color:var(--ink);text-align:center;cursor:pointer}
 .lifeos-dash .guess.done select.chg{display:none}
-.lifeos-dash .subs li{display:grid;grid-template-columns:30px 1fr auto;font-size:16px;padding:13px 0}
+.lifeos-dash .subs .sd{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.lifeos-dash .dash .plus{width:32px;height:32px;border-radius:50%;background:var(--sage);color:var(--green);font-size:19px;line-height:32px;text-align:center;flex:none;transition:background .2s,color .2s}
+.lifeos-dash .dash .plus:hover,.lifeos-dash .dash .plus[aria-expanded="true"]{background:var(--green);color:#fff}
+.lifeos-dash .subf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 10px}
+.lifeos-dash .subf[hidden]{display:none}
+.lifeos-dash .subf input,.lifeos-dash .subf select{height:38px;min-width:0;border-radius:12px;border:1px solid rgba(37,45,41,.12);background:#fff;padding:0 12px;font:inherit;font-size:14px;color:var(--ink);box-shadow:none}
+.lifeos-dash .subf .btn{grid-column:1/-1;height:38px;justify-content:center}
+.lifeos-dash .subs li{display:grid;grid-template-columns:30px 1fr auto 34px;align-items:center;font-size:16px;padding:13px 0}
 .lifeos-dash .fin-buttons{position:absolute;width:95px;height:397px;right:186px;bottom:-190px;transform:rotate(-90deg);pointer-events:none;filter:var(--sh-sticker);z-index:2}
 .is-mobile .lifeos-dash .cat-wrap{grid-template-columns:1fr;justify-items:center}
 .is-mobile .lifeos-dash svg[width="680"]{width:100%;height:auto}
@@ -152,6 +170,31 @@ const STYLE = `
 
 const root = L.mount(dv, html, STYLE);
 const openMoney = L.moneySheet(root, (e) => D.addExpense(e)); // 记一笔的小窗口
+// 订阅「＋」：加一行进 订阅.md；到了扣款日就马上记进本月账本
+const subf = root.querySelector(".subf"), subPlus = root.querySelector('.plus[aria-label="加一个订阅"]');
+const toggleSub = (open) => { subf.hidden = !open; subPlus.setAttribute("aria-expanded", open); if (open) subf.n.focus(); };
+subPlus.addEventListener("click", () => toggleSub(subf.hidden));
+subf.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleSub(false); });
+subf.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const s = { name: subf.n.value.trim(), amount: parseFloat(subf.a.value), cycle: subf.c.value, day: subf.d.value.trim(), category: subf.k.value, method: subf.m.value };
+  if (!s.name || !(s.amount > 0) || !s.day) return;
+  if (s.cycle === "年" && !/^\d{1,2}-\d{1,2}$/.test(s.day)) { L.notice("年付的扣款日写成 月-日，比如 11-15"); return; }
+  await D.addSub(s);
+  const ul = root.querySelector(".subs"), i = subs.push({ ...s, raw: null }) - 1, box = document.createElement("ul");
+  box.innerHTML = subLi(subs[i], i); ul.appendChild(box.firstElementChild);
+  subf.reset(); toggleSub(false);
+  const charged = await D.chargeSubs();
+  L.notice(charged.includes(s.name) ? `${s.name} 加好了，本月这笔已记进账本` : `${s.name} 加好了，到扣款日会自动记账`);
+});
+// 删一个订阅：4 秒内可撤销；已经记进账本的那几笔不动
+root.querySelector(".subs").addEventListener("click", async (e) => {
+  const b = e.target.closest(".delb");
+  if (!b) return;
+  const li = b.closest("li"), s = subs[+li.dataset.s];
+  const raw = s.raw || (await D.subs()).find((x) => x.name === s.name)?.raw;
+  L.removeWithUndo(root, li, `「${s.name}」订阅删掉了`, () => raw && L.removeLine(D.SUBS, raw));
+});
 // 删一笔：变淡 4 秒（可撤销），时间到了从那个月的账本里删掉这一行
 root.addEventListener("click", (e) => {
   const b = e.target.closest("tr[data-r] .delb");
